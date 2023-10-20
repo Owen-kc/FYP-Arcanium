@@ -37,4 +37,64 @@
   }
 }
 
+body {
+  font-family: "Tangerine", serif;
+  background-color: #f4e9d8;
+  background-image: url('images/parchment.jpg');
+  background-size: cover;
+  color: #3d2c29;
+}
+
+div {
+  max-width: 800px;
+  margin: 50px auto;
+  background-color: rgba(244, 233, 216, 0.8);
+  border: 2px solid #3d2c29;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-family: inherit;
+  font-size: 18px;
+  border: 2px solid #3d2c29;
+  border-radius: 5px;
+}
+
+h2 {
+  font-size: 32px;
+  border-bottom: 1px solid #3d2c29;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+}
+
+p {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Add these styles to your App.css */
+.suggestions {
+  max-height: 150px;
+  overflow-y: auto; /* Allows for scrolling if too many suggestions */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.suggestions div {
+  padding: 5px 10px;
+  font-size: 14px; /* Adjust this to make the text size as you prefer */
+  cursor: pointer;
+  background-color: #f4f4f4;
+}
+
+.suggestions div:hover {
+  background-color: #e0e0e0;
+}
+
 

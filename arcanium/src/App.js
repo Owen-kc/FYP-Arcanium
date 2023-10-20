@@ -1,54 +1,71 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import './App.css';
 
 function App() {
-  const [dndData, setDndData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [monsterData, setMonsterData] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);  // New state for autocomplete suggestions
+
+  const debounce = (func, delay) => {
+    let timerId;
+    return (...args) => {
+      clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  const fetchMonsters = async () => {
+    const response = await fetch(`https://api.open5e.com/monsters/?search=${searchTerm}`);
+    const data = await response.json();
+    const filteredResults = data.results.filter(monster => !monster.slug.includes('a5e'));
+    setMonsterData(filteredResults);
+    setSuggestions(filteredResults);  // Update suggestions based on search results
+  };
 
   useEffect(() => {
-    const apiUrl = `https://api.open5e.com/monsters/?name=${searchTerm}`;
-    
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        setDndData(data.results || []);
-      })
-      .catch((error) => console.error('Error fetching D&D data:', error));
+    if (searchTerm) {
+      const debouncedFetch = debounce(fetchMonsters, 500);
+      debouncedFetch();
+    } else {
+      setMonsterData([]);
+      setSuggestions([]);  // Clear suggestions if search term is empty
+    }
   }, [searchTerm]);
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+  // Function to handle suggestion click
+  const handleSuggestionClick = (name) => {
+    setSearchTerm(name);
+    setSuggestions([]);  // Clear suggestions after selection
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>D&D Monster Search</h1>
-        
-        <div>
-          <input
-            type="text"
-            placeholder="Search for a D&D monster..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
+    <div>
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        placeholder="Search for a monster"
+      />
+      <div className="suggestions">
+        {suggestions.slice(0, 5).map(monster => (
+          <div 
+            key={monster.slug}
+            onClick={() => handleSuggestionClick(monster.name)}
+          >
+            {monster.name}
+          </div>
+        ))}
+      </div>
+      {monsterData.map(monster => (
+        <div key={monster.slug}>
+          <h2>{monster.name}</h2>
+          <p>{monster.size}</p>
+          <p>{monster.type}</p>
+          <p>{monster.alignment}</p>
         </div>
-
-        <div>
-          {dndData.length > 0 ? (
-            <div>
-              <h3>Monster Data</h3>
-              <ul>
-                {dndData.map((item) => (
-                  <li key={item.index}>{item.name}</li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p>No data available.</p>
-          )}
-        </div>
-      </header>
+      ))}
     </div>
   );
 }
