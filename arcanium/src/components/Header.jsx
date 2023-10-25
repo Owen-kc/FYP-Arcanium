@@ -11,6 +11,7 @@ function Header() {
         </Typography>
         <Button color="inherit" component={NavLinkAdapter} to="/">Home</Button>
         <Button color="inherit" component={NavLinkAdapter} to="/monsters">Monsters</Button>
+        <Button color="inherit" component={NavLinkAdapter} to="/spells">Spells</Button>
         {/* Add more links as needed */}
       </Toolbar>
     </AppBar>

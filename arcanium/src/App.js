@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Monsters from './pages/Monsters';
+import Spells from './pages/Spells'
 import Header from './components/Header';
 import Footer from './components/Footer'
 import { ThemeProvider } from '@mui/material/styles';
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/monsters" element={<Monsters />} />
+            <Route path="/spells" element={<Spells />} />
             {/* Add other routes as needed */}
           </Routes>
         </div>
