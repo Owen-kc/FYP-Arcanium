@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import APISearch from '../components/APISearch'; 
+import { TextField, Box } from '@mui/material';
 
 function Monsters() {
+    const [crFilter, setCRFilter] = useState("");
+    
     return (
-        <APISearch 
-            apiEndpoint="https://api.open5e.com/monsters/" //adjust endpoint, placeholder, displayprops depending on page
-            placeholder="Search for a monster" 
-            displayProps={['size', 'type', 'alignment']} 
-        />
+        <Box>
+            <TextField 
+                value={crFilter}
+                onChange={(e) => setCRFilter(e.target.value)}
+                label="Filter by CR"
+            />
+            <APISearch 
+                apiEndpoint="https://api.open5e.com/monsters/"
+                placeholder="Search for a monster" 
+                displayProps={['size', 'type', 'alignment']}
+                filters={{ cr: crFilter }}
+            />
+        </Box>
     );
 }
 
