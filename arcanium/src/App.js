@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Monsters from './pages/Monsters';
 import Spells from './pages/Spells'
 import Header from './components/Header';
-import Footer from './components/Footer'
+//import Footer from './components/Footer'
 import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
 
@@ -20,7 +20,6 @@ function App() {
             {/* Add other routes as needed */}
           </Routes>
         </div>
-        <Footer/>
       </ThemeProvider>
     </Router>
   );
