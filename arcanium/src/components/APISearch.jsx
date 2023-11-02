@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Autocomplete, Typography } from '@mui/material';
+import {
+  TextField, Box, Autocomplete, Typography, Grid, FormControl, InputLabel, Select, Card, CardContent,
+} from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CircularProgress } from '@mui/material';
 
-function APISearch({ apiEndpoint, placeholder, displayProps, filters = {} }) {
+const DEFAULT_FILTERS = {};
+function APISearch({ apiEndpoint, placeholder, displayProps, filters = DEFAULT_FILTERS }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [data, setData] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    
 
     const fetchData = async (pageNum, searchValue) => {
         let query = `${apiEndpoint}?search=${searchValue}&page=${pageNum}`;
