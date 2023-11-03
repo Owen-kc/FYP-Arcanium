@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  TextField, Box, Autocomplete, Typography, Grid, FormControl, InputLabel, Select, Card, CardContent,
+  TextField, Box, Autocomplete, Typography, Button, Grid, FormControl, InputLabel, Select, Card, CardContent,
 } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CircularProgress } from '@mui/material';
+import ItemDialog from './ItemDialog'; // Update the path accordingly
 
 const DEFAULT_FILTERS = {};
 function APISearch({ apiEndpoint, placeholder, displayProps, filters = DEFAULT_FILTERS }) {
@@ -11,6 +12,8 @@ function APISearch({ apiEndpoint, placeholder, displayProps, filters = DEFAULT_F
     const [data, setData] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
     
 
     const fetchData = async (pageNum, searchValue) => {
@@ -49,6 +52,11 @@ function APISearch({ apiEndpoint, placeholder, displayProps, filters = DEFAULT_F
         setCurrentPage(1);
         fetchData(1, searchTerm);
     }, [searchTerm, filters]);
+
+    const handleOpenDialog = (item) => {
+        setSelectedItem(item);
+        setIsDialogOpen(true);
+    };
 
 
     return (
@@ -99,9 +107,19 @@ function APISearch({ apiEndpoint, placeholder, displayProps, filters = DEFAULT_F
                         {displayProps.map(prop => (
                             <Typography key={prop}>{item[prop]}</Typography>
                         ))}
+                        <Button 
+                            color="primary" 
+                            variant="contained" 
+                            style={{ marginTop: '10px' }}
+                            onClick={() => handleOpenDialog(item)}
+                        >
+                            View Details
+                        </Button>
                     </Box>
                 ))}
             </InfiniteScroll>
+
+            <ItemDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} item={selectedItem} />
         </Box>
     );
 }
