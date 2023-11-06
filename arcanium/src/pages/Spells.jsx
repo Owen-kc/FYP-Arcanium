@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import APISearch from '../components/APISearch'; 
 import FilterDropdown from '../components/FilterDropdown'; 
-import { Box } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 
 function Spells() {
     const [schoolFilter, setSchoolFilter] = useState("");
@@ -11,22 +11,27 @@ function Spells() {
     const levelOptions = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
     return (
-        <Box sx={{ bgcolor: 'background.default'}}>
-            <FilterDropdown 
-                options={schoolOptions} 
-                value={schoolFilter} 
-                onChange={(e) => setSchoolFilter(e.target.value)} 
-                label="School" 
-                id="school-filter" 
-            />
-
-            <FilterDropdown 
-                options={levelOptions} 
-                value={levelFilter} 
-                onChange={(e) => setLevelFilter(e.target.value)} 
-                label="Level" 
-                id="level-filter" 
-            />
+        <Box sx={{ bgcolor: 'background.default', padding: 2 }}>
+            <Grid container spacing={2} alignItems="center" justifyContent="center">
+                <Grid item>
+                    <FilterDropdown 
+                        options={schoolOptions} 
+                        value={schoolFilter} 
+                        onChange={(e) => setSchoolFilter(e.target.value)} 
+                        label="School" 
+                        id="school-filter" 
+                    />
+                </Grid>
+                <Grid item>
+                    <FilterDropdown 
+                        options={levelOptions} 
+                        value={levelFilter} 
+                        onChange={(e) => setLevelFilter(e.target.value)} 
+                        label="Level" 
+                        id="level-filter" 
+                    />
+                </Grid>
+            </Grid>
 
             <APISearch 
                 apiEndpoint="https://api.open5e.com/spells/"
