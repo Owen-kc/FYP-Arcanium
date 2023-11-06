@@ -13,7 +13,7 @@ function Items() {
     const itemTypeOptions = ["Armor", "Weapon", "Potion", "Ring", "Rod", "Scroll", "Wand", "Wondrous Item"];
 
     return (
-        <Box>
+        <Box sx={{ bgcolor: 'background.default'}}>
             <FilterDropdown 
                 options={rarityOptions} 
                 value={rarityFilter} 

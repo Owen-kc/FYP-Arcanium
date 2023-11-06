@@ -11,7 +11,7 @@ function Monsters() {
     const typeOptions = ["Aberration", "Beast", "Celestial", "Construct", "Dragon", "Elemental", "Fey", "Fiend", "Giant", "Humanoid", "Monstrosity", "Ooze", "Plant", "Undead"];
 
     return (
-        <Box>
+        <Box sx={{ bgcolor: 'background.default'}}>
             <FilterDropdown 
                 options={crOptions} 
                 value={crFilter} 

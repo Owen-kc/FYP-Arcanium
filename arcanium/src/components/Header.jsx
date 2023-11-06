@@ -15,7 +15,7 @@ function Header() {
   };
 
   return (
-    <AppBar position="static" color="default">
+    <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           Arcanium
