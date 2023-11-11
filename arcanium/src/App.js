@@ -11,6 +11,13 @@ import Header from './components/Header';
 //import Footer from './components/Footer'
 import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
+<<<<<<< Updated upstream
+=======
+import HomePageContent from './components/HomePageContent';
+import LoginForm from './components/LoginForm';
+import RegisterForm from './components/RegisterForm';
+import AuthPage from './pages/AuthPage';
+>>>>>>> Stashed changes
 
 function App() {
   return (
@@ -19,7 +26,7 @@ function App() {
         <div>
           <Header />
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HomePageContent />} />
             <Route path="/monsters" element={<Monsters />} />
             <Route path="/items" element={<Items />} />
             <Route path="/spells" element={<Spells />} />
@@ -27,6 +34,7 @@ function App() {
             <Route path="/weapons" element={<Weapons />} />
             <Route path="/feats" element={<Feats />} />
             <Route path="/backgrounds" element={<Backgrounds />} />
+            <Route path="/auth" element={<AuthPage />} /> {/* Corrected this line */}
             {/* Add other routes as needed */}
           </Routes>
         </div>
@@ -34,6 +42,7 @@ function App() {
     </Router>
   );
 }
+
 
 function Home() {
   return <div>Welcome to Arcanium!</div>;
