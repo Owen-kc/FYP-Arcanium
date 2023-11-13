@@ -60,68 +60,70 @@ function APISearch({ apiEndpoint, placeholder, displayProps, filters = DEFAULT_F
 
 
     return (
-        <Box component="div" p={4} bgcolor="background.paper">
-            <Autocomplete
-                options={data}
-                getOptionLabel={(option) => option.name}
-                onInputChange={(event, newValue) => {
-                    setSearchTerm(newValue);
-                }}
-                clearOnBlur={false}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        placeholder={placeholder}
-                        variant="outlined"
-                        margin="normal"
-                        label={placeholder}
-                        fullWidth
-                        clearOnEscape
-                    />
-                )}
-            />
-            <InfiniteScroll
-                dataLength={data.length}
-                next={() => {
-                    const nextPage = currentPage + 1;
-                    setCurrentPage(nextPage);
-                    fetchData(nextPage, searchTerm);
-                }}
-                hasMore={hasMore}
-                loader={
-                    <Box display="flex" justifyContent="center" mt={2}>
-                        <CircularProgress />
-                    </Box>
-                }
-            >
-                {data.length === 0 && !hasMore && (
-                    <Typography align="center" mt={2}>
-                        No entries
-                    </Typography>
-                )}
-                {data.map(item => (
-                    <Box key={item.slug} mt={2} bgcolor="background.default" p={2}>
-                        <Typography variant="h5" gutterBottom>
-                            {item.name}
-                        </Typography>
-                        {displayProps.map(prop => (
-                            <Typography key={prop}>{item[prop]}</Typography>
-                        ))}
-                        <Button 
-                            color="primary" 
-                            variant="contained" 
-                            style={{ marginTop: '10px' }}
-                            onClick={() => handleOpenDialog(item)}
-                        >
-                            View Details
-                        </Button>
-                    </Box>
+        <Box component="div" p={4} sx={{ bgcolor: 'background.paper' }}>
+          <Autocomplete
+            options={data}
+            getOptionLabel={(option) => option.name}
+            onInputChange={(event, newValue) => {
+              setSearchTerm(newValue);
+            }}
+            clearOnBlur={false}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={placeholder}
+                variant="outlined"
+                margin="normal"
+                label={placeholder}
+                fullWidth
+                clearOnEscape
+                sx={{ bgcolor: 'background.default' }} // Example usage of sx prop
+              />
+            )}
+          />
+          <InfiniteScroll
+            dataLength={data.length}
+            next={() => {
+              const nextPage = currentPage + 1;
+              setCurrentPage(nextPage);
+              fetchData(nextPage, searchTerm);
+            }}
+            hasMore={hasMore}
+            loader={
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                <CircularProgress />
+              </Box>
+            }
+          >
+            {data.length === 0 && !hasMore && (
+              <Typography align="center" mt={2}>
+                No entries
+              </Typography>
+            )}
+            {data.map(item => (
+              <Box key={item.slug} mt={2} sx={{ bgcolor: 'background.default', p: 2 }}>
+                <Typography variant="h5" gutterBottom sx={{ color: 'text.primary' }}>
+                  {item.name}
+                </Typography>
+                {displayProps.map(prop => (
+                  <Typography sx={{ color: 'text.primary' }} key={prop}>{item[prop]} </Typography>
                 ))}
-            </InfiniteScroll>
-
-            <ItemDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} item={selectedItem} />
+                <Button 
+                  color="primary" 
+                  variant="contained" 
+                  sx={{ mt: 1 }} // Replacing inline styles with sx prop
+                  onClick={() => handleOpenDialog(item)}
+                >
+                  View Details
+                </Button>
+              </Box>
+            ))}
+          </InfiniteScroll>
+      
+          <ItemDialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} item={selectedItem} />
         </Box>
-    );
+      );
+      
 }
 
 export default APISearch;

@@ -11,6 +11,7 @@ import Header from './components/Header';
 //import Footer from './components/Footer'
 import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
+import HomePageContent from './components/HomePageContent';
 
 function App() {
   return (
@@ -36,7 +37,9 @@ function App() {
 }
 
 function Home() {
-  return <div>Welcome to Arcanium!</div>;
+  return <div>
+  <HomePageContent />
+</div>
 }
 
 export default App;

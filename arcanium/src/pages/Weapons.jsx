@@ -11,7 +11,7 @@ function Weapons() {
     const damageTypeOptions = ["bludgeoning", "piercing", "slashing"];
 
     return (
-        <Box>
+        <Box sx={{ bgcolor: 'background.default'}}>
             <FilterDropdown 
                 options={damageDiceOptions} 
                 value={damageDiceFilter} 
