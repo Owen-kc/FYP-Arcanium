@@ -1,48 +1,50 @@
+// backend/routes/userRoutes.js
+
 const express = require('express');
-const auth = require('../middlewares/authMiddleware');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); 
+const auth = require('../middleware/auth'); 
 const router = express.Router();
 
 // User registration
 router.post('/register', async (req, res) => {
   try {
-    // Create a new user
     let user = new User(req.body);
     await user.save();
-
-    // Generate a token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-
     res.status(201).send({ user, token });
   } catch (error) {
-    res.status(400).send(error);
+    console.error(error);
+    res.status(400).send({ message: 'Registration failed', error: error.message });
   }
 });
 
 // User login
 router.post('/login', async (req, res) => {
   try {
-    // Find user by email
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(400).send('Unable to login');
+      return res.status(400).send({ message: 'Unable to login' });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
-      return res.status(400).send('Unable to login');
+      return res.status(400).send({ message: 'Unable to login' });
     }
 
-    // Generate a token
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-
     res.send({ user, token });
   } catch (error) {
-    res.status(400).send(error);
+    console.error(error);
+    res.status(400).send({ message: 'Login failed', error: error.message });
   }
+});
+
+// protected route
+router.get('/profile', auth, async (req, res) => {
+  // req.user is set by the auth 
+  res.send(req.user);
 });
 
 module.exports = router;
