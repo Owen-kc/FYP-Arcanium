@@ -11,13 +11,11 @@ import Header from './components/Header';
 //import Footer from './components/Footer'
 import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
-<<<<<<< Updated upstream
-=======
 import HomePageContent from './components/HomePageContent';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import AuthPage from './pages/AuthPage';
->>>>>>> Stashed changes
+
 
 function App() {
   return (

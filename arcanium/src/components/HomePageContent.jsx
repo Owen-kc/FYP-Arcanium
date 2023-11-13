@@ -3,9 +3,6 @@ import {
   Box, Card, CardActionArea, CardContent, CardMedia, Typography, Grid,
   Slider, Paper, List, ListItem, ListItemText
 } from '@mui/material';
-import monsterImage from '../images/monsters.jpg';
-import spellImage from '../images/spells.jpg';
-import itemImage from '../images/items.jpeg';
 import { Accordion, AccordionSummary, AccordionDetails, Chip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RegisterForm from './RegisterForm';
@@ -13,10 +10,6 @@ import RegisterForm from './RegisterForm';
 const HomePageContent = () => {
   // Dummy data for featured items, replace with actual data and mapping
   const features = [
-    { title: 'Monsters', description: 'Discover fearsome monsters.', imgSrc: monsterImage, link: '/monsters' },
-    { title: 'Spells', description: 'Browse through powerful spells.', imgSrc: spellImage, link: '/spells' },
-    { title: 'Items', description: 'Browse magical items.', imgSrc: itemImage, link: '/items' },
-    // ...other features
   ];
 
   // Placeholder for slider value
