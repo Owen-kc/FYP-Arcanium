@@ -12,12 +12,21 @@ import Header from './components/Header';
 import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
 import HomePageContent from './components/HomePageContent';
-
+import { useAuth0 } from '@auth0/auth0-react';
+import LoginPage from './pages/LoginPage';
 
 function App() {
+  const { isAuthenticated, isLoading } = useAuth0();
+
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
+    <ThemeProvider theme={FantasyTheme}>
     <Router>
-      <ThemeProvider theme={FantasyTheme}>
+      {isAuthenticated ? (
         <main>
           <Header />
           <Routes>
@@ -32,8 +41,11 @@ function App() {
             {/* Add other routes as needed */}
           </Routes>
         </main>
+        ) : (
+          <LoginPage />
+        )}
+        </Router>
       </ThemeProvider>
-    </Router>
   );
 }
 
