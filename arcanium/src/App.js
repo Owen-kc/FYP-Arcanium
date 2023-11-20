@@ -13,11 +13,12 @@ import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
 import HomePageContent from './components/HomePageContent';
 
+
 function App() {
   return (
     <Router>
       <ThemeProvider theme={FantasyTheme}>
-        <div>
+        <main>
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -30,7 +31,7 @@ function App() {
             <Route path="/backgrounds" element={<Backgrounds />} />
             {/* Add other routes as needed */}
           </Routes>
-        </div>
+        </main>
       </ThemeProvider>
     </Router>
   );

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Box } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import UserMenu from './UserMenu';
 
 function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -41,6 +42,10 @@ function Header() {
           <MenuItem onClick={handleClose} component={NavLinkAdapter} to="/backgrounds">Backgrounds</MenuItem>
           {/* Add more links as needed */}
         </Menu>
+        {/* Position UserMenu to the right */}
+        <Box style={{ marginLeft: 'auto' }}>
+          <UserMenu />
+        </Box>
       </Toolbar>
     </AppBar>
   );
