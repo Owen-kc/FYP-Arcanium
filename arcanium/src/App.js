@@ -14,6 +14,7 @@ import FantasyTheme from './components/FantasyTheme';
 import HomePageContent from './components/HomePageContent';
 import { useAuth0 } from '@auth0/auth0-react';
 import LoginPage from './pages/LoginPage';
+import CreateCharacterPage from './pages/CreateCharacterPage';
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -38,7 +39,8 @@ function App() {
             <Route path="/weapons" element={<Weapons />} />
             <Route path="/feats" element={<Feats />} />
             <Route path="/backgrounds" element={<Backgrounds />} />
-            {/* Add other routes as needed */}
+            <Route path="/create-character" element={<CreateCharacterPage />} />
+            {/* Add other routes*/}
           </Routes>
         </main>
         ) : (

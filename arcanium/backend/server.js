@@ -2,8 +2,8 @@ const express = require('express');
 const connectDB = require('./db/connect');
 const characterRoutes = require('./routes/characters');
 const path = require('path');
+const cors = require('cors'); 
 require('dotenv').config();
-console.log(process.env.MONGO_URI);
 
 const app = express();
 
@@ -11,6 +11,7 @@ const app = express();
 connectDB();
 
 // Init Middleware
+app.use(cors()); //CORS
 app.use(express.json({ extended: false }));
 
 // Define Routes
