@@ -22,6 +22,7 @@ function Header() {
           Arcanium
         </Typography>
         <Button color="inherit" component={NavLinkAdapter} to="/">Home</Button>
+        <Button color="inherit" component={NavLinkAdapter} to="/create-character">Characters</Button>
         <Button color="inherit" onMouseEnter={handleOpen}>
           Compendium <IconButton size="small" color="inherit"><ArrowDropDownIcon /></IconButton>
         </Button>

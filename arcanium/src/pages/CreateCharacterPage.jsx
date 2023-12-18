@@ -4,7 +4,7 @@ import CharacterForm from '../components/CharacterForm';
 function CreateCharacterPage() {
   return (
     <div>
-      <h1>Create a New Character</h1>
+      <h1></h1>
       <CharacterForm />
     </div>
   );
