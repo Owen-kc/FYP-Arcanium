@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box, Card, CardActionArea, CardContent, CardMedia, Typography, Grid,
   Slider, Paper, List, ListItem, ListItemText
@@ -6,16 +6,35 @@ import {
 import monsterImage from '../images/monsters.jpg';
 import spellImage from '../images/spells.jpg';
 import itemImage from '../images/items.jpeg';
+import bg1 from '../images/bg3.jpg';
+import bg2 from '../images/background.jpg';
+import bg3 from '../images/bg5.jpeg';
 import { Accordion, AccordionSummary, AccordionDetails, Chip } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const HomePageContent = () => {
-  // Dummy data for featured items, replace with actual data and mapping
+
+  const images = [
+    bg1, bg2, bg3
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000); // Change image every 3 seconds
+
+    // Clear interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Dummy data for featured items
   const features = [
     { title: 'Monsters', description: 'Discover fearsome monsters.', imgSrc: monsterImage, link: '/monsters' },
     { title: 'Spells', description: 'Browse through powerful spells.', imgSrc: spellImage, link: '/spells' },
     { title: 'Items', description: 'Browse magical items.', imgSrc: itemImage, link: '/items' },
-    // ...other features
+
   ];
 
   // Placeholder for slider value
@@ -27,11 +46,8 @@ const HomePageContent = () => {
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h4" gutterBottom>Welcome to Arcanium!</Typography>
-      <Typography variant="subtitle1" gutterBottom>Your ultimate 5e D&D Companion app.</Typography>
-
-
-
+      <Typography variant="h6" gutterBottom>Welcome to Arcanium!</Typography>
+    
       <Grid container spacing={3}>
         {/* Feature Cards */}
         {features.map((feature, index) => (
@@ -58,6 +74,24 @@ const HomePageContent = () => {
         ))}
       </Grid>
 
+      <Box sx={{ flexGrow: 1, p: 3 }}>
+      <Typography variant="h6" gutterBottom>Featured Art</Typography>
+
+      {/* Image Slideshow */}
+      <Card>
+        <CardMedia
+          component="img"
+          image={images[currentImageIndex]}
+          alt={`Slideshow Image ${currentImageIndex + 1}`}
+          sx={{ height: 400, width: '500' }} 
+        />
+      </Card>
+
+      <Grid container spacing={3}>
+        {/* Existing feature cards... */}
+      </Grid>
+    </Box>
+
       {/* Interactive List Placeholder */}
       <Typography variant="h6" gutterBottom mt={4}>
         Latest Campaign Updates
@@ -78,7 +112,7 @@ const HomePageContent = () => {
       </Paper>
 
       {/* Slider Placeholder */}
-      <Typography gutterBottom>Adventure Progress</Typography>
+      <Typography variant='h6' gutterBottom>Adventure Progress</Typography>
       <Slider value={value} onChange={handleSliderChange} aria-label="Adventure Progress" />
 
       {/* Accordion Placeholder for FAQs or Descriptions */}
@@ -110,8 +144,6 @@ const HomePageContent = () => {
           <Chip label={tag} key={index} onClick={() => console.log(`Clicked ${tag}`)} />
         ))}
       </Box>
-
-      {/* Add more interactive or informative components as needed */}
 
     </Box>
   );
