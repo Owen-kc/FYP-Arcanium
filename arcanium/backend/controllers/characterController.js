@@ -11,7 +11,7 @@ const getAllCharacters = async (req, res) => {
   }
 };
 
-// @desc Get a single character by ID
+// @desc Get a single character by ID (CHAR ID)
 // @route GET /api/characters/:id
 const getCharacterById = async (req, res) => {
   try {
@@ -25,10 +25,25 @@ const getCharacterById = async (req, res) => {
   }
 };
 
+// @desc Get a single character by ID (USER ID)
+// @route GET /api/characters/:id
+const getCharacterByUID = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const characters = await Character.find({ userId }); // Fetch characters associated with the user ID
+    if (!characters.length) {
+      return res.status(404).json({ message: 'No characters found for this user' });
+    }
+    res.json(characters);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // @desc Create a new character
 // @route POST /api/characters
 const createCharacter = async (req, res) => {
-  const character = new Character(req.body);
+  const character = new Character({...req.body, userId: req.body.userId});
   try {
     const newCharacter = await character.save();
     res.status(201).json(newCharacter);
@@ -36,6 +51,7 @@ const createCharacter = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
 
 // @desc Update a character
 // @route PUT /api/characters/:id
@@ -67,5 +83,6 @@ module.exports = {
   getCharacterById,
   createCharacter,
   updateCharacter,
-  deleteCharacter
+  deleteCharacter,
+  getCharacterByUID
 };

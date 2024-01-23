@@ -30,10 +30,8 @@ function DynamicDisplay({ data }) {
         <div style={styles.container}>
             <div style={styles.title}>{data.name}</div>
             
-            {/* Displaying the description */}
             <div style={styles.text}>{data.desc}</div>
             
-            {/* You can continue with other sections of the data as needed */}
         </div>
     );
 }

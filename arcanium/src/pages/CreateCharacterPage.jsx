@@ -1,11 +1,11 @@
 import React from 'react';
 import CharacterForm from '../components/CharacterForm';
 
-function CreateCharacterPage() {
+function CreateCharacterPage({userId}) {
   return (
     <div>
       <h1></h1>
-      <CharacterForm />
+      <CharacterForm userId={userId}/>
     </div>
   );
 }

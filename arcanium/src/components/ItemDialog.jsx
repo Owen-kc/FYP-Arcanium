@@ -3,7 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DynamicDisplay from './DynamicDisplay';
 import MonsterDisplay from './MonsterDisplay';
-import SpellDisplay from './SpellsDisplay'; // Make sure to import the SpellDisplay component
+import SpellDisplay from './SpellsDisplay'; 
 
 function ItemDialog({ open, onClose, item }) {
     const isMonster = item && ('alignment' in item || 'armor_class' in item);

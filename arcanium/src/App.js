@@ -20,7 +20,7 @@ import 'react-chatbot-kit/build/main.css'
 
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading, user } = useAuth0();
 
 
   if (isLoading) {
@@ -42,7 +42,7 @@ function App() {
             <Route path="/weapons" element={<Weapons />} />
             <Route path="/feats" element={<Feats />} />
             <Route path="/backgrounds" element={<Backgrounds />} />
-            <Route path="/create-character" element={<CreateCharacterPage />} />
+            <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
             {/* Add other routes*/}
           </Routes>
           <ChatbotComponent />

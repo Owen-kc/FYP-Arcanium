@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   getAllCharacters,
   getCharacterById,
+  getCharacterByUID,
   createCharacter,
   updateCharacter,
   deleteCharacter
@@ -12,8 +13,11 @@ const {
 // Route to get all characters
 router.get('/', getAllCharacters);
 
-// Route to get a single character by id
+// Route to get a single character by id (CHAR)
 router.get('/:id', getCharacterById);
+
+// Route to get a single character by id (USER)
+router.get('/:userId', getCharacterByUID);
 
 // Route to create a new character
 router.post('/', createCharacter);

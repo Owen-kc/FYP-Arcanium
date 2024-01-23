@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Select, MenuItem, FormControl, InputLabel, Grid } from '@mui/material';
 
-function CharacterForm() {
+function CharacterForm({userId}) {
   const [character, setCharacter] = useState({
     name: '',
     class: '',
     race: '',
     level: 1,
+    userId: userId
   });
   const [classes, setClasses] = useState([]);
   const [races, setRaces] = useState([]);
