@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Box } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import UserMenu from './UserMenu';
 
 function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -21,6 +22,7 @@ function Header() {
           Arcanium
         </Typography>
         <Button color="inherit" component={NavLinkAdapter} to="/">Home</Button>
+        <Button color="inherit" component={NavLinkAdapter} to="/create-character">Characters</Button>
         <Button color="inherit" onMouseEnter={handleOpen}>
           Compendium <IconButton size="small" color="inherit"><ArrowDropDownIcon /></IconButton>
         </Button>
@@ -41,6 +43,10 @@ function Header() {
           <MenuItem onClick={handleClose} component={NavLinkAdapter} to="/backgrounds">Backgrounds</MenuItem>
           {/* Add more links as needed */}
         </Menu>
+        {/* Position UserMenu to the right */}
+        <Box style={{ marginLeft: 'auto' }}>
+          <UserMenu />
+        </Box>
       </Toolbar>
     </AppBar>
   );

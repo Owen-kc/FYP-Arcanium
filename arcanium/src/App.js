@@ -12,12 +12,26 @@ import Header from './components/Header';
 import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
 import HomePageContent from './components/HomePageContent';
+import { useAuth0 } from '@auth0/auth0-react';
+import LoginPage from './pages/LoginPage';
+import CreateCharacterPage from './pages/CreateCharacterPage';
+import ChatbotComponent from './components/ChatbotComponent';
+import 'react-chatbot-kit/build/main.css'
+
 
 function App() {
+  const { isAuthenticated, isLoading } = useAuth0();
+
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
+    <ThemeProvider theme={FantasyTheme}>
     <Router>
-      <ThemeProvider theme={FantasyTheme}>
-        <div>
+      {isAuthenticated ? (
+        <main>
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -28,11 +42,16 @@ function App() {
             <Route path="/weapons" element={<Weapons />} />
             <Route path="/feats" element={<Feats />} />
             <Route path="/backgrounds" element={<Backgrounds />} />
-            {/* Add other routes as needed */}
+            <Route path="/create-character" element={<CreateCharacterPage />} />
+            {/* Add other routes*/}
           </Routes>
-        </div>
+          <ChatbotComponent />
+        </main>
+        ) : (
+          <LoginPage />
+        )}
+        </Router>
       </ThemeProvider>
-    </Router>
   );
 }
 
