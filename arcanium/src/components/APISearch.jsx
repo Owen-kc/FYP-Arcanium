@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CircularProgress } from '@mui/material';
-import ItemDialog from './ItemDialog'; // Update the path accordingly
+import ItemDialog from './ItemDialog'; 
 
 const DEFAULT_FILTERS = {};
 function APISearch({ apiEndpoint, placeholder, displayProps, filters = DEFAULT_FILTERS }) {

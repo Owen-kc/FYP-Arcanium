@@ -17,7 +17,7 @@ router.get('/', getAllCharacters);
 router.get('/:id', getCharacterById);
 
 // Route to get a single character by id (USER)
-router.get('/:userId', getCharacterByUID);
+router.get('/user/:userId', getCharacterByUID);
 
 // Route to create a new character
 router.post('/', createCharacter);

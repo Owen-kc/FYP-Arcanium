@@ -1,34 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Select, MenuItem, FormControl, InputLabel, Grid } from '@mui/material';
+import { TextField, Button, Box, Select, MenuItem, FormControl, InputLabel, Grid, List, ListItem, Typography, Card, CardContent } from '@mui/material';
 
-function CharacterForm({userId}) {
+function CharacterForm({ userId }) {
   const [character, setCharacter] = useState({
     name: '',
     class: '',
     race: '',
     level: 1,
-    userId: userId
+    userId: userId // Assuming the userId is being passed down as a prop from the parent component
   });
   const [classes, setClasses] = useState([]);
   const [races, setRaces] = useState([]);
+  const [userCharacters, setUserCharacters] = useState([]);
 
   useEffect(() => {
     // Fetch classes and races from the Open5E API
-    const fetchClassesAndRaces = async () => {
+    async function fetchClassesAndRaces() {
       const classResponse = await fetch('https://api.open5e.com/classes/');
       const raceResponse = await fetch('https://api.open5e.com/races/');
       const classesData = await classResponse.json();
       const racesData = await raceResponse.json();
       setClasses(classesData.results);
       setRaces(racesData.results);
-    };
+    }
 
     fetchClassesAndRaces();
-  }, []);
+
+    // Fetch characters created by the user
+    async function fetchUserCharacters() {
+      try {
+        const response = await fetch(`http://localhost:5000/api/characters/user/${userId}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const characters = await response.json();
+        setUserCharacters(characters);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    if (userId) {
+      fetchUserCharacters();
+    }
+  }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCharacter((prevCharacter) => ({
+    setCharacter(prevCharacter => ({
       ...prevCharacter,
       [name]: value
     }));
@@ -36,6 +55,7 @@ function CharacterForm({userId}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const characterDataWithUserId = { ...character, userId };
 
     try {
       const response = await fetch('http://localhost:5000/api/characters', {
@@ -43,15 +63,14 @@ function CharacterForm({userId}) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(character),
+        body: JSON.stringify(characterDataWithUserId),
       });
 
       if (response.ok) {
         const newCharacter = await response.json();
         console.log('Character created:', newCharacter);
-        // Handle success 
+        setUserCharacters(prevCharacters => [...prevCharacters, newCharacter]); // Update the local state with the new character
       } else {
-        // Handle errors
         console.error('Failed to create character');
       }
     } catch (error) {
@@ -141,6 +160,35 @@ function CharacterForm({userId}) {
           <Button variant="contained" color="primary" type="submit" fullWidth>
             Create Character
           </Button>
+        </Grid>
+
+        {/* Character display section */}
+        <Grid item xs={12}>
+          <Typography variant="h4" component="h2" gutterBottom>
+            My Characters
+          </Typography>
+          <List>
+            {userCharacters.map((char) => (
+              <ListItem key={char._id} disableGutters>
+                <Card variant="outlined" sx={{ width: '100%', mb: 2, backgroundColor: '#e0e0e0' }}>
+                  <CardContent>
+                    <Typography variant="h5" component="h3">
+                      {char.name}
+                    </Typography>
+                    <Typography color="textSecondary">
+                      Class: {char.class}
+                    </Typography>
+                    <Typography color="textSecondary">
+                      Race: {char.race}
+                    </Typography>
+                    <Typography color="textSecondary">
+                      Level: {char.level}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </ListItem>
+            ))}
+          </List>
         </Grid>
       </Grid>
     </Box>

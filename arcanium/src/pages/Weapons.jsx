@@ -31,7 +31,7 @@ function Weapons() {
             <APISearch 
                 apiEndpoint="https://api.open5e.com/v1/weapons/"
                 placeholder="Search for a weapon" 
-                displayProps={['damage_type', 'damage_dice']} // adjusted with relevant weapon properties you want to display
+                displayProps={['damage_type', 'damage_dice']} 
                 filters={{ damage_dice: damageDiceFilter, damage_type: damageTypeFilter }}
             />
         </Box>

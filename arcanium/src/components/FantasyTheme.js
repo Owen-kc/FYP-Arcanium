@@ -51,6 +51,13 @@ const theme = createTheme({
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#6610f2', 
+        },
+      },
+    },
     MuiTextField: {
       styleOverrides: {
         root: {
