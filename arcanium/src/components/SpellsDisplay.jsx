@@ -32,8 +32,6 @@ function SpellsDisplay({ spellData }) {
                     <div className="text">{spellData.higher_level}</div>
                 </div>
             )}
-
-            {/* Document Information - You can decide if you need this */}
             <div className="text">Document: <a href={spellData.document__url}>{spellData.document__title}</a></div>
         </div>
     );

@@ -18,10 +18,10 @@ const config = {
       ],
       customStyles: {
         botMessageBox: {
-          backgroundColor: "#6610f2", // This should match your primary main color
+          backgroundColor: "#6610f2", 
         },
         chatButton: {
-          backgroundColor: "#6610f2", // This should match your primary main color
+          backgroundColor: "#6610f2", 
         },
       },
       botName: 'Arcanium Helper'
