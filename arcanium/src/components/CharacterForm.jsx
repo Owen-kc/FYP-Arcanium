@@ -7,7 +7,7 @@ function CharacterForm({ userId }) {
     class: '',
     race: '',
     level: 1,
-    userId: userId // Assuming the userId is being passed down as a prop from the parent component
+    userId: userId 
   });
   const [classes, setClasses] = useState([]);
   const [races, setRaces] = useState([]);
