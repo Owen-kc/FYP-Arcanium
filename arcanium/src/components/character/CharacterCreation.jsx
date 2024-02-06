@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Button, Box, Stepper, Step, StepLabel } from '@mui/material';
 import ClassForm from './ClassForm'
-import {AbilityScoresForm} from './AbilityScoresForm'
-import {SpellSelectionForm} from './SpellSelectionForm'
-import {CharacterDetailsForm} from './CharacterDetailsForm'
-import {EquipmentSelectionForm} from './EquipmentSelectionForm';
+import AbilityScoresForm from './AbilityScoresForm'
+import SpellSelectionForm from './SpellSelectionForm'
+import CharacterDetailsForm from './CharacterDetailsForm'
+import EquipmentSelectionForm from './EquipmentSelectionForm';
 import RaceForm from './RaceForm'
 import {ReviewAndSubmit} from './ReviewAndSubmit'
 

@@ -3,8 +3,8 @@ import APISearch from '../APISearch';
 
 function ClassForm({ character, updateCharacter, nextStep }) {
   // Callback function for when a race is selected
-  const handleRaceSelect = (selectedRace) => {
-    updateCharacter({ race: selectedRace.name }); 
+  const handleClassSelect = (selectedClass) => {
+    updateCharacter({ class: selectedClass.name }); 
     nextStep(); // Note: remove nextStep if wanting to add second step to class. E.g, some classes have subclasses at level 1, can make that process happen on this page.
   };
 
@@ -16,7 +16,7 @@ function ClassForm({ character, updateCharacter, nextStep }) {
         placeholder="Search for classes"
         displayProps={['name', 'description']} 
         enableSelection={true}
-        onItemSelect={handleRaceSelect}
+        onItemSelect={handleClassSelect}
       />
     </div>
   );
