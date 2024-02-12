@@ -22,7 +22,7 @@ function CharacterCreation() {
       backstory: '',
       height: '',
       weight: '',
-      // Add other details
+      // Add other details (TBD)
     }
   });
   const [currentStep, setCurrentStep] = useState(1);

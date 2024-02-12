@@ -19,7 +19,7 @@ export const calculatePointCost = (currentScore, newScore) => {
     return Math.floor((score - 10) / 2);
   };
 
-  // Dice roll calculation
+  // Dice roll calculation (all)
   export const rollDiceForScores = () => {
     const roll4d6DropLowest = () => {
       let rolls = [];
@@ -39,4 +39,18 @@ export const calculatePointCost = (currentScore, newScore) => {
       charisma: roll4d6DropLowest(),
     };
   };
+
+// utility function to return individual dice rolls
+export const rollSingleAbilityScore = () => {
+  let rolls = [];
+  for (let i = 0; i < 4; i++) {
+    rolls.push(Math.floor(Math.random() * 6) + 1);
+  }
+  rolls.sort((a, b) => b - a); 
+  return {
+    sum: rolls.slice(0, 3).reduce((total, current) => total + current, 0),
+    rolls: rolls // Return all rolls for visual representation
+  };
+};
+
   
