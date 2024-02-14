@@ -24,7 +24,9 @@ function APISearch({
   const [selectedItem, setSelectedItem] = useState(null);
 
   const fetchData = async (pageNum, searchValue) => {
-    let query = `${apiEndpoint}?search=${searchValue}&page=${pageNum}`;
+    let baseUrl = apiEndpoint.includes('?') ? `${apiEndpoint}&` : `${apiEndpoint}?`;
+    let query = `${baseUrl}search=${searchValue}&page=${pageNum}`;
+    console.log(query);
 
     for (let key in filters) {
       if (filters[key]) {

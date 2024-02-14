@@ -15,6 +15,7 @@ function CharacterCreation() {
     name: '',
     race: '',
     class: '',
+    level: '1',
     abilityScores: {},
     spells: [],
     equipment: [],
