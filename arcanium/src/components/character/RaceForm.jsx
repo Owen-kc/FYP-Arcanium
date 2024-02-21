@@ -1,22 +1,31 @@
+// Updated RaceForm to extract skill proficiencies from race traits
 import React from 'react';
 import APISearch from '../APISearch';
 
 function RaceForm({ character, updateCharacter, nextStep }) {
-  // function for when a race is selected
+  // Function for when a race is selected
   const handleRaceSelect = (selectedRace) => {
     const asiData = selectedRace.asi.reduce((acc, asi) => {
       asi.attributes.forEach(attribute => {
-        // Normalize attribute names to lower case to match struc
         const normalizedAttribute = attribute.toLowerCase();
         acc[normalizedAttribute] = (acc[normalizedAttribute] || 0) + asi.value;
       });
       return acc;
     }, {});
 
-    // Update the character state with the race name and the structured ASI data
+    // Extract skill proficiencies from the traits description
+    const proficiencyRegex = /proficiency in the (\w+) skill/gi;
+    let match;
+    const proficiencies = [];
+    while ((match = proficiencyRegex.exec(selectedRace.traits))) {
+      proficiencies.push(match[1]); // Assuming skill name is captured in the first group
+    }
+
+    // Update the character state with the race, ASI data, and racial proficiencies
     updateCharacter({ 
       race: selectedRace.name,
-      asi: asiData 
+      asi: asiData,
+      raceProficiencies: proficiencies, // Add this line to save racial proficiencies
     });
 
     nextStep(); // Move to the next step upon selection

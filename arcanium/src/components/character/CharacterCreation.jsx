@@ -4,11 +4,11 @@ import ClassForm from './ClassForm'
 import AbilityScoresForm from './AbilityScoresForm'
 import SpellSelectionForm from './SpellSelectionForm'
 import CharacterDetailsForm from './CharacterDetailsForm'
-import EquipmentSelectionForm from './EquipmentSelectionForm';
+import ProficiencyForm from './ProficiencyForm'
+import SkillSelectionForm from './SkillSelectionForm'
 import RaceForm from './RaceForm'
+import BackgroundForm from './BackgroundForm'
 import {ReviewAndSubmit} from './ReviewAndSubmit'
-
-
 
 function CharacterCreation() {
   const [character, setCharacter] = useState({
@@ -16,6 +16,8 @@ function CharacterCreation() {
     race: '',
     class: '',
     level: '1',
+    background: '',
+    availableSkills: [],
     abilityScores: {},
     spells: [],
     equipment: [],
@@ -27,12 +29,16 @@ function CharacterCreation() {
     }
   });
   const [currentStep, setCurrentStep] = useState(1);
-  const steps = ['Race', 'Class', 'Ability Scores', 'Spell Selection', 'Equipment Selection', 'Character Details', 'Review and Submit'];
+  const steps = ['Race', 'Class', 'Background Selection', 'Ability Scores',  'Spell Selection', 'Equipment Selection', 'Skill Selection', 'Character Details', 'Review and Submit'];
 
   // Function to update character state
   const updateCharacter = (updates) => {
-    setCharacter((prevCharacter) => ({ ...prevCharacter, ...updates }));
-  };
+    setCharacter((prevCharacter) => {
+        const updatedCharacter = { ...prevCharacter, ...updates };
+        console.log(updatedCharacter); 
+        return updatedCharacter;
+    });
+};
 
   // Move to the next or previous step
   const nextStep = () => setCurrentStep(currentStep + 1);
@@ -46,14 +52,18 @@ function CharacterCreation() {
       case 2:
         return <ClassForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
       case 3:
-        return <AbilityScoresForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
+        return <BackgroundForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
       case 4:
-        return <SpellSelectionForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
+        return <AbilityScoresForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
       case 5:
-        return <EquipmentSelectionForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
+        return <SpellSelectionForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
       case 6:
+        return <ProficiencyForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
+      case 7: 
+        return <SkillSelectionForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
+      case 8:
         return <CharacterDetailsForm character={character} updateCharacter={updateCharacter} nextStep={nextStep} prevStep={prevStep} />;
-      case 7:
+      case 9:
         return <ReviewAndSubmit character={character} />;
       default:
         return <div>Unknown step</div>;

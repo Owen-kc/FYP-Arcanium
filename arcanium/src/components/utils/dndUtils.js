@@ -1,3 +1,4 @@
+//----------MATHEMATICAL CALCULATIONS--------------//
 
 // Calculate the cost to increase or decrease an ability score
 export const calculatePointCost = (currentScore, newScore) => {
@@ -53,4 +54,46 @@ export const rollSingleAbilityScore = () => {
   };
 };
 
-  
+
+//----------CLASS SPELL CALCULATIONS--------------//
+
+export function extractSpellcastingDataForAllClasses(classData) {
+  let spellcastingInfo = {};
+
+  Object.entries(classData).forEach(([className, classAttributes]) => {
+    // Locate the section with spellcasting info, accommodating variability in structure
+    const classFeatureKeys = Object.keys(classAttributes["Class Features"]);
+    const classSectionKey = classFeatureKeys.find(key => key.startsWith("The"));
+
+    if (classSectionKey && Array.isArray(classAttributes["Class Features"][classSectionKey].content)) {
+      // Now safely assuming content is an array; proceed to find the table
+      const contentArray = classAttributes["Class Features"][classSectionKey].content;
+      let table = null;
+
+      for (const contentItem of contentArray) {
+        if (typeof contentItem === "object" && contentItem.hasOwnProperty('table')) {
+          table = contentItem.table;
+          break;
+        }
+      }
+
+      if (table) {
+        const cantripsKnown = table["Cantrips Known"] || [];
+        const spellSlots = {};
+
+        // Define spell levels to search for within the table
+        const spellLevels = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th"];
+
+        spellLevels.forEach(level => {
+          // Populate spellSlots only if the level exists in the table
+          spellSlots[level] = table[level] || [];
+        });
+
+        // Assign extracted data to the class in the spellcastingInfo object
+        spellcastingInfo[className] = { cantripsKnown, spellSlots };
+      }
+    }
+  });
+
+  return spellcastingInfo;
+}
