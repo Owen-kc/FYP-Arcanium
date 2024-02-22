@@ -21,7 +21,6 @@ const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) 
 
   useEffect(() => {
     const classInfo = spellcastingProgression[character.class];
-    
     if (classesWithoutSpells.has(character.class) || 
         (classesWithDelayedSpellAccess.has(character.class) && character.level < 2)) {
       // Open the dialog for classes without spells or with delayed spell access

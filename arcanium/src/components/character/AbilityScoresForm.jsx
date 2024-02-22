@@ -3,11 +3,12 @@ import {Box, Button, Slider, Typography, FormControl, FormLabel, RadioGroup, For
 import {calculatePointCost, calculateModifier, rollSingleAbilityScore,} from "../utils/dndUtils";
 import Dice from "react-dice-complete";
 
-const AbilityScoresForm = ({ character }) => {
+const AbilityScoresForm = ({ character, updateCharacter, nextStep, prevStep }) => {
   const [method, setMethod] = useState("pointBuy");
   const [points, setPoints] = useState(27);
   const diceRef = useRef(null);
   const [rolling, setRolling] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false); // State to track if the user has confirmed their choices
 
   // Initialize a sequence for rolling
   const rollSequence = [
@@ -118,6 +119,12 @@ const AbilityScoresForm = ({ character }) => {
     }
   };
 
+  const handleConfirmation = () => {
+    setIsConfirmed(true); // Set confirmation state to true
+    updateCharacter({ ...character, abilityScores: scores }); // Update the main character state with the selected scores
+    nextStep(); // Proceed to the next step
+  };
+
   return (
     <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
       {/* Components */}
@@ -214,6 +221,20 @@ const AbilityScoresForm = ({ character }) => {
           </Grid>
         ))}
       </Grid>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+        <Button variant="contained" color="primary" onClick={prevStep}>
+          Previous
+        </Button>
+        <Button 
+          variant="contained" 
+          color="secondary" 
+          onClick={handleConfirmation}
+          disabled={isConfirmed} // Disable button after confirmation
+        >
+          {isConfirmed ? 'Confirmed' : 'Confirm & Continue'}
+        </Button>
+      </Box>
 
       {method === "pointBuy" && (
         <Typography style={{ marginTop: "20px", textAlign: "center" }}>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Typography, Box } from '@mui/material';
 import APISearch from '../APISearch'; 
 
 function ClassForm({ character, updateCharacter, nextStep }) {
@@ -9,16 +10,18 @@ function ClassForm({ character, updateCharacter, nextStep }) {
   };
 
   return (
-    <div>
-      <h2>Select a Class</h2>
+    <Box sx={{ width: '100%', p: 3 }}>
+      <Typography variant="h4" gutterBottom component="div" color="textPrimary">
+        Select a Class
+      </Typography>
       <APISearch
         apiEndpoint="https://api.open5e.com/v1/classes/"
         placeholder="Search for classes"
-        displayProps={['name', 'description']} 
+        displayProps={['name', '']} 
         enableSelection={true}
         onItemSelect={handleClassSelect}
       />
-    </div>
+    </Box>
   );
 }
 

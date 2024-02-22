@@ -1,5 +1,6 @@
 // Updated RaceForm to extract skill proficiencies from race traits
 import React from 'react';
+import { Card, CardActionArea, CardContent, Typography, Button, Box } from '@mui/material';
 import APISearch from '../APISearch';
 
 function RaceForm({ character, updateCharacter, nextStep }) {
@@ -18,30 +19,34 @@ function RaceForm({ character, updateCharacter, nextStep }) {
     let match;
     const proficiencies = [];
     while ((match = proficiencyRegex.exec(selectedRace.traits))) {
-      proficiencies.push(match[1]); // Assuming skill name is captured in the first group
+      proficiencies.push(match[1]); 
     }
 
     // Update the character state with the race, ASI data, and racial proficiencies
     updateCharacter({ 
       race: selectedRace.name,
       asi: asiData,
-      raceProficiencies: proficiencies, // Add this line to save racial proficiencies
+      raceProficiencies: proficiencies, 
     });
 
     nextStep(); // Move to the next step upon selection
   };
 
+  const customMessage = "Explore the various races to choose the one that fits your character best.";
+
   return (
-    <div>
-      <h2>Select a Race</h2>
+    <Box sx={{ width: '100%', p: 3 }}>
+      <Typography variant="h4" gutterBottom component="div" color="textPrimary">
+        Select a Race
+      </Typography>
       <APISearch
         apiEndpoint="https://api.open5e.com/v1/races/"
         placeholder="Search for races..."
-        displayProps={['name', 'description']}
+        displayProps={['name', '']}
         enableSelection={true}
         onItemSelect={handleRaceSelect}
       />
-    </div>
+    </Box>
   );
 }
 

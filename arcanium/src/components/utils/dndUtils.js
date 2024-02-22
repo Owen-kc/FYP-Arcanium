@@ -66,7 +66,7 @@ export function extractSpellcastingDataForAllClasses(classData) {
     const classSectionKey = classFeatureKeys.find(key => key.startsWith("The"));
 
     if (classSectionKey && Array.isArray(classAttributes["Class Features"][classSectionKey].content)) {
-      // Now safely assuming content is an array; proceed to find the table
+    
       const contentArray = classAttributes["Class Features"][classSectionKey].content;
       let table = null;
 

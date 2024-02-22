@@ -31,14 +31,14 @@ function CharacterCreation() {
   const [currentStep, setCurrentStep] = useState(1);
   const steps = ['Race', 'Class', 'Background Selection', 'Ability Scores',  'Spell Selection', 'Equipment Selection', 'Skill Selection', 'Character Details', 'Review and Submit'];
 
-  // Function to update character state
   const updateCharacter = (updates) => {
     setCharacter((prevCharacter) => {
-        const updatedCharacter = { ...prevCharacter, ...updates };
-        console.log(updatedCharacter); 
-        return updatedCharacter;
+      console.log('Before update:', prevCharacter);
+      const updatedCharacter = { ...prevCharacter, ...updates };
+      console.log('After update:', updatedCharacter);
+      return updatedCharacter;
     });
-};
+  };
 
   // Move to the next or previous step
   const nextStep = () => setCurrentStep(currentStep + 1);
