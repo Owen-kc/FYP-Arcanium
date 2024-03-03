@@ -40,7 +40,7 @@ function MonsterDisplay({ monsterData }) {
                 ))}
             </div>
 
-            {/* Damage Resistances, Immunities etc. can be added similarly */}
+            {/* Damage Resistances, Immunities etc, more added similarly*/}
             {monsterData.damage_resistances && <div className="text">Damage Resistances: {monsterData.damage_resistances}</div>}
 
             {/* Display special traits */}

@@ -1,3 +1,5 @@
+// NOTE: Placeholder theme, update theme in styling phase
+
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
