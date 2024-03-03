@@ -54,6 +54,28 @@ export const rollSingleAbilityScore = () => {
   };
 };
 
+//----------ABILITY MAP--------------//
+export const skillToAbilityMap = {
+  'Acrobatics': 'Dexterity',
+  'Animal Handling': 'Wisdom',
+  'Arcana': 'Intelligence',
+  'Athletics': 'Strength',
+  'Deception': 'Charisma',
+  'History': 'Intelligence',
+  'Insight': 'Wisdom',
+  'Intimidation': 'Charisma',
+  'Investigation': 'Intelligence',
+  'Medicine': 'Wisdom',
+  'Nature': 'Intelligence',
+  'Perception': 'Wisdom',
+  'Performance': 'Charisma',
+  'Persuasion': 'Charisma',
+  'Religion': 'Intelligence',
+  'Sleight of Hand': 'Dexterity',
+  'Stealth': 'Dexterity',
+  'Survival': 'Wisdom',
+};
+
 
 //----------CLASS SPELL CALCULATIONS--------------//
 

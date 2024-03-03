@@ -57,12 +57,11 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
   };
 
   const handleSubmit = () => {
-    const updatedEquipmentChoices = [...equipmentChoices]; 
-    updateCharacter(prev => ({
-      ...prev,
+    const updatedEquipmentChoices = [...equipmentChoices];
+    updateCharacter({
       equipment: updatedEquipmentChoices
-    }));
-    
+    });
+  
     console.log(updatedEquipmentChoices);
     nextStep();
   };

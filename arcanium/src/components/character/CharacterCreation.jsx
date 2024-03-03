@@ -8,23 +8,29 @@ import ProficiencyForm from './ProficiencyForm'
 import SkillSelectionForm from './SkillSelectionForm'
 import RaceForm from './RaceForm'
 import BackgroundForm from './BackgroundForm'
-import {ReviewAndSubmit} from './ReviewAndSubmit'
+import ReviewAndSubmit from './ReviewAndSubmit'
 
 function CharacterCreation() {
   const [character, setCharacter] = useState({
-    name: '',
     race: '',
     class: '',
     level: '1',
     background: '',
-    availableSkills: [],
+    speed: '',
+    proficiencyBonus: 2,
     abilityScores: {},
     spells: [],
+    skills: [],
     equipment: [],
     details: {
+      name: '',
       backstory: '',
       height: '',
       weight: '',
+      image: '' ,
+      hairColor: '',
+      eyeColor: '',
+      alignment: '',
       // Add other details (TBD)
     }
   });

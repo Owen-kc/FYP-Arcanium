@@ -26,13 +26,12 @@ function RaceForm({ character, updateCharacter, nextStep }) {
     updateCharacter({ 
       race: selectedRace.name,
       asi: asiData,
-      raceProficiencies: proficiencies, 
+      raceProficiencies: proficiencies,
+      speed: selectedRace.speed 
     });
 
     nextStep(); // Move to the next step upon selection
   };
-
-  const customMessage = "Explore the various races to choose the one that fits your character best.";
 
   return (
     <Box sx={{ width: '100%', p: 3 }}>
