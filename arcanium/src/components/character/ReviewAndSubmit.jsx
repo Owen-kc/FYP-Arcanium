@@ -4,7 +4,7 @@ import CharacterSheet from './CharacterSheet';
 
 function ReviewAndSubmit({ character }) {
   const { user } = useAuth0(); // Use the useAuth0 hook to get the user object
-  const userId = user?.sub; // Extract the userId from the user object
+  const userId = user?.sub; 
 
   const handleSubmit = async () => {
     //conversion
@@ -15,9 +15,8 @@ function ReviewAndSubmit({ character }) {
     // Include the userId when preparing the character data for submission
     const characterData = {
       ...character,
-      userId, // Include the dynamically obtained userId
+      userId,
       name: character.details.name,
-      // Continue to include all other character details as before...
       backstory: character.details.backstory,
       height: character.details.height,
       weight: character.details.weight,
@@ -49,7 +48,6 @@ function ReviewAndSubmit({ character }) {
       }
       const newCharacter = await response.json();
       console.log('Character created:', newCharacter);
-      // Optionally, handle further actions after successful submission
     } catch (error) {
       console.error('There was a problem with your fetch operation:', error);
     }

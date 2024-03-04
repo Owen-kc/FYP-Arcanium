@@ -30,7 +30,7 @@ function RaceForm({ character, updateCharacter, nextStep }) {
       speed: selectedRace.speed 
     });
 
-    nextStep(); // Move to the next step upon selection
+    nextStep(); 
   };
 
   return (
