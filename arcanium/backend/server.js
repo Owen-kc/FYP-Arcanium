@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./db/connect');
 const characterRoutes = require('./routes/characters');
+const storyRoutes = require('./routes/stories');
 const path = require('path');
 const cors = require('cors'); 
 require('dotenv').config({ path: path.resolve(__dirname, './.env') });
@@ -16,6 +17,7 @@ app.use(express.json({ extended: false }));
 
 // Define Routes
 app.use('/api/characters', characterRoutes);
+app.use('/api/stories', storyRoutes);
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
