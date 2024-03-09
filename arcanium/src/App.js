@@ -43,7 +43,7 @@ function App() {
             <Route path="/weapons" element={<Weapons />} />
             <Route path="/feats" element={<Feats />} />
             <Route path="/backgrounds" element={<Backgrounds />} />
-            <Route path="/dungeon" element={<ChatbotDungeon />} />
+            <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
             <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
             {/* Add other routes*/}
           </Routes>

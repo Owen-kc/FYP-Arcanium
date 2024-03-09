@@ -16,7 +16,7 @@ import {trefoil} from 'ldrs';
 
 
 // ******** IMPORTANT ******** PUT API KEY HERE ******** IMPORTANT ********
-const API_KEY = 'PLC-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // Replace with your OpenAI API key
+const API_KEY = '**PUT API KEY HERE**';
 
 trefoil.register()
 const renderTypingIndicator = () => {
@@ -46,7 +46,7 @@ const ChatbotComp = () => {
 
   const handleSend = async (message) => {
     const newMessage = { message, sender: "user" };
-    // Immediately show user's message in the chat
+    
     setMessages(prevMessages => [...prevMessages, newMessage]);
     setIsTyping(true);
     
@@ -62,11 +62,9 @@ const ChatbotComp = () => {
     
     for (let i = 0; i < words.length; i++) {
       currentMessage += (i === 0 ? '' : ' ') + words[i];
-      // Temporarily show the chatbot's message being "typed"
+      // Temporarily show the chatbot's message being typed
       setMessages(prevMessages => {
-        // If the last message was sent by the chatbot and the chatbot is currently typing a new message
         if (prevMessages.length > 0 && prevMessages[prevMessages.length - 1].sender === "Arcanium Advisor" && sender === "Arcanium Advisor") {
-          // Remove the last message
           return [...prevMessages.slice(0, prevMessages.length - 1), { message: currentMessage, sender }];
         } else {
           return [...prevMessages, { message: currentMessage, sender }];
