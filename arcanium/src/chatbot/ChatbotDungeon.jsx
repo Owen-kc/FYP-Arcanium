@@ -11,6 +11,10 @@ import {
   DialogContent,
   DialogActions,
   DialogContentText,
+  FormControl,
+  InputLabel,
+  Select,
+  Checkbox,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ReplayIcon from "@mui/icons-material/Replay";
@@ -22,6 +26,13 @@ import { trefoil } from "ldrs";
 import { useAuth0 } from "@auth0/auth0-react";
 import SaveStories from "./SavedStories";
 import useStoryManager from "./useStoryManager";
+import { fetchCharactersByUserId } from "../components/FetchCharacters";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import ForestIcon from "@mui/icons-material/Park"; 
+import MagicIcon from "@mui/icons-material/AutoAwesome"; 
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 trefoil.register();
 
@@ -31,7 +42,7 @@ const renderTypingIndicator = () => {
   };
 };
 
-const API_KEY = "**PUT API KEY HERE**";
+const API_KEY = "***REMOVED***";
 
 const systemMessage = {
   role: "system",
@@ -46,7 +57,7 @@ const systemMessage = {
 const ChatbotDungeon = () => {
   const [messages, setMessages] = useState([
     {
-      message: "Your journey begins in a dark, mysterious dungeon...",
+      message: "The journey begins...",
       sender: "system",
     },
   ]);
@@ -62,21 +73,36 @@ const ChatbotDungeon = () => {
   const [isNamingDialogOpen, setIsNamingDialogOpen] = useState(false);
   const { user } = useAuth0();
   const userId = user?.sub;
-  const { savedStories, activeStoryId, setActiveStoryId, isReadOnlyMode, activeStory, setIsReadOnlyMode, saveStory, deleteStory, loadStory } = useStoryManager();
-
-
-
+  const {
+    savedStories,
+    activeStoryId,
+    setActiveStoryId,
+    isReadOnlyMode,
+    activeStory,
+    setIsReadOnlyMode,
+    saveStory,
+    deleteStory,
+    loadStory,
+  } = useStoryManager();
+  const [isPromptDialogOpen, setIsPromptDialogOpen] = useState(true); 
+  const [initialPrompt, setInitialPrompt] = useState(""); 
+  const [isAnimatingMessage, setIsAnimatingMessage] = useState(false);
+  const [characters, setCharacters] = useState([]);
+  const [showCharactersModal, setShowCharactersModal] = useState(false);
+  const [selectedCharacterId, setSelectedCharacterId] = useState(null);
+  const [selectedCharacterDetails, setSelectedCharacterDetails] =
+    useState(null);
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   useEffect(() => {
-    
     if (activeStory && activeStory.messages) {
       const formattedMessages = activeStory.messages.map((msg) => ({
-        message: msg, 
-        sender: 'system', 
+        message: msg,
+        sender: "system",
       }));
       setMessages(formattedMessages);
     }
@@ -88,9 +114,35 @@ const ChatbotDungeon = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      if (user?.sub) {
+        // Ensure there's a user ID to use for fetching characters
+        try {
+          const fetchedCharacters = await fetchCharactersByUserId(user.sub);
+          setCharacters(fetchedCharacters);
+          console.log(fetchedCharacters);
+        } catch (error) {
+          console.error("Error fetching characters:", error);
+        }
+      }
+    };
+
+    fetchCharacters();
+  }, [user?.sub]);
 
   const promptForStoryName = () => {
     setIsNamingDialogOpen(true);
+  };
+
+  const handleCharacterSelection = (characterId) => {
+    setSelectedCharacterId(characterId);
+    const characterDetails = characters.find(
+      (char) => char._id === characterId
+    );
+    setSelectedCharacterDetails(
+      characterDetails ? characterDetails.details : null
+    );
   };
 
   const handleSaveStoryDialog = () => {
@@ -106,7 +158,7 @@ const ChatbotDungeon = () => {
       margin: "10px auto",
       padding: "10px 20px",
       maxWidth: "75%", // Adjust to match the CSS
-      borderRadius: "18px", 
+      borderRadius: "18px",
       color: "white",
       textAlign: "left",
       wordBreak: "break-word",
@@ -137,6 +189,7 @@ const ChatbotDungeon = () => {
   };
 
   const typeMessage = async (message, sender = "system") => {
+    setIsAnimatingMessage(true); // Start animating message
     const words = message.split(" ");
     let currentMessage = "";
 
@@ -159,6 +212,40 @@ const ChatbotDungeon = () => {
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
+    setIsAnimatingMessage(false); // End animating message
+  };
+
+  const handlePromptSelection = (prompt) => {
+    setSelectedLocation(prompt);
+    const formattedPrompt = `Your journey begins in ${prompt}`; // Ensure consistency
+    setInitialPrompt(formattedPrompt);
+  };
+
+  const startAdventureWithPrompt = () => {
+    setIsPromptDialogOpen(false); // Close the dialog
+
+    // First, find the selected character details
+    const selectedCharacter = characters.find(
+      (character) => character._id === selectedCharacterId
+    );
+
+    // Construct a string with character details or a default message
+    let characterDetailsMessage =
+      "You embark on your journey alone, unbound by allegiance or legacy.";
+    if (selectedCharacter) {
+      characterDetailsMessage = `You are ${selectedCharacter.details.name}, a ${selectedCharacter.class} of ${selectedCharacter.race} origin, with a background in ${selectedCharacter.background}.`;
+    }
+
+    // Determine the initial prompt or fallback message
+    let adventureStartMessage = initialPrompt.trim()
+      ? initialPrompt
+      : "your journey begins in an unknown land...";
+
+    // Combine character details with the adventure start message
+    let fullInitialMessage = `${characterDetailsMessage} ${adventureStartMessage}`;
+
+    // Send the combined message as a story action
+    sendMessage(fullInitialMessage, "story");
   };
 
   const processMessage = async (userMessage, actionType) => {
@@ -278,6 +365,10 @@ const ChatbotDungeon = () => {
     setActionType(event.target.value);
   };
 
+  const selectedCharacter = characters.find(
+    (character) => character._id === selectedCharacterId
+  );
+
   return (
     <Box
       className="chatbot-dungeon"
@@ -288,7 +379,6 @@ const ChatbotDungeon = () => {
         boxSizing: "border-box",
       }}
     >
-      
       <Box sx={{ width: "85%", display: "flex", flexDirection: "column" }}>
         <Box
           className="chatbot-messages"
@@ -326,9 +416,12 @@ const ChatbotDungeon = () => {
               variant="contained"
               color="primary"
               onClick={() => {
-                setIsReadOnlyMode(false); 
-                setActiveStoryId(null); 
-                setMessages([{ message: "Start a new journey...", sender: "system" }]); 
+                setIsReadOnlyMode(false);
+                setActiveStoryId(null);
+                setMessages([
+                  { message: "Start a new journey...", sender: "system" },
+                ]);
+                setIsPromptDialogOpen(true);
               }}
             >
               Return to New Story
@@ -362,6 +455,9 @@ const ChatbotDungeon = () => {
               value={userInput}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
+              // For the TextField and Send Button, consider both isTyping and isAnimatingMessage
+              disabled={isAnimatingMessage}
+              // Disable text field while typing
               placeholder="What will you do next..."
               sx={{ flexGrow: 1, mr: 1 }}
               InputProps={{
@@ -376,6 +472,8 @@ const ChatbotDungeon = () => {
               variant="contained"
               endIcon={<SendIcon />}
               onClick={() => sendMessage(userInput, actionType)}
+              // For the TextField and Send Button, consider both isTyping and isAnimatingMessage
+              disabled={isAnimatingMessage}
               sx={{ mr: 1 }}
             >
               Send
@@ -397,8 +495,203 @@ const ChatbotDungeon = () => {
           savedStories={savedStories}
           activeStoryId={activeStoryId}
           loadStory={loadStory}
+          isAnimatingMessage={isAnimatingMessage} // Add this line
         />
       )}
+      <Dialog
+        open={isPromptDialogOpen}
+        disableEscapeKeyDown
+        PaperProps={{
+          style: {
+            backgroundColor: "#2A2A2A",
+            color: "white",
+            padding: "20px",
+          },
+        }}
+      >
+        <DialogTitle sx={{ textAlign: "center", color: "white" }}>
+          Choose Your Adventure's Starting Point
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            sx={{ textAlign: "center", marginBottom: "20px", color: "white" }}
+          >
+            Select a starting scenario for your adventure, choose your
+            character, or create your own adventure.
+          </DialogContentText>
+          {/* Location Heading */}
+          <Typography
+            variant="h6"
+            sx={{ textAlign: "center", color: "white", marginBottom: 2 }}
+          >
+            Location
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-around", mb: 2 }}>
+            {[
+              {
+                label: "Big City",
+                icon: (
+                  <LocationCityIcon
+                    sx={{
+                      fontSize: 40,
+                      color:
+                        selectedLocation ===
+                        "a bustling big city, full of secrets and opportunities"
+                          ? "secondary.main"
+                          : "primary.main",
+                    }}
+                  />
+                ),
+                value: "a bustling big city, full of secrets and opportunities",
+              },
+              {
+                label: "Dark Forest",
+                icon: (
+                  <ForestIcon
+                    sx={{
+                      fontSize: 40,
+                      color:
+                        selectedLocation ===
+                        "a dark, mysterious forest, home to ancient mysteries"
+                          ? "secondary.main"
+                          : "primary.main",
+                    }}
+                  />
+                ),
+                value: "a dark, mysterious forest, home to ancient mysteries",
+              },
+              {
+                label: "Magical Place",
+                icon: (
+                  <MagicIcon
+                    sx={{
+                      fontSize: 40,
+                      color:
+                        selectedLocation ===
+                        "a magical place, where anything is possible"
+                          ? "secondary.main"
+                          : "primary.main",
+                    }}
+                  />
+                ),
+                value: "a magical place, where anything is possible",
+              },
+            ].map((location) => (
+              <Box
+                key={location.label}
+                sx={{
+                  textAlign: "center",
+                  cursor: "pointer",
+                  "&:hover": { opacity: 0.8 },
+                  border:
+                    selectedLocation === location.value
+                      ? "2px solid #4caf50"
+                      : "none",
+                  borderRadius: "4px",
+                  padding: "10px",
+                }}
+                onClick={() => handlePromptSelection(location.value)}
+              >
+                {location.icon}
+                <Typography sx={{ color: "white", mt: 1 }}>
+                  {location.label}
+                </Typography>
+                {selectedLocation === location.value && (
+                  <CheckCircleIcon
+                    sx={{ color: "#4caf50", fontSize: 20, mt: 1 }}
+                  />
+                )}
+              </Box>
+            ))}
+          </Box>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="custom-prompt"
+            label="Or enter your own adventure start"
+            type="text"
+            fullWidth
+            variant="outlined"
+            placeholder="Your journey begins in..."
+            value={initialPrompt}
+            onChange={(e) => setInitialPrompt(e.target.value)}
+            InputProps={{ style: { color: "white" } }}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "primary.light" },
+                "&:hover fieldset": { borderColor: "primary.main" },
+                "&.Mui-focused fieldset": { borderColor: "primary.main" },
+              },
+              mb: 4, // Increased margin for separation
+            }}
+          />
+          {/* Character Heading */}
+          <Typography
+            variant="h6"
+            sx={{ textAlign: "center", color: "white", marginBottom: 2 }}
+          >
+            Character
+          </Typography>
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+            sx={{ mb: 2 }}
+          >
+            {characters.map((character) => (
+              <Box
+                key={character._id}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  padding: "8px",
+                  borderRadius: "4px",
+                  border:
+                    selectedCharacterId === character._id
+                      ? "2px solid #4caf50"
+                      : "1px solid transparent",
+                }}
+                onClick={() => handleCharacterSelection(character._id)}
+              >
+                <Avatar
+                  src={character.details.image || ""}
+                  sx={{ bgcolor: "primary.main", width: 56, height: 56 }}
+                  alt={character.details.name}
+                >
+                  {!character.details.image && character.details.name[0]}
+                </Avatar>
+                <Typography sx={{ color: "white", mt: 1 }}>
+                  {character.details.name}
+                </Typography>
+                {/* Display class and race next to each other */}
+                <Typography sx={{ color: "white" }}>
+                  {`${character.race} ${character.class}`}
+                </Typography>
+              </Box>
+            ))}
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+          <Button
+            onClick={() => startAdventureWithPrompt()}
+            disabled={!initialPrompt && !selectedCharacterId}
+            variant="contained"
+            sx={{
+              bgcolor: "secondary.main",
+              "&:hover": {
+                bgcolor: "secondary.dark",
+              },
+            }}
+          >
+            Start Adventure
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {isNamingDialogOpen && (
         <Dialog
           open={isNamingDialogOpen}
@@ -406,9 +699,7 @@ const ChatbotDungeon = () => {
         >
           <DialogTitle>Save Your Story</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Enter a name for your story.
-            </DialogContentText>
+            <DialogContentText>Enter a name for your story.</DialogContentText>
             <TextField
               autoFocus
               margin="dense"
@@ -423,17 +714,20 @@ const ChatbotDungeon = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setIsNamingDialogOpen(false)}>Cancel</Button>
-            <Button onClick={() => {
-              saveStory(storyName, messages);
-              setIsNamingDialogOpen(false);
-              setStoryName("");
-            }}>Save</Button>
+            <Button
+              onClick={() => {
+                saveStory(storyName, messages);
+                setIsNamingDialogOpen(false);
+                setStoryName("");
+              }}
+            >
+              Save
+            </Button>
           </DialogActions>
         </Dialog>
       )}
     </Box>
   );
-  
 };
 
 export default ChatbotDungeon;

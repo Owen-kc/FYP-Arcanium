@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Grid, Slider, Snackbar, Avatar, ToggleButtonGroup, ToggleButton, useTheme } from '@mui/material';
+import { Box, TextField, Button, Typography, Grid, Slider, Snackbar, Avatar, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { HexColorPicker } from "react-colorful";
+import axios from 'axios';
 
 const defaultAvatarUrl = ''; 
 const alignments = [
@@ -11,7 +12,6 @@ const alignments = [
 ];
 
 function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }) {
-  const theme = useTheme();
   const [details, setDetails] = useState({
     ...character.details,
     image: character.details.image || defaultAvatarUrl,
@@ -25,6 +25,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const [hairColor, setHairColor] = useState(character.details.hairColor || '#000000');
   const [eyeColor, setEyeColor] = useState(character.details.eyeColor || '#000000');
   const [selectedAlignment, setSelectedAlignment] = useState(character.details.alignment || '');
+  const [imageFile, setImageFile] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,10 +38,8 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const formatHeight = (value) => {
     const feet = Math.floor(value / 12);
     const inches = value % 12;
-    return `${feet}'${inches}"`; // Displays as feet and inches
+    return `${feet}'${inches}"`; 
   };
-
-  
 
   const handleSliderChange = (name, newValue) => {
     setDetails((prevDetails) => ({
@@ -65,21 +64,17 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const handleImageChange = (e) => {
     if (e.target.files.length) {
       const file = e.target.files[0];
-      
       if (file.size > 2097152) {
         setSnackbarMessage('Image size should not exceed 2MB.');
         setOpenSnackbar(true);
         return;
       }
-
-      // Check the file type
       if (!file.type.match('image.*')) {
         setSnackbarMessage('Please select a valid image file.');
         setOpenSnackbar(true);
         return;
       }
-
-      // Create a URL for the file
+      setImageFile(file);
       const imageUrl = URL.createObjectURL(file);
       setDetails((prevDetails) => ({
         ...prevDetails,
@@ -88,27 +83,73 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
   
-    updateCharacter({
-      ...character,
-      details: {
-        ...character.details,
-        hairColor: hairColor, 
-        eyeColor: eyeColor,  
-        alignment: selectedAlignment,
-        name: details.name,
-      backstory: details.backstory,
-      height: details.height,
-      weight: details.weight,
-      image: details.image
+    // f there's an image file selected, upload it to S3
+    if (imageFile) {
+      try {
+        // req a pre-signed URL for the image upload
+        const presignedResponse = await axios.get(`/api/upload-url?fileName=${encodeURIComponent(imageFile.name)}&fileType=${encodeURIComponent(imageFile.type)}`);
+        const presignedUrl = presignedResponse.data.url;
+  
+        // Upload the image file to S3 using the pre-signed URL
+        axios.put(presignedUrl, imageFile, {
+          headers: {
+            'Content-Type': imageFile.type,
+          },
+          maxRedirects: 5,
+        })
+        .then(response => {
+          console.log('Upload successful:', response);
+        })
+        .catch(error => {
+          console.error('Upload failed:', error);
+        });
+        const uploadedImageUrl = presignedUrl.split('?')[0];
+        
+
+        setDetails((prevDetails) => ({
+          ...prevDetails,
+          image: uploadedImageUrl, // Update the image URL to the S3 path
+        }));
+  
+        // Update the character details with the new image URL and proceed
+        updateCharacter({
+          ...character,
+          details: {
+            ...details,
+            image: uploadedImageUrl, // Use the S3 URL for the image
+            hairColor: hairColor,
+            eyeColor: eyeColor,
+            alignment: selectedAlignment,
+          }
+        });
+  
+        // Move to the next step
+        nextStep();
+      } catch (error) {
+        console.error('Error uploading image to S3:', error);
+        setSnackbarMessage('Failed to upload image.');
+        setOpenSnackbar(true);
+        return;
       }
-    });
-    
-    nextStep();
+    } else {
+      // Proceed without image upload if no image is selected
+      updateCharacter({
+        ...character,
+        details: {
+          ...details,
+          hairColor: hairColor,
+          eyeColor: eyeColor,
+          alignment: selectedAlignment,
+        }
+      });
+      nextStep();
+    }
   };
+  
+  
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
@@ -118,7 +159,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
 
       <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Avatar
-          src={details.image}
+          src={imageFile ? URL.createObjectURL(imageFile) : details.image || defaultAvatarUrl}
           alt="Character"
           sx={{ width: 150, height: 150, mb: 2 }} // Set size of the avatar
         />
@@ -181,8 +222,8 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
             onChange={(e, newValue) => handleSliderChange('weight', newValue)}
             aria-labelledby="weight-slider"
             valueLabelDisplay="auto"
-            min={50} // 50 lbs
-            max={300} // 300 lbs
+            min={50} 
+            max={300} 
           />
         </Grid>
 
