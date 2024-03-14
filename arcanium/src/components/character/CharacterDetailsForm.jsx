@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Grid, Slider, Snackbar, Avatar, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { HexColorPicker } from "react-colorful";
@@ -26,6 +26,8 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const [eyeColor, setEyeColor] = useState(character.details.eyeColor || '#000000');
   const [selectedAlignment, setSelectedAlignment] = useState(character.details.alignment || '');
   const [imageFile, setImageFile] = useState(null);
+  const [imageKey, setImageKey] = useState(character.details.imageKey || '');
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,6 +36,12 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    if (imageKey) {
+      fetchAndSetImageUrl(imageKey);
+    }
+  }, [imageKey]);
 
   const formatHeight = (value) => {
     const feet = Math.floor(value / 12);
@@ -78,78 +86,71 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
       const imageUrl = URL.createObjectURL(file);
       setDetails((prevDetails) => ({
         ...prevDetails,
-        image: imageUrl,
+        image: imageUrl, // Set the image URL to the locally generated URL
       }));
+    }
+  };
+
+  const fetchAndSetImageUrl = async (objectKey) => {
+    try {
+      const response = await axios.get(`/api/get-image-url?objectKey=${encodeURIComponent(objectKey)}`);
+      setDetails((prevDetails) => ({
+        ...prevDetails,
+        imageUrl: response.data.url, // The signed URL for the image
+      }));
+    } catch (error) {
+      console.error('Error fetching image URL:', error);
+      setSnackbarMessage('Failed to fetch image.');
+      setOpenSnackbar(true);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // f there's an image file selected, upload it to S3
     if (imageFile) {
       try {
-        // req a pre-signed URL for the image upload
-        const presignedResponse = await axios.get(`/api/upload-url?fileName=${encodeURIComponent(imageFile.name)}&fileType=${encodeURIComponent(imageFile.type)}`);
+        const presignedResponse = await axios.get(`/api/upload-url`, {
+          params: { fileName: encodeURIComponent(imageFile.name), fileType: encodeURIComponent(imageFile.type) }
+        });
         const presignedUrl = presignedResponse.data.url;
   
-        // Upload the image file to S3 using the pre-signed URL
-        axios.put(presignedUrl, imageFile, {
-          headers: {
-            'Content-Type': imageFile.type,
-          },
-          maxRedirects: 5,
-        })
-        .then(response => {
-          console.log('Upload successful:', response);
-        })
-        .catch(error => {
-          console.error('Upload failed:', error);
+        await axios.put(presignedUrl, imageFile, {
+          headers: { 'Content-Type': imageFile.type }
         });
-        const uploadedImageUrl = presignedUrl.split('?')[0];
-        
-
-        setDetails((prevDetails) => ({
-          ...prevDetails,
-          image: uploadedImageUrl, // Update the image URL to the S3 path
-        }));
   
-        // Update the character details with the new image URL and proceed
+        const objectKey = imageFile.name;
+  
+        // Now update character with the full URL of the image
+        // Construct the full URL using the base URL of your S3 bucket and the object key
+        const imageUrl = `https://arcanium.s3.eu-north-1.amazonaws.com/${objectKey}`;
+  
         updateCharacter({
           ...character,
           details: {
             ...details,
-            image: uploadedImageUrl, // Use the S3 URL for the image
-            hairColor: hairColor,
-            eyeColor: eyeColor,
+            image: imageUrl, // Save the full URL instead of the local URL
+            hairColor,
+            eyeColor,
             alignment: selectedAlignment,
           }
         });
   
-        // Move to the next step
         nextStep();
       } catch (error) {
         console.error('Error uploading image to S3:', error);
         setSnackbarMessage('Failed to upload image.');
         setOpenSnackbar(true);
-        return;
       }
     } else {
-      // Proceed without image upload if no image is selected
+      // If no image is selected, proceed with the character update
       updateCharacter({
         ...character,
-        details: {
-          ...details,
-          hairColor: hairColor,
-          eyeColor: eyeColor,
-          alignment: selectedAlignment,
-        }
+        details: { ...details, hairColor, eyeColor, alignment: selectedAlignment }
       });
       nextStep();
     }
   };
-  
-  
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
@@ -159,7 +160,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
 
       <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Avatar
-          src={imageFile ? URL.createObjectURL(imageFile) : details.image || defaultAvatarUrl}
+          src={details.imageUrl || defaultAvatarUrl}
           alt="Character"
           sx={{ width: 150, height: 150, mb: 2 }} // Set size of the avatar
         />

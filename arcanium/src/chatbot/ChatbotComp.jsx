@@ -16,7 +16,7 @@ import {trefoil} from 'ldrs';
 
 
 // ******** IMPORTANT ******** PUT API KEY HERE ******** IMPORTANT ********
-const API_KEY = '**replace-with-your-api-key**';
+const API_KEY = '';
 
 trefoil.register()
 const renderTypingIndicator = () => {

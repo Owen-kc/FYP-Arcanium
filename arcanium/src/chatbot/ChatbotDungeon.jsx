@@ -33,6 +33,7 @@ import MagicIcon from "@mui/icons-material/AutoAwesome";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import axios from "axios";
 
 trefoil.register();
 
@@ -42,7 +43,7 @@ const renderTypingIndicator = () => {
   };
 };
 
-const API_KEY = "***REMOVED***";
+const API_KEY = "";
 
 const systemMessage = {
   role: "system",
@@ -117,17 +118,33 @@ const ChatbotDungeon = () => {
   useEffect(() => {
     const fetchCharacters = async () => {
       if (user?.sub) {
-        // Ensure there's a user ID to use for fetching characters
         try {
           const fetchedCharacters = await fetchCharactersByUserId(user.sub);
-          setCharacters(fetchedCharacters);
-          console.log(fetchedCharacters);
+          // Fetch signed URLs for each character image
+          const charactersWithSignedUrls = await Promise.all(
+            fetchedCharacters.map(async (character) => {
+              if (character.details.imageKey) {
+                try {
+                  const response = await axios.get(`/api/get-image-url`, {
+                    params: { objectKey: character.details.imageKey },
+                  });
+                  return { ...character, details: { ...character.details, image: response.data.url } };
+                } catch (error) {
+                  console.error('Error fetching signed URL for character image:', error);
+                  return character; // Return the original character if there's an error fetching the URL
+                }
+              } else {
+                return character; // Return the original character if no imageKey is present
+              }
+            })
+          );
+          setCharacters(charactersWithSignedUrls);
         } catch (error) {
           console.error("Error fetching characters:", error);
         }
       }
     };
-
+  
     fetchCharacters();
   }, [user?.sub]);
 
@@ -634,46 +651,41 @@ const ChatbotDungeon = () => {
           >
             Character
           </Typography>
-          <Stack
-            direction="row"
-            spacing={2}
-            justifyContent="center"
-            sx={{ mb: 2 }}
-          >
-            {characters.map((character) => (
-              <Box
-                key={character._id}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  padding: "8px",
-                  borderRadius: "4px",
-                  border:
-                    selectedCharacterId === character._id
-                      ? "2px solid #4caf50"
-                      : "1px solid transparent",
-                }}
-                onClick={() => handleCharacterSelection(character._id)}
-              >
-                <Avatar
-                  src={character.details.image || ""}
-                  sx={{ bgcolor: "primary.main", width: 56, height: 56 }}
-                  alt={character.details.name}
-                >
-                  {!character.details.image && character.details.name[0]}
-                </Avatar>
-                <Typography sx={{ color: "white", mt: 1 }}>
-                  {character.details.name}
-                </Typography>
-                {/* Display class and race next to each other */}
-                <Typography sx={{ color: "white" }}>
-                  {`${character.race} ${character.class}`}
-                </Typography>
-              </Box>
-            ))}
-          </Stack>
+          <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 2 }}>
+          {characters.map((character) => (
+  <Box
+    key={character._id}
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      cursor: "pointer",
+      padding: "8px",
+      borderRadius: "4px",
+      border:
+        selectedCharacterId === character._id
+          ? "2px solid #4caf50"
+          : "1px solid transparent",
+    }}
+    onClick={() => handleCharacterSelection(character._id)}
+  >
+    <Avatar
+      src={character.details.image || ""}
+      sx={{ bgcolor: "primary.main", width: 56, height: 56 }}
+      alt={character.details.name}
+    >
+      {!character.details.image && character.details.name[0]}
+    </Avatar>
+    <Typography sx={{ color: "white", mt: 1 }}>
+      {character.details.name}
+    </Typography>
+    <Typography sx={{ color: "white" }}>
+      {`${character.race} ${character.class}`}
+    </Typography>
+  </Box>
+))}
+</Stack>
+
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
           <Button

@@ -20,7 +20,6 @@ function ReviewAndSubmit({ character }) {
       },
     });
 
-    // Assuming the presignedUrl without query parameters is the file URL; adjust as needed
     return presignedUrl.split('?')[0];
   };
 
@@ -31,10 +30,7 @@ function ReviewAndSubmit({ character }) {
       imageUrl = await getPresignedUrlAndUpload(imageUrl);
     }
 
-    // Convert speed object to a string or use it as it is if already a string
     const formattedSpeed = typeof character.speed === 'object' ? `Walk: ${character.speed.walk} feet` : character.speed;
-    
-    // Map spells objects to their names if they are objects, or use the spell directly if it's already a string
     const spellNames = character.spells.map(spell => typeof spell === 'object' ? spell.name : spell);
 
     const characterData = {

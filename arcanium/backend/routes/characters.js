@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../aws/upload'); 
 
 const {
   getAllCharacters,

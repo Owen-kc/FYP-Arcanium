@@ -125,13 +125,13 @@ const CharacterSheet = ({ character }) => {
         >
           <Typography variant="h2" sx={{ fontFamily: "MedievalSharp", mb: 2 }}>
             {character.details.name || "Name not chosen"}{" "}
-            {/* Use character.details.name */}
           </Typography>
           <Avatar
-            src={details.image}
-            alt="Character Image"
-            sx={{ width: 150, height: 150, mb: 2, border: "3px solid purple" }}
-          />
+  src={`https://arcanium.s3.eu-north-1.amazonaws.com/${character.details.image}`}
+  alt="Character Image"
+  sx={{ width: 150, height: 150, mb: 2, border: "3px solid purple" }}
+/>
+
           <Typography variant="h5" sx={{ fontFamily: "MedievalSharp" }}>
             {name}
           </Typography>
