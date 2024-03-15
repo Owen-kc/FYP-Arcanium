@@ -19,16 +19,16 @@ const SaveStories = ({ savedStories, activeStoryId, loadStory, exitReadOnlyMode,
     '&:hover': {
       backgroundColor: "#333",
     },
-    transition: "background-color 0.3s ease, opacity 0.3s ease", // Smooth transitions for visual feedback
+    transition: "background-color 0.3s ease, opacity 0.3s ease", 
   };
 
   // Define a style for disabled stories
   const disabledStyle = {
     ...baseStyle,
     cursor: "not-allowed",
-    opacity: 0.5, // Lowered opacity to indicate it's disabled
+    opacity: 0.5,
     '&:hover': {
-      backgroundColor: "transparent", // Prevents hover style when disabled
+      backgroundColor: "transparent", 
     },
   };
 

@@ -121,15 +121,13 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   
         const objectKey = imageFile.name;
   
-        // Now update character with the full URL of the image
-        // Construct the full URL using the base URL of your S3 bucket and the object key
         const imageUrl = `https://arcanium.s3.eu-north-1.amazonaws.com/${objectKey}`;
   
         updateCharacter({
           ...character,
           details: {
             ...details,
-            image: imageUrl, // Save the full URL instead of the local URL
+            image: imageUrl, 
             hairColor,
             eyeColor,
             alignment: selectedAlignment,
@@ -143,7 +141,6 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
         setOpenSnackbar(true);
       }
     } else {
-      // If no image is selected, proceed with the character update
       updateCharacter({
         ...character,
         details: { ...details, hairColor, eyeColor, alignment: selectedAlignment }
