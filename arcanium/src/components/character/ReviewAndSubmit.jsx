@@ -11,7 +11,6 @@ function ReviewAndSubmit({ character }) {
     // Request a pre-signed URL from your server
     const presignResponse = await axios.get(`http://localhost:5000/api/upload-url?fileName=${encodeURIComponent(file.name)}&fileType=${encodeURIComponent(file.type)}`);
     const presignedUrl = presignResponse.data.url;
-    
 
     // Use the pre-signed URL to upload the file to S3
     await axios.put(presignedUrl, file, {
@@ -42,6 +41,18 @@ function ReviewAndSubmit({ character }) {
         ...character.details,
         image: imageUrl, // Include the S3 image URL
       },
+      name: character.details.name,
+      backstory: character.details.backstory,
+      height: character.details.height,
+      weight: character.details.weight,
+      hairColor: character.details.hairColor,
+      eyeColor: character.details.eyeColor,
+      alignment: character.details.alignment,
+      background: character.background,
+      proficiencyBonus: character.proficiencyBonus,
+      abilityScores: character.abilityScores,
+      skills: character.skills,
+      equipment: character.equipment,
     };
 
     try {
@@ -61,7 +72,7 @@ function ReviewAndSubmit({ character }) {
   return (
     <div>
       <CharacterSheet character={character} />
-      <button onClick={handleSubmit }>Submit Character</button>
+      <button onClick={handleSubmit}>Submit Character</button>
     </div>
   );
 }

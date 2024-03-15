@@ -41,7 +41,7 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
           .map(option => option.replace(/\(\*\w\*\)\s/, '').trim());
         choices.push(options.join(' or '));
       } else {
-        const item = line.substring(2).trim(); // Remove the leading '* '
+        const item = line.substring(2).trim(); 
         choices.push(item);
       }
     });
