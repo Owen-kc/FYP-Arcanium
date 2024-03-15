@@ -23,6 +23,7 @@ function Header() {
         </Typography>
         <Button color="inherit" component={NavLinkAdapter} to="/">Home</Button>
         <Button color="inherit" component={NavLinkAdapter} to="/create-character">Characters</Button>
+        <Button color="inherit" component={NavLinkAdapter} to="/dungeon">Dungeon</Button>
         <Button color="inherit" onMouseEnter={handleOpen}>
           Compendium <IconButton size="small" color="inherit"><ArrowDropDownIcon /></IconButton>
         </Button>
@@ -41,9 +42,8 @@ function Header() {
           <MenuItem onClick={handleClose} component={NavLinkAdapter} to="/weapons">Weapons</MenuItem>
           <MenuItem onClick={handleClose} component={NavLinkAdapter} to="/feats">Feats</MenuItem>
           <MenuItem onClick={handleClose} component={NavLinkAdapter} to="/backgrounds">Backgrounds</MenuItem>
-          {/* Add more links as needed */}
+          {/* Add more links */}
         </Menu>
-        {/* Position UserMenu to the right */}
         <Box style={{ marginLeft: 'auto' }}>
           <UserMenu />
         </Box>

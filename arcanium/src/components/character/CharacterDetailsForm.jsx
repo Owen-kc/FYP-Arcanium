@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Grid, Slider, Snackbar, Avatar, ToggleButtonGroup, ToggleButton, useTheme } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, Button, Typography, Grid, Slider, Snackbar, Avatar, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { HexColorPicker } from "react-colorful";
+import axios from 'axios';
 
 const defaultAvatarUrl = ''; 
 const alignments = [
@@ -11,7 +12,6 @@ const alignments = [
 ];
 
 function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }) {
-  const theme = useTheme();
   const [details, setDetails] = useState({
     ...character.details,
     image: character.details.image || defaultAvatarUrl,
@@ -25,6 +25,9 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const [hairColor, setHairColor] = useState(character.details.hairColor || '#000000');
   const [eyeColor, setEyeColor] = useState(character.details.eyeColor || '#000000');
   const [selectedAlignment, setSelectedAlignment] = useState(character.details.alignment || '');
+  const [imageFile, setImageFile] = useState(null);
+  const [imageKey, setImageKey] = useState(character.details.imageKey || '');
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,13 +37,17 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
     }));
   };
 
+  useEffect(() => {
+    if (imageKey) {
+      fetchAndSetImageUrl(imageKey);
+    }
+  }, [imageKey]);
+
   const formatHeight = (value) => {
     const feet = Math.floor(value / 12);
     const inches = value % 12;
-    return `${feet}'${inches}"`; // Displays as feet and inches
+    return `${feet}'${inches}"`; 
   };
-
-  
 
   const handleSliderChange = (name, newValue) => {
     setDetails((prevDetails) => ({
@@ -65,49 +72,81 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const handleImageChange = (e) => {
     if (e.target.files.length) {
       const file = e.target.files[0];
-      
       if (file.size > 2097152) {
         setSnackbarMessage('Image size should not exceed 2MB.');
         setOpenSnackbar(true);
         return;
       }
-
-      // Check the file type
       if (!file.type.match('image.*')) {
         setSnackbarMessage('Please select a valid image file.');
         setOpenSnackbar(true);
         return;
       }
-
-      // Create a URL for the file
+      setImageFile(file);
       const imageUrl = URL.createObjectURL(file);
       setDetails((prevDetails) => ({
         ...prevDetails,
-        image: imageUrl,
+        image: imageUrl, // Set the image URL to the locally generated URL
       }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const fetchAndSetImageUrl = async (objectKey) => {
+    try {
+      const response = await axios.get(`/api/get-image-url?objectKey=${encodeURIComponent(objectKey)}`);
+      setDetails((prevDetails) => ({
+        ...prevDetails,
+        imageUrl: response.data.url, // The signed URL for the image
+      }));
+    } catch (error) {
+      console.error('Error fetching image URL:', error);
+      setSnackbarMessage('Failed to fetch image.');
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
   
-    updateCharacter({
-      ...character,
-      details: {
-        ...character.details,
-        hairColor: hairColor, 
-        eyeColor: eyeColor,  
-        alignment: selectedAlignment,
-        name: details.name,
-      backstory: details.backstory,
-      height: details.height,
-      weight: details.weight,
-      image: details.image
+    if (imageFile) {
+      try {
+        const presignedResponse = await axios.get(`/api/upload-url`, {
+          params: { fileName: encodeURIComponent(imageFile.name), fileType: encodeURIComponent(imageFile.type) }
+        });
+        const presignedUrl = presignedResponse.data.url;
+  
+        await axios.put(presignedUrl, imageFile, {
+          headers: { 'Content-Type': imageFile.type }
+        });
+  
+        const objectKey = imageFile.name;
+  
+        const imageUrl = `https://arcanium.s3.eu-north-1.amazonaws.com/${objectKey}`;
+  
+        updateCharacter({
+          ...character,
+          details: {
+            ...details,
+            image: imageUrl, 
+            hairColor,
+            eyeColor,
+            alignment: selectedAlignment,
+          }
+        });
+  
+        nextStep();
+      } catch (error) {
+        console.error('Error uploading image to S3:', error);
+        setSnackbarMessage('Failed to upload image.');
+        setOpenSnackbar(true);
       }
-    });
-    
-    nextStep();
+    } else {
+      updateCharacter({
+        ...character,
+        details: { ...details, hairColor, eyeColor, alignment: selectedAlignment }
+      });
+      nextStep();
+    }
   };
 
   return (
@@ -118,7 +157,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
 
       <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Avatar
-          src={details.image}
+          src={details.imageUrl || defaultAvatarUrl}
           alt="Character"
           sx={{ width: 150, height: 150, mb: 2 }} // Set size of the avatar
         />
@@ -181,8 +220,8 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
             onChange={(e, newValue) => handleSliderChange('weight', newValue)}
             aria-labelledby="weight-slider"
             valueLabelDisplay="auto"
-            min={50} // 50 lbs
-            max={300} // 300 lbs
+            min={50} 
+            max={300} 
           />
         </Grid>
 

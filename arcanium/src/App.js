@@ -15,8 +15,8 @@ import HomePageContent from './components/HomePageContent';
 import { useAuth0 } from '@auth0/auth0-react';
 import LoginPage from './pages/LoginPage';
 import CreateCharacterPage from './pages/CreateCharacterPage';
-import ChatbotComponent from './components/ChatbotComponent';
-import 'react-chatbot-kit/build/main.css'
+import ChatbotComp from './chatbot/ChatbotComp';
+import ChatbotDungeon from './chatbot/ChatbotDungeon';
 
 
 function App() {
@@ -43,10 +43,11 @@ function App() {
             <Route path="/weapons" element={<Weapons />} />
             <Route path="/feats" element={<Feats />} />
             <Route path="/backgrounds" element={<Backgrounds />} />
+            <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
             <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
             {/* Add other routes*/}
           </Routes>
-          <ChatbotComponent />
+          <ChatbotComp/>
         </main>
         ) : (
           <LoginPage />

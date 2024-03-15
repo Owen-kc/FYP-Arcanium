@@ -19,10 +19,10 @@ router.get('/:id', getCharacterById);
 // Route to get a single character by id (USER)
 router.get('/user/:userId', getCharacterByUID);
 
-// Route to create a new character
+// Route to create a new character without image upload middleware
 router.post('/', createCharacter);
 
-// Route to update a character
+// Route to update a character without new image upload middleware
 router.put('/:id', updateCharacter);
 
 // Route to delete a character

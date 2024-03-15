@@ -1,0 +1,74 @@
+/* Chatbot container styles */
+.chatbot-container {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  z-index: 1000;
+  border: 1px solid #5d3fd3;
+  background-color: #4b2b82;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden; 
+}
+
+
+/* Header styles */
+.chat-header {
+  background-color: #6a4fa5;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Message list styles */
+.chat-body {
+  overflow-y: auto;
+  padding: 10px;
+  flex-grow: 1; 
+}
+
+/* Message styles */
+.message {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Footer styles */
+.chat-footer {
+  padding: 10px;
+  background-color: #4b2b82;
+}
+
+/* Additional styling for the input area */
+.chat-footer .cs-input {
+  background-color: #bfa2db;
+  border: 1px solid #5d3fd3;
+}
+
+/* potenitally uneeded */
+.typing-indicator {
+  text-align: center; 
+}
+
+.chat-footer .cs-sendButton {
+  color: #6a4fa5;
+}
+
+/* resp design adjustments for smaller screens */
+@media (max-width: 600px) {
+  .chatbot-container, .toggle-chatbot-btn {
+    width: 95%;
+    right: 2.5%;
+    bottom: 10px;
+  }
+  .chatbot-container {
+    height: calc(100vh - 20px);
+    bottom: initial;
+    top: 10px;
+  }
+}

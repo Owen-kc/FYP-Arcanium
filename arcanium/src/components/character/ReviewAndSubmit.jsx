@@ -1,55 +1,71 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react'; // Import useAuth0 hook
+import { useAuth0 } from '@auth0/auth0-react';
 import CharacterSheet from './CharacterSheet';
+import axios from 'axios';
 
 function ReviewAndSubmit({ character }) {
-  const { user } = useAuth0(); // Use the useAuth0 hook to get the user object
-  const userId = user?.sub; 
+  const { user } = useAuth0();
+  const userId = user?.sub;
+
+  const getPresignedUrlAndUpload = async (file) => {
+    // Request a pre-signed URL from your server
+    const presignResponse = await axios.get(`http://localhost:5000/api/upload-url?fileName=${encodeURIComponent(file.name)}&fileType=${encodeURIComponent(file.type)}`);
+    const presignedUrl = presignResponse.data.url;
+
+    // Use the pre-signed URL to upload the file to S3
+    await axios.put(presignedUrl, file, {
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+
+    return presignedUrl.split('?')[0];
+  };
 
   const handleSubmit = async () => {
-    //conversion
+    let imageUrl = character.details.image;
+    
+    if (imageUrl instanceof File) {
+      imageUrl = await getPresignedUrlAndUpload(imageUrl);
+    }
+
     const formattedSpeed = typeof character.speed === 'object' ? `Walk: ${character.speed.walk} feet` : character.speed;
     const spellNames = character.spells.map(spell => typeof spell === 'object' ? spell.name : spell);
 
-
-    // Include the userId when preparing the character data for submission
     const characterData = {
       ...character,
       userId,
+      speed: formattedSpeed, // Use the formatted speed string
+      spells: spellNames, // Use the array of spell names
+      details: {
+        ...character.details,
+        image: imageUrl, // Include the S3 image URL
+      },
       name: character.details.name,
       backstory: character.details.backstory,
       height: character.details.height,
       weight: character.details.weight,
-      image: character.details.image,
       hairColor: character.details.hairColor,
       eyeColor: character.details.eyeColor,
       alignment: character.details.alignment,
       background: character.background,
-      speed: formattedSpeed,
       proficiencyBonus: character.proficiencyBonus,
       abilityScores: character.abilityScores,
-      spells: spellNames,
       skills: character.skills,
       equipment: character.equipment,
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/characters', {
-        method: 'POST',
+      console.log('Submitting character data:', characterData);
+      const response = await axios.post('http://localhost:5000/api/characters', characterData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(characterData),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${error.message}`);
-      }
-      const newCharacter = await response.json();
-      console.log('Character created:', newCharacter);
+      console.log('Character created:', response.data);
     } catch (error) {
-      console.error('There was a problem with your fetch operation:', error);
+      console.error('There was a problem with the character submission:', error);
     }
   };
 
