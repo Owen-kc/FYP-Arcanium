@@ -17,10 +17,13 @@ import LoginPage from './pages/LoginPage';
 import CreateCharacterPage from './pages/CreateCharacterPage';
 import ChatbotComp from './chatbot/ChatbotComp';
 import ChatbotDungeon from './chatbot/ChatbotDungeon';
+import ProfilePrompt from './components/social/ProfilePrompt';
+import useProfileCheck from './components/social/useProfileCheck';
 
 
 function App() {
   const { isAuthenticated, isLoading, user } = useAuth0();
+  const { showProfilePrompt, setShowProfilePrompt } = useProfileCheck();
 
 
   if (isLoading) {
@@ -30,30 +33,34 @@ function App() {
 
   return (
     <ThemeProvider theme={FantasyTheme}>
-    <Router>
-      {isAuthenticated ? (
-        <main>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/monsters" element={<Monsters />} />
-            <Route path="/items" element={<Items />} />
-            <Route path="/spells" element={<Spells />} />
-            <Route path="/armor" element={<Armor />} />
-            <Route path="/weapons" element={<Weapons />} />
-            <Route path="/feats" element={<Feats />} />
-            <Route path="/backgrounds" element={<Backgrounds />} />
-            <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
-            <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
-            {/* Add other routes*/}
-          </Routes>
-          <ChatbotComp/>
-        </main>
+      <Router>
+        {isAuthenticated ? (
+          <>
+            <Header />
+            {/* Conditionally render the ProfilePrompt */}
+            {showProfilePrompt && <ProfilePrompt setShowProfilePrompt={setShowProfilePrompt} />}
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/monsters" element={<Monsters />} />
+                <Route path="/items" element={<Items />} />
+                <Route path="/spells" element={<Spells />} />
+                <Route path="/armor" element={<Armor />} />
+                <Route path="/weapons" element={<Weapons />} />
+                <Route path="/feats" element={<Feats />} />
+                <Route path="/backgrounds" element={<Backgrounds />} />
+                <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
+                <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
+                {/* Add other routes later */}
+              </Routes>
+              <ChatbotComp/>
+            </main>
+          </>
         ) : (
           <LoginPage />
         )}
-        </Router>
-      </ThemeProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

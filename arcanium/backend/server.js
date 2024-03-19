@@ -7,6 +7,7 @@ const cors = require('cors');
 const { generateUploadURL, generateGetUrl } = require('./aws/aws-config'); 
 require('dotenv').config({ path: path.resolve(__dirname, './.env') });
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const profileRoutes = require('./routes/profiles');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use('/api/characters', characterRoutes);
 app.use('/api/stories', storyRoutes);
+app.use('/api', profileRoutes);
 
 app.use('/api/s3proxy', createProxyMiddleware({ 
   target: 'https://arcanium.s3.eu-north-1.amazonaws.com', 

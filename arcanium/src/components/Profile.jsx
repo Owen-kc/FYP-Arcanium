@@ -1,10 +1,24 @@
-// Profile.jsx
 import React from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { DialogContent, DialogTitle, DialogActions, Button } from '@mui/material';
+import axios from 'axios'; 
 
 const Profile = ({ handleClose }) => {
-    const { user } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth0();
+
+    const handleAcknowledge = async () => {
+        try {
+            const token = await getAccessTokenSilently();
+            await axios.post('/api/user/profile', user, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            handleClose();
+        } catch (error) {
+            console.error('Error saving user profile:', error);
+        }
+    };
 
     return (
         <>
@@ -20,6 +34,9 @@ const Profile = ({ handleClose }) => {
                     </ul>
                 </article>
             </DialogContent>
+            <DialogActions>
+                <Button onClick={handleAcknowledge}>Acknowledge/Accept</Button>
+            </DialogActions>
         </>
     );
 };
