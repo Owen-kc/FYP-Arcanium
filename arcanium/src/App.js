@@ -19,6 +19,8 @@ import ChatbotComp from './chatbot/ChatbotComp';
 import ChatbotDungeon from './chatbot/ChatbotDungeon';
 import ProfilePrompt from './components/social/ProfilePrompt';
 import useProfileCheck from './components/social/useProfileCheck';
+import FriendsPage from './components/social/friends/FriendsPage';
+import ProfilePage from './components/social/ProfilePage';
 
 
 function App() {
@@ -51,6 +53,8 @@ function App() {
                 <Route path="/backgrounds" element={<Backgrounds />} />
                 <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
                 <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
+                <Route path="/friends" element={<FriendsPage />} />
+                <Route path="/profile/:userId" element={<ProfilePage />} />
                 {/* Add other routes later */}
               </Routes>
               <ChatbotComp/>

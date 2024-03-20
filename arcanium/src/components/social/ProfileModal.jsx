@@ -1,9 +1,16 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { motion } from 'framer-motion';
+
 
 const SimpleModal = ({ open, onClose, onAcknowledge, user }) => {
   return (
     <Dialog open={open} onClose={onClose}>
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
       <DialogTitle>User Profile</DialogTitle>
       <DialogContent>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -17,6 +24,7 @@ const SimpleModal = ({ open, onClose, onAcknowledge, user }) => {
           Acknowledge
         </Button>
       </DialogActions>
+      </motion.div>
     </Dialog>
   );
 };

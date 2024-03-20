@@ -31,7 +31,29 @@ router.get('/profile-exists/:userId', async (req, res) => {
     }
   });
 
-// Route to handle saving/updating user profiles
+router.get('/search', async (req, res) => {
+    const searchTerm = req.query.query;
+  
+    try {
+      if (!searchTerm) {
+        const profiles = await UserProfile.find({});
+        return res.json({ users: profiles });
+      }
+  
+      const profiles = await UserProfile.find({
+        $or: [
+          { name: { $regex: searchTerm, $options: 'i' } },
+          { nickname: { $regex: searchTerm, $options: 'i' } },
+        ],
+      });
+  
+      res.json({ users: profiles }); 
+    } catch (error) {
+      console.error('Error searching for profiles:', error);
+      res.status(500).send('Server error');
+    }
+  });
+
 router.post('/user/profile', saveUserProfile);
 
 module.exports = router;
