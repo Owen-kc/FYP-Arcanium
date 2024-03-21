@@ -15,6 +15,6 @@ router.post('/end-friendship', friendController.endFriendship);
 
 router.get('/incoming-requests/:auth0Id', friendController.getIncomingFriendRequests);
 
-
+router.get('/friend-profile/:auth0Id', friendController.getFriendProfile);
 
 module.exports = router;

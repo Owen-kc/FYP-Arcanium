@@ -20,6 +20,21 @@ async function saveUserProfile(req, res) {
   }
 }
 
+// fetch prof by auth0id 
+router.get('/profile/:auth0Id', async (req, res) => {
+  const { auth0Id } = req.params;
+  try {
+    const userProfile = await UserProfile.findOne({ auth0Id });
+    if (!userProfile) {
+      return res.status(404).send('Profile not found');
+    }
+    res.json(userProfile);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 router.get('/profile-exists/:userId', async (req, res) => {
     try {
       const userId = req.params.userId;

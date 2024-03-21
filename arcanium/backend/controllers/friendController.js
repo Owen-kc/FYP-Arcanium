@@ -66,12 +66,14 @@ exports.getIncomingFriendRequests = async (req, res) => {
         const incomingRequests = await Friendship.find({
             recipient: recipientProfile._id,
             status: 'pending'
-        }).populate('requester', 'name nickname auth0Id'); //updt
+        }).populate('requester', 'name nickname auth0Id picture email'); //updt
 
         res.json(incomingRequests.map(request => ({
           id: request._id,
           senderName: request.requester.name, 
-          senderAuth0Id: request.requester.auth0Id 
+          senderAuth0Id: request.requester.auth0Id,
+          senderPicture: request.requester.picture, // Add picture
+          senderEmail: request.requester.email // Optionally add email if you want to use it
         })));
     } catch (error) {
         console.error('Error fetching incoming friend requests:', error);
@@ -94,6 +96,21 @@ exports.acceptFriendRequest = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
+//auth0 friend profile
+exports.getFriendProfile = async (req, res) => {
+    const { auth0Id } = req.params;
+    try {
+      const friendProfile = await UserProfile.findOne({ auth0Id });
+      if (!friendProfile) {
+        return res.status(404).send('Friend profile not found');
+      }
+      res.json(friendProfile);
+    } catch (error) {
+      console.error('Error fetching friend profile:', error);
+      res.status(500).send('Server error');
+    }
+  };
 
 // Reject a Friend Request
 exports.rejectFriendRequest = async (req, res) => {
@@ -124,7 +141,7 @@ exports.listFriends = async (req, res) => {
         const friends = await Friendship.find({
             $or: [{ requester: userProfile._id }, { recipient: userProfile._id }],
             status: 'accepted'
-        }).populate('requester recipient', 'name nickname auth0Id'); // Adjust fields as needed
+        }).populate('requester recipient', 'name nickname auth0Id picture email'); // Adjust fields as needed
 
         res.json(friends);
     } catch (error) {

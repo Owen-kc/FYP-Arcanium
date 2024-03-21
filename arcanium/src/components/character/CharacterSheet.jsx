@@ -104,6 +104,7 @@ const CharacterSheet = ({ character }) => {
         maxWidth: "90%",
         mx: "auto",
         borderRadius: 2,
+        overflow: 'auto'
       }}
     >
       <Typography
@@ -140,29 +141,29 @@ const CharacterSheet = ({ character }) => {
             sx={{ fontFamily: "MedievalSharp" }}
           >{`Level ${level} ${race} ${characterClass}`}</Typography>
 
-          {/* Ability Scores in Styled Cards */}
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            {Object.entries(abilityScores).map(([ability, score]) => (
-              <Grid item xs={4} key={ability}>
-                <StyledCard>
-                  <CardContent sx={{ textAlign: "center" }}>
-                    <Typography
-                      variant="caption"
-                      sx={{ fontFamily: "MedievalSharp", fontSize: "0.75rem" }}
-                    >
-                      {ability.toUpperCase()}
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      sx={{ fontFamily: "MedievalSharp", fontSize: "1.25rem" }}
-                    >
-                      {score}
-                    </Typography>
-                  </CardContent>
-                </StyledCard>
-              </Grid>
-            ))}
-          </Grid>
+          {/* Ability Scores in Responsive Grid Cards */}
+<Grid container spacing={2} sx={{ mt: 2, justifyContent: 'center' }}>
+  {Object.entries(abilityScores).map(([ability, score]) => (
+    <Grid item xs={6} sm={4} md={2} key={ability}>
+      <StyledCard>
+        <CardContent sx={{ textAlign: "center" }}>
+          <Typography
+            variant="caption"
+            sx={{ fontFamily: "MedievalSharp", fontSize: "0.75rem" }}
+          >
+            {ability.toUpperCase()}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ fontFamily: "MedievalSharp", fontSize: "1.25rem" }}
+          >
+            {score}
+          </Typography>
+        </CardContent>
+      </StyledCard>
+    </Grid>
+  ))}
+</Grid>
 
           {/* AC Section */}
           <StyledCard sx={{ mt: 2, width: "100%" }}>

@@ -21,6 +21,7 @@ import ProfilePrompt from './components/social/ProfilePrompt';
 import useProfileCheck from './components/social/useProfileCheck';
 import FriendsPage from './components/social/friends/FriendsPage';
 import ProfilePage from './components/social/ProfilePage';
+import FriendProfile from './components/social/friends/FriendProfile';
 
 
 function App() {
@@ -54,7 +55,7 @@ function App() {
                 <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
                 <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
                 <Route path="/friends" element={<FriendsPage />} />
-                <Route path="/profile/:userId" element={<ProfilePage />} />
+                <Route path="/friend-profile/:auth0Id" element={<FriendProfile />} />
                 {/* Add other routes later */}
               </Routes>
               <ChatbotComp/>
