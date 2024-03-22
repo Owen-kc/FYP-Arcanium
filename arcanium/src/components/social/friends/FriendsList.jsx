@@ -37,8 +37,16 @@ const FriendsList = () => {
   };
 
   const openChat = (friendId) => {
-    // Function to handle chat opening
+    if (user?.sub && friendId && user.sub !== friendId) { 
+      // Log to check the IDs being passed
+      console.log(`Navigating to chat with User ID: ${user.sub} and Friend ID: ${friendId}`);
+      
+      navigate(`/chat?user=${user.sub}&friend=${friendId}`);
+    } else {
+      console.error("Error: Trying to open chat with oneself or missing IDs.");
+    }
   };
+  
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography variant="body1" color="error">{error}</Typography>;
@@ -54,23 +62,43 @@ const FriendsList = () => {
                 return (
                   <motion.div
                     key={friend._id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
+                    variants={{
+                      hidden: { scale: 0.95, opacity: 0 },
+                      visible: { scale: 1, opacity: 1 }
+                    }}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
                     transition={{ duration: 0.5 }}
+                    whileHover={{ scale: 1.02 }}
+                    layout // Enable layout animation
                   >
-                    <Card variant="outlined" sx={{ display: 'flex', mb: 1, alignItems: 'center', cursor: 'pointer' }}>
+                    <Card variant="outlined" sx={{
+                      display: 'flex',
+                      mb: 2,
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      boxShadow: 3,
+                      padding: '16px',
+                      backgroundColor: 'rgba(52,58,64,255)', 
+                      borderRadius: '16px', 
+                      '&:hover': {
+                        boxShadow: 6,
+                      }
+                    }}>
                       <CardMedia
                         component="img"
-                        sx={{ width: 90, height: 90, borderRadius: '50%' }}
+                        sx={{ width: 90, height: 90, borderRadius: '50%', mr: 2 }}
                         image={friendInfo.picture}
                         alt={`${friendInfo.name}'s profile`}
                       />
-                      <CardContent onClick={(e) => e.stopPropagation()}>
+                      <CardContent sx={{ flexGrow: 1, textAlign: 'left' }}>
                         <Typography variant="h6">{friendInfo.name}</Typography>
                         <Typography variant="body2" color="textSecondary">{friendInfo.nickname}</Typography>
-                        <Button variant="contained" color="primary" onClick={() => openChat(friendInfo._id)}>Chat</Button>
-                        <Button variant="contained" color="secondary" onClick={(e) => {e.stopPropagation(); navigateToFriendProfile(friendInfo.auth0Id);}}>Profile</Button>
+                        <Box mt={1} display="flex" justifyContent="space-between">
+                          <Button variant="contained" color="primary" onClick={() => openChat(friendInfo.auth0Id)}>Chat</Button>
+                          <Button variant="contained" color="secondary" onClick={(e) => {e.stopPropagation(); navigateToFriendProfile(friendInfo.auth0Id);}}>Profile</Button>
+                        </Box>
                       </CardContent>
                     </Card>
                   </motion.div>

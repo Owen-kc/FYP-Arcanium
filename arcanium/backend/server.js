@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http'); // socket
+const { Server } = require('socket.io');
 const connectDB = require('./db/connect');
 const characterRoutes = require('./routes/characters');
 const storyRoutes = require('./routes/stories');
@@ -10,8 +12,15 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const profileRoutes = require('./routes/profiles');
 const friendRoutes = require('./routes/friends');
 
-
 const app = express();
+const server = http.createServer(app);
+
+//socket init
+const io = new Server(server, {
+  cors: {
+    origin: '*', 
+  },
+});
 
 connectDB();
 
@@ -58,5 +67,33 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on('join_room', (room) => {
+    socket.join(room);
+    console.log(`[Server] User with ID: ${socket.id} joined room: ${room}`);
+  });
+
+  socket.on('send_message', ({ room, content, sender }) => {
+    if (content) {
+      console.log(`[Server] Sending message to room ${room} by ${sender}: ${content}`);
+      io.in(room).emit('receive_message', { room, content, sender });
+    } else {
+      console.error(`[Server] Received undefined content for room ${room}`);
+    }
+  });
+  
+  
+
+  socket.on('disconnect', () => {
+    console.log(`User Disconnected: ${socket.id}`);
+  });
+});
+
+
+
+// update to server instd of app
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
