@@ -18,6 +18,8 @@ require('dotenv').config({ path: path.resolve(__dirname, './.env') });
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const profileRoutes = require('./routes/profiles');
 const friendRoutes = require('./routes/friends');
+const campaignRoutes = require('./routes/campaigns');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -39,6 +41,7 @@ app.use('/api/characters', characterRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api', profileRoutes);
 app.use('/api/friends', friendRoutes);
+app.use('/api/campaigns', campaignRoutes);
 
 app.use('/api/s3proxy', createProxyMiddleware({ 
   target: 'https://arcanium.s3.eu-north-1.amazonaws.com', 

@@ -10,8 +10,6 @@ const userProfileSchema = new mongoose.Schema({
   email_verified: Boolean, 
   preferred_username: String, 
   bio: String,
-  // *to change, status for chat feature*
-  status: String, 
 });
 
 const UserProfile = mongoose.model('UserProfile', userProfileSchema);

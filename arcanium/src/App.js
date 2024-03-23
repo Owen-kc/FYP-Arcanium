@@ -23,6 +23,7 @@ import FriendsPage from './components/social/friends/FriendsPage';
 import ProfilePage from './components/social/ProfilePage';
 import FriendProfile from './components/social/friends/FriendProfile';
 import ChatComponent from './components/social/chat/ChatComponent';
+import CampaignsPage from './components/social/campaign/CampaignsPage';
 
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/friends" element={<FriendsPage />} />
                 <Route path="/friend-profile/:auth0Id" element={<FriendProfile />} />
                 <Route path="/chat" element={<ChatComponent />} />
+                <Route path="/campaigns" element={<CampaignsPage userId={user.sub} />} />
                 {/* Add other routes later */}
               </Routes>
               <ChatbotComp/>
