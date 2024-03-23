@@ -6,6 +6,13 @@ const characterRoutes = require('./routes/characters');
 const storyRoutes = require('./routes/stories');
 const path = require('path');
 const cors = require('cors');
+/**
+ * Generates an upload URL and a get URL using AWS configuration.
+ * @module aws-config
+ * @type {Object}
+ * @property {Function} generateUploadURL - Generates an upload URL.
+ * @property {Function} generateGetUrl - Generates a get URL.
+ */
 const { generateUploadURL, generateGetUrl } = require('./aws/aws-config'); 
 require('dotenv').config({ path: path.resolve(__dirname, './.env') });
 const { createProxyMiddleware } = require('http-proxy-middleware');
@@ -14,6 +21,7 @@ const friendRoutes = require('./routes/friends');
 
 const app = express();
 const server = http.createServer(app);
+const Message = require('./models/MessageSchema');
 
 //socket init
 const io = new Server(server, {
@@ -76,15 +84,34 @@ io.on('connection', (socket) => {
     console.log(`[Server] User with ID: ${socket.id} joined room: ${room}`);
   });
 
-  socket.on('send_message', ({ room, content, sender }) => {
+  socket.on('send_message', async ({ room, content, sender }) => {
     if (content) {
-      console.log(`[Server] Sending message to room ${room} by ${sender}: ${content}`);
-      io.in(room).emit('receive_message', { room, content, sender });
+      try {
+        const message = await Message.create({ room, content, sender });
+        console.log(`[Server] Message saved to room ${room} by ${sender}`);
+        io.in(room).emit('receive_message', {
+          room,
+          content,
+          sender,
+          timestamp: message.timestamp
+        });
+      } catch (error) {
+        console.error(`[Server] Error saving message: ${error}`);
+      }
     } else {
       console.error(`[Server] Received undefined content for room ${room}`);
     }
   });
   
+ socket.on('start_typing', ({room, user}) => {
+  console.log(`Received start_typing for room ${room} by ${user}`);
+  socket.to(room).emit('user_typing', {typing: true, user});
+});
+
+socket.on('stop_typing', ({room, user}) => {
+  console.log(`Received stop+typing for room ${room} by ${user}`);
+  socket.to(room).emit('user_typing', {typing: false, user});
+});
   
 
   socket.on('disconnect', () => {
@@ -92,7 +119,15 @@ io.on('connection', (socket) => {
   });
 });
 
-
+app.get('/api/messages/:room', async (req, res) => {
+  try {
+    const messages = await Message.find({ room: req.params.room }).sort({ timestamp: 1 });
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ message: 'Could not fetch messages.' });
+  }
+});
 
 // update to server instd of app
 const PORT = process.env.PORT || 5000;
