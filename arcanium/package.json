@@ -74,6 +74,7 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "webpack-dev-middleware": "^5.3.4"
   }
 }

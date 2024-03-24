@@ -7,7 +7,7 @@ const CampaignInvitations = ({ userId }) => {
     const [invitations, setInvitations] = useState([]);
     const [characters, setCharacters] = useState([]);
     const [selectedCharacterId, setSelectedCharacterId] = useState('');
-    const [openDialog, setOpenDialog] = useState(false); // Use Auth0Id, adjusted to match your backend
+    const [openDialog, setOpenDialog] = useState(false);
     const [currentCampaignId, setCurrentCampaignId] = useState(null);
 
     useEffect(() => {
@@ -15,7 +15,7 @@ const CampaignInvitations = ({ userId }) => {
             console.log("Fetching invitations...");
             try {
                 const invitationRes = await axios.get(`/api/campaigns/invitations/${userId}`);
-                console.log("Invitations:", invitationRes.data); // Log the received data here
+                console.log("Invitations:", invitationRes.data); 
                 setInvitations(invitationRes.data);
             } catch (error) {
                 console.error('Error fetching invitations:', error);
@@ -26,7 +26,7 @@ const CampaignInvitations = ({ userId }) => {
         const fetchCharacters = async () => {
             try {
                 
-                const charactersData = await fetchCharactersByUserId(userId); // Use the userId prop directly
+                const charactersData = await fetchCharactersByUserId(userId);
                 setCharacters(charactersData);
                 console.log(charactersData)
             } catch (error) {
@@ -57,11 +57,10 @@ const CampaignInvitations = ({ userId }) => {
         try {
             await axios.post('/api/campaigns/accept-invitation', {
                 campaignId: currentCampaignId,
-                userAuth0Id: userId, // Use Auth0Id, adjusted to match your backend
+                userAuth0Id: userId, 
                 characterId: selectedCharacterId,
             });
-            // Update UI accordingly
-            setInvitations(invitations.filter(inv => inv._id !== currentCampaignId)); // Adjust based on your data structure
+            setInvitations(invitations.filter(inv => inv._id !== currentCampaignId));
             handleClose();
         } catch (error) {
             console.error('Error accepting invitation', error);
