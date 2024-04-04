@@ -16,5 +16,9 @@ router.get('/my-campaigns/:userId', campaignController.getMyCampaigns);
 // to be removed
 router.get('/invitations/:userId', campaignController.fetchInvitationsForUser);
 
+// Inside the file where you define your campaignRoutes
+router.get('/details/:campaignId', campaignController.getCampaignDetails);
+
+
 
 module.exports = router;

@@ -36,7 +36,6 @@ exports.inviteToCampaign = async (req, res) => {
             return res.status(404).json({ msg: 'Campaign not found.' });
         }
 
-        // Directly add Auth0 IDs to the campaign's invitations
         campaign.invitations = [...new Set([...campaign.invitations, ...friendAuth0Ids])];
         await campaign.save();
   
@@ -50,11 +49,15 @@ exports.inviteToCampaign = async (req, res) => {
 
 exports.getMyCampaigns = async (req, res) => {
     try {
-        const userAuth0Id = req.params.userId; 
+        const userAuth0Id = req.params.userId;
+
+        const userProfile = await UserProfile.findOne({ auth0Id: userAuth0Id });
+        const userProfileId = userProfile?._id;
+
         const campaigns = await Campaign.find({
             $or: [
                 { creator: userAuth0Id },
-                { 'members.user': userAuth0Id },
+                { 'members.user': userProfileId }, 
                 { invitations: userAuth0Id }
             ]
         });
@@ -66,6 +69,7 @@ exports.getMyCampaigns = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
 
 
 exports.fetchInvitationsForUser = async (req, res) => {
@@ -119,3 +123,32 @@ exports.acceptInvitation = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
+// Inside campaignController.js
+exports.getCampaignDetails = async (req, res) => {
+    const campaignId = req.params.campaignId;
+    try {
+        const campaign = await Campaign.findById(campaignId)
+            .populate({
+                path: 'members.user',
+                model: 'UserProfile',
+                select: 'name' 
+            })
+            .populate({
+                path: 'members.character',
+                model: 'Character',
+                select: 'details.name' 
+              })
+              
+
+        if (!campaign) {
+            return res.status(404).json({ message: 'Campaign not found' });
+        }
+
+        res.json(campaign);
+    } catch (error) {
+        console.error('Failed to fetch campaign details:', error);
+        res.status(500).send('Server error');
+    }
+};
+

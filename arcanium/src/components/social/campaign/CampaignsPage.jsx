@@ -1,76 +1,68 @@
 import React, { useState } from 'react';
-import { Box, Tab, Tabs, Modal, Typography, Button, Paper } from '@mui/material';
-import CampaignInvitations from './CampaignInvitations'; 
-import MyCampaigns from './MyCampaigns'; 
-import CreateCampaignForm from './CreateCampaignForm'; 
-import InviteFriendsToCampaign from './InviteFriendsToCampaign'; 
+import { Box, Tab, Tabs, Typography, Container } from '@mui/material';
+import { motion } from 'framer-motion';
+import CampaignInvitations from './CampaignInvitations';
+import MyCampaigns from './MyCampaigns';
+import CreateCampaignForm from './CreateCampaignForm';
+import InviteFriendsToCampaign from './InviteFriendsToCampaign';
 
 const CampaignsPage = ({ userId }) => {
     const [selectedTab, setSelectedTab] = useState(0);
-    const [openCreateModal, setOpenCreateModal] = useState(false);
     const [newCampaignId, setNewCampaignId] = useState(null);
 
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
+        // Ensure that switching tabs resets the new campaign ID, if needed
+        if (newValue !== 2) { // If not switching to the Create Campaign tab
+            setNewCampaignId(null);
+        }
     };
 
-    const handleOpenCreateModal = () => setOpenCreateModal(true);
-    const handleCloseCreateModal = () => {
-        setOpenCreateModal(false);
-        setNewCampaignId(null); 
+    const onCampaignCreated = (campaignId) => {
+        setNewCampaignId(campaignId);
     };
 
-    // Modal style
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        p: 4,
-        outline: 'none'
+    const tabStyle = {
+        borderBottom: 1, 
+        borderColor: 'divider', 
+        my: 3
     };
 
     return (
-        <Box sx={{ width: '100%', mt: 3 }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={selectedTab} onChange={handleTabChange} aria-label="campaign tabs">
+        <Container maxWidth="md">
+            <Box sx={tabStyle}>
+                <Tabs 
+                    value={selectedTab} 
+                    onChange={handleTabChange} 
+                    aria-label="campaign tabs" 
+                    variant="fullWidth"
+                >
                     <Tab label="My Campaigns" />
                     <Tab label="Campaign Invitations" />
                     <Tab label="Create Campaign" />
                 </Tabs>
             </Box>
-            {selectedTab === 0 && <MyCampaigns userId={userId} />}
-            {selectedTab === 1 && <CampaignInvitations userId={userId} />}
-            {selectedTab === 2 && (
-                <Box sx={{ p: 3 }}>
-                    <Button variant="outlined" onClick={handleOpenCreateModal}>
-                        Create New Campaign
-                    </Button>
-                </Box>
-            )}
-            <Modal
-                open={openCreateModal}
-                onClose={handleCloseCreateModal}
-                aria-labelledby="create-campaign-modal-title"
-                aria-describedby="create-campaign-modal-description"
+            <motion.div
+                key={selectedTab}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                layout
             >
-                <Paper sx={style}>
-                    {newCampaignId ? (
+                {selectedTab === 0 && <MyCampaigns userId={userId} />}
+                {selectedTab === 1 && <CampaignInvitations userId={userId} />}
+                {selectedTab === 2 && (
+                    newCampaignId ? (
                         <InviteFriendsToCampaign userId={userId} campaignId={newCampaignId} />
                     ) : (
                         <CreateCampaignForm 
                             userId={userId}
-                            onCampaignCreated={(campaignId) => {
-                                setNewCampaignId(campaignId);
-                            }}
+                            onCampaignCreated={onCampaignCreated}
                         />
-                    )}
-                </Paper>
-            </Modal>
-        </Box>
+                    )
+                )}
+            </motion.div>
+        </Container>
     );
 };
 
