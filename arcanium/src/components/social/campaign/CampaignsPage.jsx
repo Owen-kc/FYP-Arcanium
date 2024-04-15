@@ -12,8 +12,7 @@ const CampaignsPage = ({ userId }) => {
 
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
-        // Ensure that switching tabs resets the new campaign ID, if needed
-        if (newValue !== 2) { // If not switching to the Create Campaign tab
+        if (newValue !== 2) {
             setNewCampaignId(null);
         }
     };

@@ -15,7 +15,7 @@ import {
   useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import CampaignDetails from './CampaignDetails'; // Ensure this path is correct
+import CampaignDetails from './CampaignDetails'; 
 
 const MyCampaigns = ({ userId }) => {
   const theme = useTheme();

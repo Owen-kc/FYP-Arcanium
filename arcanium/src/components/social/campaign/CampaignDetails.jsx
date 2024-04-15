@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CircularProgress, Box, Typography, Modal, Button } from '@mui/material';
-import CharacterSheet from '../../character/CharacterSheet'; // Ensure this path is correct
+import CharacterSheet from '../../character/CharacterSheet'; 
 
 const CampaignDetails = ({ campaignId }) => {
   const [campaignDetails, setCampaignDetails] = useState(null);
@@ -30,13 +30,12 @@ const CampaignDetails = ({ campaignId }) => {
 
   const handleOpenCharacterModal = async (characterId) => {
     try {
-      setIsLoading(true); // Consider adding a loading state for fetching character details
+      setIsLoading(true); 
       const response = await axios.get(`/api/characters/${characterId}`);
       setSelectedCharacter(response.data);
       setIsCharacterModalOpen(true);
     } catch (error) {
       console.error('Failed to fetch character details:', error);
-      // Handle error (e.g., set an error state or display a notification)
     } finally {
       setIsLoading(false);
     }
@@ -84,14 +83,14 @@ const CampaignDetails = ({ campaignId }) => {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 'auto', // Allow width to adjust based on content and padding
-    maxWidth: '90vw', // Limit the width to 90% of the viewport width for responsiveness
-    maxHeight: '90vh', // Limit the height to 90% of the viewport height
-    overflow: 'auto', // Add scroll if content overflows
+    width: 'auto', 
+    maxWidth: '90vw', 
+    maxHeight: '90vh', 
+    overflow: 'auto', 
     bgcolor: 'background.paper',
     boxShadow: 24,
-    p: 4, // Padding around the content
-    borderRadius: 2, // Optional border-radius for aesthetics
+    p: 4, 
+    borderRadius: 2, 
   }}
 >
   {selectedCharacter && <CharacterSheet character={selectedCharacter} />}
