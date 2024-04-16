@@ -24,6 +24,7 @@ import ProfilePage from './components/social/ProfilePage';
 import FriendProfile from './components/social/friends/FriendProfile';
 import ChatComponent from './components/social/chat/ChatComponent';
 import CampaignsPage from './components/social/campaign/CampaignsPage';
+import WizardHelper from './styling/WizardHelper';
 
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
 function Home() {
   return <div>
   <HomePageContent />
+  <WizardHelper />
 </div>
 }
 
