@@ -1,12 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Box, Drawer, List, ListItem, Collapse, useMediaQuery, useTheme } from '@mui/material';
+import {
+    AppBar, Toolbar, Typography, Button, Menu, MenuItem, IconButton, Box, Drawer,
+    List, ListItem, Collapse, useMediaQuery, useTheme
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import UserMenu from './UserMenu';
-import logo from '../images/Arcanium-logo.png'; // Assuming your logo is in the images folder
+import logo from '../images/Arcanium-logo.png'; 
+import { motion, AnimatePresence } from 'framer-motion';
+
+const MotionMenu = forwardRef(({ children, in: open, onEnter, onExited, ...other }, ref) => (
+  <AnimatePresence>
+    {open && (
+      <motion.div
+        ref={ref}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={{
+          initial: {
+            opacity: 0,
+            scale: 0.95,
+            y: -20
+          },
+          animate: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: {
+              duration: 0.2,
+              ease: "easeInOut"
+            }
+          },
+          exit: {
+            opacity: 0,
+            scale: 0.95,
+            y: 20,
+            transition: {
+              duration: 0.15,
+              ease: "easeInOut"
+            }
+          }
+        }}
+        {...other}
+      >
+        {children}
+      </motion.div>
+    )}
+  </AnimatePresence>
+));
 
 function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -30,16 +75,14 @@ function Header() {
   };
 
   const toggleCompendium = (event) => {
-    // Stop event propagation to prevent the drawer toggle from being triggered
     event.stopPropagation();
     setOpenCompendium(!openCompendium);
   };
-  
 
   const activeStyle = {
     backgroundColor: theme.palette.secondary.light,
-    color: theme.palette.secondary.contrastText, 
-    borderRadius: '4px' 
+    color: theme.palette.secondary.contrastText,
+    borderRadius: '4px'
   };
 
   const drawer = (
@@ -100,9 +143,39 @@ function Header() {
             <Button color="inherit" component={NavLink} to="/dungeon" style={({ isActive }) => isActive ? activeStyle : undefined}>Dungeon</Button>
             <Button color="inherit" component={NavLink} to="/friends" style={({ isActive }) => isActive ? activeStyle : undefined}>Friends</Button>
             <Button color="inherit" component={NavLink} to="/campaigns" style={({ isActive }) => isActive ? activeStyle : undefined}>Campaigns</Button>
-            <Button color="inherit" onMouseEnter={handleMenuOpen}>
-              Compendium <ArrowDropDownIcon />
+            <Button
+              color="inherit"
+              aria-controls="compendium-menu"
+              aria-haspopup="true"
+              onClick={handleMenuOpen}
+              endIcon={<ArrowDropDownIcon />}
+            >
+              Compendium
             </Button>
+            <Menu
+              id="compendium-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              TransitionComponent={MotionMenu}
+            >
+              <MenuItem component={NavLink} to="/monsters" onClick={handleClose}>Monsters</MenuItem>
+              <MenuItem component={NavLink} to="/spells" onClick={handleClose}>Spells</MenuItem>
+              <MenuItem component={NavLink} to="/items" onClick={handleClose}>Items</MenuItem>
+              <MenuItem component={NavLink} to="/armor" onClick={handleClose}>Armor</MenuItem>
+              <MenuItem component={NavLink} to="/weapons" onClick={handleClose}>Weapons</MenuItem>
+              <MenuItem component={NavLink} to="/feats" onClick={handleClose}>Feats</MenuItem>
+              <MenuItem component={NavLink} to="/backgrounds" onClick={handleClose}>Backgrounds</MenuItem>
+            </Menu>
           </Box>
         )}
         <Drawer

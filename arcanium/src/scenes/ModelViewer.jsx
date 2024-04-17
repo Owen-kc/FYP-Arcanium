@@ -7,7 +7,7 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 const ModelViewer = ({ modelPath }) => {
   const CameraHelper = () => {
     const { camera } = useThree();
-    camera.position.set(0, 100, 50); // y to be higher
+    camera.position.set(90, 20, 150); // y to be higher
     camera.lookAt(0, 0, 0); 
     camera.updateProjectionMatrix();
     return null;
@@ -23,7 +23,6 @@ const ModelViewer = ({ modelPath }) => {
         
         <ambientLight intensity={1.3} />
 
-        {/* Use a SpotLight for focused illumination */}
         <spotLight
           position={[50, 100, 50]} // Adjust to illuminate more of the scene
           angle={0.3}
@@ -36,7 +35,6 @@ const ModelViewer = ({ modelPath }) => {
           shadow-camera-near={0.5}
         />
 
-        {/* Use a HemisphereLight for illumination from above */}
         <hemisphereLight
           skyColor={0xddeeff} // Light blue sky color
           groundColor={0x080820}

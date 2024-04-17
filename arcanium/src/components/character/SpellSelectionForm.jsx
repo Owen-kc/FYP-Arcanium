@@ -3,7 +3,7 @@ import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle } from '@mui/material';
+  DialogTitle, Tab, Tabs } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import APISearch from '../APISearch'; 
 import { spellcastingProgression } from '../utils/spellcastingProgression';
@@ -110,67 +110,61 @@ const handleSubmit = () => {
     ));
   };
 
+  const [selectedTab, setSelectedTab] = useState(0);
+
+const handleTabChange = (event, newValue) => {
+  setSelectedTab(newValue);
+};
+
   return (
-    <Box>
+    <Box sx={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: '800px' }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>Select Your Spells and Cantrips</Typography>
       
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <Accordion defaultExpanded>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="subtitle1">Cantrips (Select up to {cantripsLimit})</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <APISearch
-                apiEndpoint={`https://api.open5e.com/spells/?spell_lists=${character.class.toLowerCase()}&level_int=0`}
-                placeholder="Search for cantrips"
-                displayProps={['name', 'desc', 'level']}
-                enableSelection={true}
-                onItemSelect={(spell) => handleSelectSpell(spell, true)}
-              />
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Accordion defaultExpanded>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="subtitle1">Level 1 Spells (Select up to {spellsLimit})</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <APISearch
-                apiEndpoint={`https://api.open5e.com/spells/?spell_lists=${character.class.toLowerCase()}&level_int=1`}
-                placeholder="Search for level 1 spells"
-                displayProps={['name', 'desc', 'level']}
-                enableSelection={true}
-                onItemSelect={(spell) => handleSelectSpell(spell, false)}
-              />
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-      </Grid>
-      
+      <Tabs value={selectedTab} onChange={handleTabChange} centered>
+        <Tab label={`Cantrips (Select up to ${cantripsLimit})`} />
+        <Tab label={`Level 1 Spells (Select up to ${spellsLimit})`} />
+      </Tabs>
+  
+      {selectedTab === 0 && (
+        <APISearch
+          apiEndpoint={`https://api.open5e.com/spells/?spell_lists=${character.class.toLowerCase()}&level_int=0`}
+          placeholder="Search for cantrips"
+          displayProps={['name', 'desc', 'level']}
+          enableSelection={true}
+          onItemSelect={(spell) => handleSelectSpell(spell, true)}
+        />
+      )}
+      {selectedTab === 1 && (
+        <APISearch
+          apiEndpoint={`https://api.open5e.com/spells/?spell_lists=${character.class.toLowerCase()}&level_int=1`}
+          placeholder="Search for level 1 spells"
+          displayProps={['name', 'desc', 'level']}
+          enableSelection={true}
+          onItemSelect={(spell) => handleSelectSpell(spell, false)}
+        />
+      )}
+  
       {/* Section to display selected spells and cantrips */}
       <Box sx={{ mt: 2 }}>
         <Typography variant="h6">Selected Cantrips:</Typography>
         {renderSelectedSpells(selectedCantrips)}
-
+  
         <Typography variant="h6" sx={{ mt: 2 }}>Selected Spells:</Typography>
         {renderSelectedSpells(selectedSpells)}
       </Box>
-
-
+  
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
         <Button variant="contained" onClick={handleSubmit}>Complete Selection</Button>
       </Box>
-      
+  
       <Snackbar open={alertInfo.open} autoHideDuration={6000} onClose={() => setAlertInfo({ ...alertInfo, open: false })}>
-      <Alert onClose={() => setAlertInfo({ ...alertInfo, open: false })} severity={alertInfo.severity} sx={{ width: '100%' }}>
-        {alertInfo.message}
-      </Alert>
-    </Snackbar>
-
-    {/* Dialog for classes without spells */}
-    <Dialog
+        <Alert onClose={() => setAlertInfo({ ...alertInfo, open: false })} severity={alertInfo.severity} sx={{ width: '100%' }}>
+          {alertInfo.message}
+        </Alert>
+      </Snackbar>
+  
+      {/* Dialog for classes without spells */}
+      <Dialog
         open={openNoSpellsDialog}
         onClose={handleCloseNoSpellsDialog}
         aria-labelledby="alert-dialog-title"
@@ -188,9 +182,9 @@ const handleSubmit = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
     </Box>
   );
+  
 };
 
 

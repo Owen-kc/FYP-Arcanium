@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
+import { useTheme } from '@mui/material/styles';
+
 const wordVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { 
@@ -23,7 +25,9 @@ const letterVariants = {
   },
 };
 
-const AnimatedHeading = ({ text, show }) => {
+
+const AnimatedHeading = ({ text = '', show }) => {
+  const theme = useTheme();
   const controls = useAnimation();
 
   useEffect(() => {
@@ -34,10 +38,37 @@ const AnimatedHeading = ({ text, show }) => {
     }
   }, [show, controls]);
 
-  const words = text.split(' ');
+  const words = text.split(' ').filter(Boolean);
 
   return (
-    <motion.div initial="hidden" animate={controls} variants={wordVariants} style={{ fontSize: '4rem', color: '#FFF', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+    <motion.div
+      initial="hidden"
+      animate={controls}
+      variants={wordVariants}
+      style={{
+        fontSize: '4vw', // Responsive font size based on viewport width
+        fontWeight: theme.typography.h6.fontWeight,
+        fontFamily: theme.typography.fontFamily,
+        letterSpacing: theme.typography.h6.letterSpacing,
+        color: theme.palette.text.primary,
+        textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+      }}
+      // Apply responsive styles with breakpoints
+      sx={{
+        [theme.breakpoints.down('md')]: {
+          fontSize: '5.5vw',
+        },
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '7vw',
+        },
+        [theme.breakpoints.down('xs')]: {
+          fontSize: '9vw',
+        },
+      }}
+    >
       {words.map((word, index) => (
         <span key={index} style={{ whiteSpace: 'nowrap' }}>
           {word.split('').map((letter, index) => (
