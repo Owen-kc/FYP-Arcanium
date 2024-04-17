@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Grid, Paper } from '@mui/material';
+import { Box, Typography, Button, Grid, Card, CardContent, CardActions, RadioGroup, FormControlLabel, Radio, useTheme } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useTheme } from '@mui/material/styles';
 
 const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => {
   const [classDetails, setClassDetails] = useState({});
   const [equipmentChoices, setEquipmentChoices] = useState([]);
   const theme = useTheme();
-
 
   useEffect(() => {
     const fetchClassDetails = async () => {
@@ -17,7 +15,6 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
         const data = await response.json();
         setClassDetails(data);
         parseEquipmentChoices(data.equipment);
-        
       } catch (error) {
         console.error('Failed to fetch class details:', error);
       }
@@ -29,26 +26,30 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
   }, [character.class]);
 
   const parseEquipmentChoices = (equipmentString) => {
-    // Split the string into lines
     const equipmentLines = equipmentString.split('\n').filter(line => line.startsWith('*'));
     let choices = [];
-  
     equipmentLines.forEach((line) => {
-      // Check if the line contains choice groups like (*a*), (*b*)
       if (/\(\*[a-c]\*\)/.test(line)) {
-        // Extract the choices from the line
+        // Extract choices and remove the '(*a*)' notation
         const options = line.match(/\(\*\w\*\)\s([^*]+)(?=\s\(|$)/g)
-          .map(option => option.replace(/\(\*\w\*\)\s/, '').trim());
+          .map(option => option.replace(/\(\*\w\*\)\s/, '').trim())
+          .map(option => {
+            let formattedOption = option.replace(/^or\s+/i, '');
+            return formattedOption.charAt(0).toUpperCase() + formattedOption.slice(1);
+          });
+        // Join the options with ' or ' and add to the choices
         choices.push(options.join(' or '));
       } else {
-        const item = line.substring(2).trim(); 
+        // For items without options, just capitalize the first letter
+        let item = line.substring(2);
+        item = item.replace(/^or\s+/i, ''); 
+        item = item.charAt(0).toUpperCase() + item.slice(1);
         choices.push(item);
       }
     });
-  
-    // Update the state with the parsed choices
     setEquipmentChoices(choices);
   };
+  
 
   const handleEquipmentSelection = (index, value) => {
     setEquipmentChoices(prevChoices => prevChoices.map((choice, i) => 
@@ -57,21 +58,16 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
   };
 
   const handleSubmit = () => {
-    const updatedEquipmentChoices = [...equipmentChoices];
-    updateCharacter({
-      equipment: updatedEquipmentChoices
-    });
-  
-    console.log(updatedEquipmentChoices);
+    updateCharacter({ ...character, equipment: equipmentChoices });
     nextStep();
   };
 
   const renderEquipmentChoices = () => {
     return equipmentChoices.map((choice, index) => (
-      <Grid item xs={12} md={6} key={index}>
-        <Paper elevation={3} sx={{ padding: theme.spacing(2), backgroundColor: theme.palette.background.paper }}>
-          <FormControl component="fieldset" fullWidth>
-            <FormLabel component="legend" sx={{ color: theme.palette.text.primary }}>{`Equipment Choice ${index + 1}`}</FormLabel>
+      <Grid item xs={12} sm={6} key={index}>
+        <Card elevation={3} sx={{ padding: 2, margin: 2, backgroundColor: theme.palette.background.paper }}>
+          <CardContent>
+            <Typography variant="subtitle1">{`Equipment Choice ${index + 1}`}</Typography>
             <RadioGroup
               aria-label={`equipment-choice-${index}`}
               name={`equipment-choice-${index}`}
@@ -83,32 +79,44 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
                   value={option}
                   control={<Radio />}
                   label={option}
-                  sx={{ color: theme.palette.text.primary }}
                 />
               ))}
             </RadioGroup>
-          </FormControl>
-        </Paper>
+          </CardContent>
+          <CardActions>
+            {/* Future action buttons can be added here */}
+          </CardActions>
+        </Card>
       </Grid>
     ));
   };
 
   return (
-    <Box sx={{ flexGrow: 1, maxWidth: 800, margin: 'auto', padding: theme.spacing(3), color: theme.palette.text.primary }}>
-      <Typography variant="h4" gutterBottom align="center">
+    <Box sx={{ 
+      flexGrow: 1, 
+      maxWidth: 800, 
+      margin: 'auto', 
+      padding: 3, 
+      '@media (max-width:600px)': {
+        paddingLeft: '50px'  // Shifts content slightly to the right on mobile
+      }
+    }}>
+      <Typography variant="h4" gutterBottom align="center" sx={{ color: 'white' }}>
         Select Your Equipment
       </Typography>
-      <Grid container spacing={theme.spacing(3)} justifyContent="center">
+      <Typography variant="subtitle1" align="center" sx={{ mb: 2, color: 'white' }}>
+        As a <span style={{ fontWeight: 'bold', color: theme.palette.secondary.main }}>{character.class}</span>, you get the following equipment choices:
+      </Typography>
+      <Grid container spacing={2} justifyContent="center">
         {renderEquipmentChoices()}
       </Grid>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: theme.spacing(4) }}>
-        {prevStep && (
-          <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={prevStep} sx={{ borderColor: theme.palette.primary.main, color: theme.palette.text.primary }}>
-            Back
-          </Button>
-        )}
-        <Button variant="contained" endIcon={<ArrowForwardIcon />} onClick={handleSubmit} sx={{ backgroundColor: theme.palette.primary.main }}>
-          Next
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Button 
+          variant="contained" 
+          onClick={handleSubmit} 
+          sx={{ backgroundColor: theme.palette.primary.main }}
+        >
+          Select Equipment
         </Button>
       </Box>
     </Box>

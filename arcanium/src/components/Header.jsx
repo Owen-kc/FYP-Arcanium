@@ -9,7 +9,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import UserMenu from './UserMenu';
-import logo from '../images/Arcanium-logo.png'; 
+import logo from '../images/Arcanium-logo.png';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MotionMenu = forwardRef(({ children, in: open, onEnter, onExited, ...other }, ref) => (
@@ -95,7 +95,8 @@ function Header() {
       </Box>
       <List>
         <ListItem button component={NavLink} to="/" exact style={({ isActive }) => isActive ? activeStyle : undefined}>Home</ListItem>
-        <ListItem button component={NavLink} to="/create-character" style={({ isActive }) => isActive ? activeStyle : undefined}>Characters</ListItem>
+        <ListItem button component={NavLink} to="/create-character" style={({ isActive }) => isActive ? activeStyle : undefined}>Create Character</ListItem>
+        <ListItem button component={NavLink} to="/characters" style={({ isActive }) => isActive ? activeStyle : undefined}>My Characters</ListItem>
         <ListItem button component={NavLink} to="/dungeon" style={({ isActive }) => isActive ? activeStyle : undefined}>Dungeon</ListItem>
         <ListItem button component={NavLink} to="/friends" style={({ isActive }) => isActive ? activeStyle : undefined}>Friends</ListItem>
         <ListItem button component={NavLink} to="/campaigns" style={({ isActive }) => isActive ? activeStyle : undefined}>Campaigns</ListItem>
@@ -139,7 +140,8 @@ function Header() {
         {!isMobile && (
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
             <Button color="inherit" component={NavLink} to="/" style={({ isActive }) => isActive ? activeStyle : undefined}>Home</Button>
-            <Button color="inherit" component={NavLink} to="/create-character" style={({ isActive }) => isActive ? activeStyle : undefined}>Characters</Button>
+            <Button color="inherit" component={NavLink} to="/create-character" style={({ isActive }) => isActive ? activeStyle : undefined}>Create Character</Button>
+            <Button color="inherit" component={NavLink} to="/characters" style={({ isActive }) => isActive ? activeStyle : undefined}>My Characters</Button>
             <Button color="inherit" component={NavLink} to="/dungeon" style={({ isActive }) => isActive ? activeStyle : undefined}>Dungeon</Button>
             <Button color="inherit" component={NavLink} to="/friends" style={({ isActive }) => isActive ? activeStyle : undefined}>Friends</Button>
             <Button color="inherit" component={NavLink} to="/campaigns" style={({ isActive }) => isActive ? activeStyle : undefined}>Campaigns</Button>

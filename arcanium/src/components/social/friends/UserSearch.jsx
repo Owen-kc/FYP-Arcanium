@@ -3,20 +3,32 @@ import axios from 'axios';
 import { TextField, Button, List, Box, Paper, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import UserProfile from '../UserProfile';
+import CustomAlert from '../CustomAlert'; 
 
 const UserSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    severity: '',
+  });
 
   const handleSearch = async () => {
     try {
       const response = await axios.get(`/api/search?query=${searchTerm}`);
       const users = response.data.users || [];
       setResults(users);
+      setAlert({ open: false });
     } catch (error) {
       console.error('Error searching users:', error);
       setResults([]);
+      setAlert({ open: true, message: 'Failed to search users.', severity: 'error' });
     }
+  };
+
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
   };
 
   const listVariants = {
@@ -44,6 +56,7 @@ const UserSearch = () => {
           Search
         </Button>
       </Paper>
+      <CustomAlert open={alert.open} handleClose={handleCloseAlert} severity={alert.severity} message={alert.message} />
       <Grid container spacing={2} justifyContent="center">
         {results.map((user) => (
           <Grid item xs={12} sm={6} md={4} key={user._id}>

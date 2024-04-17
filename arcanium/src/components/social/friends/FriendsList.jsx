@@ -4,11 +4,17 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { List, CircularProgress, Typography, Card, CardContent, CardMedia, Box, Button } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom'; 
+import CustomAlert from '../CustomAlert'; 
 
 const FriendsList = () => {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    severity: '',
+  });
   const { user } = useAuth0();
   const navigate = useNavigate(); 
 
@@ -23,6 +29,7 @@ const FriendsList = () => {
       } catch (error) {
         console.error('Error fetching friends:', error);
         setError('Failed to load friends.');
+        setAlert({ open: true, message: 'Failed to load friends.', severity: 'error' });
       } finally {
         setLoading(false);
       }
@@ -44,9 +51,14 @@ const FriendsList = () => {
       navigate(`/chat?user=${user.sub}&friend=${friendId}`);
     } else {
       console.error("Error: Trying to open chat with oneself or missing IDs.");
+      setAlert({ open: true, message: 'Error: Trying to open chat with oneself or missing IDs.', severity: 'error' });
     }
   };
   
+
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography variant="body1" color="error">{error}</Typography>;
@@ -54,6 +66,7 @@ const FriendsList = () => {
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
       <Box width="100%" maxWidth={600}>
+        <CustomAlert open={alert.open} handleClose={handleCloseAlert} severity={alert.severity} message={alert.message} />
         <AnimatePresence>
           {friends.length > 0 ? (
             <List>

@@ -6,7 +6,6 @@ import CharacterSheet from '../../character/CharacterSheet';
 const CampaignDetails = ({ campaignId }) => {
   const [campaignDetails, setCampaignDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
 
@@ -16,10 +15,9 @@ const CampaignDetails = ({ campaignId }) => {
       try {
         const response = await axios.get(`/api/campaigns/details/${campaignId}`);
         setCampaignDetails(response.data);
-        setError('');
       } catch (error) {
         console.error('Failed to fetch campaign details:', error);
-        setError('Failed to load campaign details.');
+        alert('Failed to load campaign details. Please try again later.');
       } finally {
         setIsLoading(false);
       }
@@ -36,18 +34,17 @@ const CampaignDetails = ({ campaignId }) => {
       setIsCharacterModalOpen(true);
     } catch (error) {
       console.error('Failed to fetch character details:', error);
+      alert('Failed to load character details. Please try again later.');
     } finally {
       setIsLoading(false);
     }
   };
-  
   
   const handleCloseCharacterModal = () => {
     setIsCharacterModalOpen(false);
   };
 
   if (isLoading) return <CircularProgress />;
-  if (error) return <Typography variant="body1" color="error">{error}</Typography>;
   if (!campaignDetails) return <Box>No Campaign Details Available</Box>;
 
   return (
@@ -74,27 +71,27 @@ const CampaignDetails = ({ campaignId }) => {
         aria-describedby="modal-modal-description"
       >
         <Box
-  sx={{
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center', // Center items horizontally
-    justifyContent: 'center', // Center items vertically
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 'auto', 
-    maxWidth: '90vw', 
-    maxHeight: '90vh', 
-    overflow: 'auto', 
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4, 
-    borderRadius: 2, 
-  }}
->
-  {selectedCharacter && <CharacterSheet character={selectedCharacter} />}
-</Box>
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center', // Center items horizontally
+            justifyContent: 'center', // Center items vertically
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 'auto', 
+            maxWidth: '90vw', 
+            maxHeight: '90vh', 
+            overflow: 'auto', 
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4, 
+            borderRadius: 2, 
+          }}
+        >
+          {selectedCharacter && <CharacterSheet character={selectedCharacter} />}
+        </Box>
       </Modal>
     </Box>
   );

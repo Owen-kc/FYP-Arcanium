@@ -7,6 +7,8 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { motion } from 'framer-motion';
 import { fetchCharactersByUserId } from '../../FetchCharacters';
 import CharacterSheet from '../../character/CharacterSheet';
+import Alert from '@mui/material/Alert';
+
 
 const FriendProfile = () => {
   const theme = useTheme();
@@ -21,6 +23,8 @@ const FriendProfile = () => {
 
   const navigate = useNavigate();
   const goBack = () => navigate(-1);
+  const [alert, setAlert] = useState({ severity: '', message: '' });
+
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -28,7 +32,7 @@ const FriendProfile = () => {
         const response = await axios.get(`/api/profile/${decodedAuth0Id}`);
         setProfileData(response.data);
       } catch (error) {
-        console.error('Error fetching profile data:', error);
+        setAlert({ severity: 'error', message: 'Error fetching profile data.' });
       } finally {
         setLoading(false);
       }
@@ -78,6 +82,18 @@ const FriendProfile = () => {
   >
     <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" bgcolor={theme.palette.background.default}>
       <Box width="100%" maxWidth="600px" display="flex" flexDirection="column" alignItems="center" p={2} borderRadius={2}>
+
+        {/* Display the alert here */}
+      {alert.message && (
+        <Box my={2}>
+          <Alert 
+            severity={alert.severity}
+            onClose={() => setAlert({ severity: '', message: '' })}
+          >
+            {alert.message}
+          </Alert>
+        </Box>
+      )}
 
         {/* User Info Section with Back Arrow */}
         <Box position="relative" width="100%">

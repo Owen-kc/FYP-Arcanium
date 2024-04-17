@@ -25,6 +25,7 @@ import ChatComponent from './components/social/chat/ChatComponent';
 import CampaignsPage from './components/social/campaign/CampaignsPage';
 import WizardHelper from './styling/WizardHelper';
 import Footer from './components/Footer';
+import UserCharacters from './components/character/UserCharacters';
 
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
                 <Route path="/backgrounds" element={<Backgrounds />} />
                 <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
                 <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
+                <Route path="/characters" element={<UserCharacters />} />
                 <Route path="/friends" element={<FriendsPage />} />
                 <Route path="/friend-profile/:auth0Id" element={<FriendProfile />} />
                 <Route path="/chat" element={<ChatComponent />} />

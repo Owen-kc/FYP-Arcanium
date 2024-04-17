@@ -3,10 +3,13 @@ import { Box, Button, Typography, Accordion, AccordionSummary, AccordionDetails,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle, Tab, Tabs } from '@mui/material';
+  DialogTitle, Tab, Tabs, Link, IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import APISearch from '../APISearch'; 
 import { spellcastingProgression } from '../utils/spellcastingProgression';
+import WizardHelper from '../../styling/WizardHelper';
 
 const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) => {
   const [alertInfo, setAlertInfo] = useState({ open: false, message: '', severity: 'info' });
@@ -18,8 +21,13 @@ const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) 
   const [openNoSpellsDialog, setOpenNoSpellsDialog] = useState(false);
   const classesWithoutSpells = new Set(['Barbarian', 'Fighter', 'Rogue', 'Monk']);
   const classesWithDelayedSpellAccess = new Set(['Paladin', 'Ranger']);
+  const [wizardVisible, setWizardVisible] = useState(false);
+  const [snackbarTop, setSnackbarTop] = useState(0);
+
 
   useEffect(() => {
+
+    
     const classInfo = spellcastingProgression[character.class];
     if (classesWithoutSpells.has(character.class) || 
         (classesWithDelayedSpellAccess.has(character.class) && character.level < 2)) {
@@ -38,6 +46,18 @@ const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) 
   }
   }, [character.class, character.level]);
 
+  useEffect(() => {
+    // Automatically trigger WizardHelper when the component mounts
+    setWizardVisible(true);
+
+    // Optional: hide WizardHelper after a delay or based on other actions
+    const timer = setTimeout(() => {
+      setWizardVisible(false);
+    }, 10000); // Hide after 10 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Close non-spellcasting dialog, move to next step
   const handleCloseNoSpellsDialog = () => {
     setOpenNoSpellsDialog(false);
@@ -46,23 +66,23 @@ const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) 
 
   const handleSelectSpell = (spell, isCantrip) => {
     const alreadySelected = isCantrip
-    ? selectedCantrips.some(s => s.name === spell.name)
-    : selectedSpells.some(s => s.name === spell.name);
+        ? selectedCantrips.some(s => s.name === spell.name)
+        : selectedSpells.some(s => s.name === spell.name);
 
-  if (alreadySelected) {
-    setAlertInfo({ open: true, message: "This spell has already been selected.", severity: 'warning' });
-    return;
-  }
+    if (alreadySelected) {
+        triggerAlert("This spell has already been selected.", 'warning');
+        return;
+    }
 
-  if (isCantrip && selectedCantrips.length >= cantripsLimit) {
-    setAlertInfo({ open: true, message: "Cantrips limit reached.", severity: 'error' });
-    return;
-  }
+    if (isCantrip && selectedCantrips.length >= cantripsLimit) {
+        triggerAlert("Cantrips limit reached.", 'error');
+        return;
+    }
 
-  if (!isCantrip && selectedSpells.length >= spellsLimit) {
-    setAlertInfo({ open: true, message: "Spells limit reached.", severity: 'error' });
-    return;
-  }
+    if (!isCantrip && selectedSpells.length >= spellsLimit) {
+        triggerAlert("Spells limit reached.", 'error');
+        return;
+    }
 
     const newSpell = { ...spell, isCantrip }; // Include the isCantrip flag within the spell object
     if (isCantrip && selectedCantrips.length < cantripsLimit) {
@@ -70,10 +90,22 @@ const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) 
     } else if (!isCantrip && selectedSpells.length < spellsLimit) {
         setSelectedSpells(prev => [...prev, newSpell]);
     } else {
-        alert(`${isCantrip ? 'Cantrips' : 'Spells'} limit reached`);
+        triggerAlert(`${isCantrip ? 'Cantrips' : 'Spells'} limit reached`, 'error');
     }
-    setAlertInfo({ open: true, message: `${spell.name} selected!`, severity: 'success' });
+    triggerAlert(`${spell.name} selected!`, 'success');
 };
+
+const triggerAlert = (message, severity) => {
+  setAlertInfo({ open: true, message: message, severity: severity });
+
+  // Dynamically update the vertical position to be the middle of the user's current viewport
+  const viewportOffset = window.innerHeight / 2; 
+  const currentScrollPosition = window.scrollY + viewportOffset; 
+
+  setSnackbarTop(currentScrollPosition - 100); 
+};
+
+
 
 const handleSubmit = () => {
   updateCharacter({
@@ -116,20 +148,50 @@ const handleTabChange = (event, newValue) => {
   setSelectedTab(newValue);
 };
 
+const handleJumpToEnd = () => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+};
+
+const handleJumpToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
   return (
-    <Box sx={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: '800px' }}>
+    <Box sx={{
+      margin: 'auto',
+      maxWidth: '800px',
+      textAlign: 'center',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      '@media (max-width:600px)': { 
+        marginRight: 'auto', 
+        marginLeft: '50px'
+      }
+    }}>
       <Typography variant="h6" sx={{ marginBottom: 2 }}>Select Your Spells and Cantrips</Typography>
       
+      {wizardVisible && <WizardHelper />}  
+
       <Tabs value={selectedTab} onChange={handleTabChange} centered>
-        <Tab label={`Cantrips (Select up to ${cantripsLimit})`} />
-        <Tab label={`Level 1 Spells (Select up to ${spellsLimit})`} />
+        <Tab label={`Cantrips ( ${cantripsLimit})`} />
+        <Tab label={`Level 1 Spells ( ${spellsLimit})`} />
       </Tabs>
-  
+
+      <Link
+        component="button"
+        variant="body2"
+        onClick={handleJumpToEnd}
+        sx={{ mt: 1, display: 'block', textDecoration: 'underline', cursor: 'pointer' }}
+      >
+        Jump to end <IconButton size="small"><KeyboardArrowDownIcon /></IconButton>
+      </Link>
+      
+
       {selectedTab === 0 && (
         <APISearch
           apiEndpoint={`https://api.open5e.com/spells/?spell_lists=${character.class.toLowerCase()}&level_int=0`}
           placeholder="Search for cantrips"
-          displayProps={['name', 'desc', 'level']}
+          displayProps={[ 'desc', 'level']}
           enableSelection={true}
           onItemSelect={(spell) => handleSelectSpell(spell, true)}
         />
@@ -138,11 +200,21 @@ const handleTabChange = (event, newValue) => {
         <APISearch
           apiEndpoint={`https://api.open5e.com/spells/?spell_lists=${character.class.toLowerCase()}&level_int=1`}
           placeholder="Search for level 1 spells"
-          displayProps={['name', 'desc', 'level']}
+          displayProps={['desc', 'level']}
           enableSelection={true}
           onItemSelect={(spell) => handleSelectSpell(spell, false)}
         />
       )}
+
+      {/* Jump to top */}
+      <Link
+        component="button"
+        variant="body2"
+        onClick={handleJumpToTop}
+        sx={{ mt: 2, display: 'block', textDecoration: 'underline', cursor: 'pointer' }}
+      >
+        Jump to top <IconButton size="small"><KeyboardArrowUpIcon /></IconButton>
+      </Link>
   
       {/* Section to display selected spells and cantrips */}
       <Box sx={{ mt: 2 }}>
@@ -153,15 +225,32 @@ const handleTabChange = (event, newValue) => {
         {renderSelectedSpells(selectedSpells)}
       </Box>
   
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-        <Button variant="contained" onClick={handleSubmit}>Complete Selection</Button>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button variant="contained" onClick={handleSubmit} sx={{ minWidth: '200px' }}>Complete Selection</Button>
       </Box>
   
-      <Snackbar open={alertInfo.open} autoHideDuration={6000} onClose={() => setAlertInfo({ ...alertInfo, open: false })}>
-        <Alert onClose={() => setAlertInfo({ ...alertInfo, open: false })} severity={alertInfo.severity} sx={{ width: '100%' }}>
-          {alertInfo.message}
-        </Alert>
-      </Snackbar>
+      <Snackbar
+  open={alertInfo.open}
+  autoHideDuration={6000}
+  onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+  sx={{
+    position: 'fixed', // Fixed position relative to the viewport
+    top: `${snackbarTop}px`, 
+    left: '50%',
+    transform: 'translate(-50%, -50%)', 
+    width: 'auto',
+    maxWidth: '90%' 
+  }}
+>
+  <Alert 
+    onClose={() => setAlertInfo({ ...alertInfo, open: false })} 
+    severity={alertInfo.severity} 
+    sx={{ width: '100%' }}
+  >
+    {alertInfo.message}
+  </Alert>
+</Snackbar>
+
   
       {/* Dialog for classes without spells */}
       <Dialog
@@ -182,9 +271,10 @@ const handleTabChange = (event, newValue) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      
     </Box>
   );
-  
 };
 
 
