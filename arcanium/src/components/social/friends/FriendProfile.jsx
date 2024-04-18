@@ -187,18 +187,6 @@ const FriendProfile = () => {
   </Box>
 </Modal>
 
-        {/* Joined Campaigns Section Placeholder */}
-        <Card sx={{ mb: 2, bgcolor: theme.palette.background.paper, width: '100%', textAlign: 'center' }}>
-          <CardContent>
-            <Typography gutterBottom variant="h6" component="div" color={theme.palette.text.primary}>
-              Joined Campaigns
-            </Typography>
-            <Typography variant="body2" color={theme.palette.text.secondary}>
-              Placeholder for joined campaigns data...
-            </Typography>
-          </CardContent>
-        </Card>
-
         {/* Friends Section */}
         <Card sx={{ bgcolor: theme.palette.background.paper, width: '100%', textAlign: 'center' }}>
           <CardContent>
