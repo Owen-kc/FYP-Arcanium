@@ -11,10 +11,7 @@ import {
   DialogContent,
   DialogActions,
   DialogContentText,
-  FormControl,
-  InputLabel,
-  Select,
-  Checkbox,
+  IconButton,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ReplayIcon from "@mui/icons-material/Replay";
@@ -35,6 +32,8 @@ import Stack from "@mui/material/Stack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
 import { dungeonSystemMessage } from "./dungeonConfig";
+import MenuIcon from '@mui/icons-material/Menu';
+
 
 trefoil.register();
 
@@ -61,9 +60,7 @@ const ChatbotDungeon = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [conversationHistory, setConversationHistory] = useState([]);
   const messagesEndRef = useRef(null);
-  const [showSavedStories, setShowSavedStories] = useState(
-    window.innerWidth > 768
-  );
+  const [showSavedStories, setShowSavedStories] = useState(false);
   const [storyName, setStoryName] = useState("");
   const [isNamingDialogOpen, setIsNamingDialogOpen] = useState(false);
   const { user } = useAuth0();
@@ -88,6 +85,7 @@ const ChatbotDungeon = () => {
   const [selectedCharacterDetails, setSelectedCharacterDetails] =
     useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
+  
 
   useEffect(() => {
     scrollToBottom();
@@ -104,10 +102,21 @@ const ChatbotDungeon = () => {
   }, [activeStory]);
 
   useEffect(() => {
-    const handleResize = () => setShowSavedStories(window.innerWidth > 768);
+    const handleResize = () => {
+
+      setShowSavedStories(window.innerWidth >= 768);
+    };
+    
+    // Call once to set initial state based on current window size
+    handleResize();
+  
+    // Set up the event listener
     window.addEventListener("resize", handleResize);
+  
+    // Clean up the event listener
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -144,6 +153,10 @@ const ChatbotDungeon = () => {
 
   const promptForStoryName = () => {
     setIsNamingDialogOpen(true);
+  };
+
+  const toggleSavedStoriesVisibility = () => {
+    setShowSavedStories(!showSavedStories);
   };
 
   const handleCharacterSelection = (characterId) => {
@@ -223,39 +236,35 @@ const ChatbotDungeon = () => {
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    setIsAnimatingMessage(false); // End animating message
+    setIsAnimatingMessage(false);
   };
 
   const handlePromptSelection = (prompt) => {
     setSelectedLocation(prompt);
-    const formattedPrompt = `Your journey begins in ${prompt}`; // Ensure consistency
+    const formattedPrompt = `Your journey begins in ${prompt}`;
     setInitialPrompt(formattedPrompt);
   };
 
   const startAdventureWithPrompt = () => {
-    setIsPromptDialogOpen(false); // Close the dialog
+    setIsPromptDialogOpen(false); 
 
-    // First, find the selected character details
     const selectedCharacter = characters.find(
       (character) => character._id === selectedCharacterId
     );
 
-    // Construct a string with character details or a default message
     let characterDetailsMessage =
       "You embark on your journey alone, unbound by allegiance or legacy.";
     if (selectedCharacter) {
       characterDetailsMessage = `You are ${selectedCharacter.details.name}, a ${selectedCharacter.class} of ${selectedCharacter.race} origin, with a background in ${selectedCharacter.background}.`;
     }
 
-    // Determine the initial prompt or fallback message
     let adventureStartMessage = initialPrompt.trim()
       ? initialPrompt
       : "your journey begins in an unknown land...";
 
-    // Combine character details with the adventure start message
     let fullInitialMessage = `${characterDetailsMessage} ${adventureStartMessage}`;
 
-    // Send the combined message as a story action
+  
     sendMessage(fullInitialMessage, "story");
   };
 
@@ -334,7 +343,7 @@ const ChatbotDungeon = () => {
     }
 
     const actionIcon = getActionIcon(message.actionType);
-    const messageClass = isSaved ? "saved-message" : "active-message"; // Choose class based on saved status
+    const messageClass = isSaved ? "saved-message" : "active-message"; 
 
     return (
       <Box
@@ -381,39 +390,45 @@ const ChatbotDungeon = () => {
   );
 
   return (
-    <Box
-      className="chatbot-dungeon"
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        height: "100vh",
-        boxSizing: "border-box",
-      }}
-    >
-      <Box sx={{ width: "85%", display: "flex", flexDirection: "column" }}>
-        <Box
-          className="chatbot-messages"
-          sx={{
-            flexGrow: 1,
-            overflowY: "auto",
-            display: "flex",
-            flexDirection: "column",
-            padding: 2,
-          }}
-        >
-          {messages.map((message, index) => (
-            <Box key={index} sx={getMessageStyles(message)}>
-              {renderMessageContent(message, message.saved)}
-            </Box>
-          ))}
-          {isTyping && (
-            <Box
-              sx={{ margin: "10px auto", textAlign: "center" }}
-              dangerouslySetInnerHTML={renderTypingIndicator()}
-            />
-          )}
-          <div ref={messagesEndRef} />
-        </Box>
+    <Box className="chatbot-dungeon" sx={{ display: "flex", flexDirection: "row", height: "100vh", boxSizing: "border-box" }}>
+    {/* Toggle Button for showing/hiding saved stories */}
+    <IconButton
+  onClick={toggleSavedStoriesVisibility} 
+  color="primary"
+  aria-label="toggle stories visibility"
+  component="span"
+  sx={{
+    position: 'absolute',
+    top: 16, 
+    right: 16,
+    zIndex: 10 
+  }}
+>
+  <MenuIcon />
+</IconButton>
+
+
+    {/* Saved Stories Panel */}
+    {showSavedStories && (
+      <Box className="saved-stories" sx={{ width: "15%", overflowY: "auto", background: "#2a2a3b", color: "#fff", padding: '10px' }}>
+        {/* Dynamic content of saved stories */}
+      </Box>
+    )}
+
+    {/* Main Chat Content Area */}
+    <Box sx={{ flexGrow: 1, width: showSavedStories ? "85%" : "100%" }}>
+      {/* All your existing chat interface and components */}
+      <Box className="chatbot-messages" sx={{ flexGrow: 1, overflowY: "auto", display: "flex", flexDirection: "column", padding: 2 }}>
+        {messages.map((message, index) => (
+          <Box key={index} sx={getMessageStyles(message)}>
+            {renderMessageContent(message, message.saved)}
+          </Box>
+        ))}
+        {isTyping && (
+          <Box sx={{ margin: "10px auto", textAlign: "center" }} dangerouslySetInnerHTML={renderTypingIndicator()} />
+        )}
+        <div ref={messagesEndRef} />
+      </Box>
         {isReadOnlyMode ? (
           // If in Read-Only mode, display a button to return to the new story mode
           <Box
@@ -439,7 +454,6 @@ const ChatbotDungeon = () => {
             </Button>
           </Box>
         ) : (
-          // Else, display the action controls for interaction
           <Box
             className="action-controls"
             sx={{
@@ -466,9 +480,7 @@ const ChatbotDungeon = () => {
               value={userInput}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
-              // For the TextField and Send Button, consider both isTyping and isAnimatingMessage
               disabled={isAnimatingMessage}
-              // Disable text field while typing
               placeholder="What will you do next..."
               sx={{ flexGrow: 1, mr: 1 }}
               InputProps={{
@@ -483,7 +495,6 @@ const ChatbotDungeon = () => {
               variant="contained"
               endIcon={<SendIcon />}
               onClick={() => sendMessage(userInput, actionType)}
-              // For the TextField and Send Button, consider both isTyping and isAnimatingMessage
               disabled={isAnimatingMessage}
               sx={{ mr: 1 }}
             >
@@ -506,7 +517,7 @@ const ChatbotDungeon = () => {
           savedStories={savedStories}
           activeStoryId={activeStoryId}
           loadStory={loadStory}
-          isAnimatingMessage={isAnimatingMessage} // Add this line
+          isAnimatingMessage={isAnimatingMessage}
         />
       )}
       <Dialog

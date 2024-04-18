@@ -174,53 +174,66 @@
 }
 
 
-@media (max-width: 768px) {
-  .chatbot-dungeon {
-    top: 50px;
-  }
-
-  @media (max-width: 768px) {
-    .action-controls button {
-      margin-right: 8px;
-    }
-
-    .chatbot-messages {
-      padding: 0 10px;
-    }
-
-    .action-controls button {
-      padding: 5px 10px;
-      font-size: 0.8rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .action-controls button {
-      margin-right: 5px;
-    }
-
-    .chatbot-messages {
-      padding: 0 5px;
-    }
-
-    .action-controls button {
-      padding: 4px 8px;
-      font-size: 0.75rem;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .chatbot-dungeon {
-      flex-direction: column;
-    }
-
-    .chatbot-messages, .saved-stories {
-      width: 100%;
-    }
-
-    .saved-stories {
-      height: 50vh;
-      overflow-y: auto;
-    }
+/* Hide the toggle button on desktops */
+@media (min-width: 768px) {
+  .toggle-stories-button {
+    display: none;
   }
 }
+
+/* Ensure the saved stories are always visible on desktop */
+@media (min-width: 768px) {
+  .saved-stories {
+    display: block; 
+    width: 15%; 
+  }
+}
+
+@media (max-width: 768px) {
+  .chatbot-dungeon {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0; /* Consistent padding around elements */
+  }
+
+  .chatbot-messages, .saved-stories {
+    width: 100%; 
+    padding: 0 5px;
+  }
+
+  .saved-stories {
+    height: 200px; 
+    overflow-y: auto; 
+    display: none;
+    padding: 10px;
+  }
+
+  .show-stories-button {
+    display: none; 
+    margin: 10px;
+    background-color: #525265;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatbot-messages {
+    padding: 0; 
+  }
+
+  .action-controls button, .action-controls input, .action-controls select {
+    font-size: 14px;
+    padding: 10px; 
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .message {
+    margin-left: 20px; 
+  }
+}
+
