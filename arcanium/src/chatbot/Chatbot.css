@@ -16,7 +16,7 @@
 
 /* Header styles */
 .chat-header {
-  background-color: #6a4fa5;
+  background-color: #5f1bf1;
   color: #ffffff;
   padding: 10px 16px;
   border-top-left-radius: 10px;
@@ -50,7 +50,20 @@
 }
 
 .typing-indicator {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 24px;
+  background: transparent; 
+}
+
+.typing-indicator span {
+  animation: blink 1.4s infinite both;
+  color: purple;
+  font-weight: bold;
+  font-size: 24px;
+  margin: 0 2px; 
+  background: transparent; 
 }
 
 .chat-footer .cs-sendButton {

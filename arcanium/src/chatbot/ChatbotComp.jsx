@@ -8,23 +8,15 @@ import {
   MessageInput
 } from '@chatscope/chat-ui-kit-react';
 import './Chatbot.css';
-import {Box, Fab, Typography} from '@mui/material';
+import {Box, Fab, Typography, CircularProgress} from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import CloseIcon from '@mui/icons-material/Close';
-import {trefoil} from 'ldrs';
 import { chatbotSystemMessage } from './chatbotConfig';
 
 
 
 // ******** IMPORTANT ******** PUT API KEY HERE ******** IMPORTANT ********
 const API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
-
-trefoil.register()
-const renderTypingIndicator = () => {
-  return {
-    __html: `<l-trefoil size="20" stroke="4" stroke-length="0.05" bg-opacity="0.1" speed="1.4" color="purple"></l-trefoil>`
-  };
-};
 
 const systemMessage = chatbotSystemMessage;
 
@@ -111,7 +103,7 @@ const ChatbotComp = () => {
       {isOpen && (
         <MainContainer className="chatbot-container">
           <Box className="chat-header">
-            <Typography variant="h9" component="div" sx={{ flexGrow: 1, color: 'common.white' }}>
+            <Typography variant="h9" component="div" sx={{ flexGrow: 1}}>
               Arcanium Advisor
             </Typography>
           </Box>
@@ -124,8 +116,14 @@ const ChatbotComp = () => {
                   direction: msg.sender === "Arcanium Advisor" ? "incoming" : "outgoing"
                 }} key={i} />
               ))}
-              {isTyping && (
-  <div className="typing-indicator" dangerouslySetInnerHTML={renderTypingIndicator()}></div>
+{isTyping && (
+  <Box sx={{
+    display: 'flex',
+    justifyContent: 'center',
+    p: 1
+  }}>
+    <CircularProgress size={24} color="secondary" />
+  </Box>
 )}
             </MessageList>
             <MessageInput placeholder="Type message here" onSend={handleSend} />

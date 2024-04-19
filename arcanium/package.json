@@ -56,10 +56,11 @@
   },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"node backend/server.js\"",
+    "start-backend": "node backend/server.js",
     "build": "react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject"
-  },
+},
   "eslintConfig": {
     "extends": [
       "react-app",
