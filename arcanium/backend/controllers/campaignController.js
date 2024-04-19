@@ -1,6 +1,6 @@
 const UserProfile = require('../models/ProfileSchema');
 const Character = require('../models/CharacterSchema'); 
-const Campaign = require('../models/campaignSchema');
+const Campaign = require('../models/CampaignSchema');
 
 // Create a new campaign
 exports.createCampaign = async (req, res) => {
