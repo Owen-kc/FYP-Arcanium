@@ -32,6 +32,13 @@ const io = new Server(server, {
   },
 });
 
+const corsOptions = {
+  origin: ['https://fyp-arcanium-1.onrender.com', 'http://localhost:3000'], // Replace 'yourdomain.com' with your actual domain
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+
+
 connectDB();
 
 app.use(cors());
