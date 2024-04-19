@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { Button, TextField, Box } from '@mui/material';
 import axios from 'axios';
+import CustomAlert from '../CustomAlert';
 
 const CreateCampaignForm = ({ userId, onCampaignCreated }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState('');
+    const [alert, setAlert] = useState({
+        open: false,
+        message: '',
+        severity: ''
+    });
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -20,17 +26,21 @@ const CreateCampaignForm = ({ userId, onCampaignCreated }) => {
             if (response.data && response.data._id) {
                 onCampaignCreated(response.data._id);
             } else {
-                setError('Failed to get campaign ID after creation.');
+                setAlert({ open: true, message: 'Failed to get campaign ID after creation.', severity: 'error' });
             }
         } catch (error) {
             console.error('Failed to create campaign', error);
-            setError('Failed to create campaign.');
+            setAlert({ open: true, message: 'Failed to create campaign.', severity: 'error' });
         }
+    };
+
+    const handleCloseAlert = () => {
+        setAlert({ ...alert, open: false });
     };
 
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <CustomAlert open={alert.open} handleClose={handleCloseAlert} severity={alert.severity} message={alert.message} />
             <TextField
                 margin="normal"
                 required

@@ -8,15 +8,13 @@ function MonsterDisplay({ monsterData }) {
             <div className="title">{monsterData.name}</div>
             <div className="subheading">{monsterData.size}, {monsterData.alignment}</div>
 
-            {/* Display basic attributes */}
             <div className="text">Armor Class: {monsterData.armor_class} ({monsterData.armor_desc})</div>
             <div className="text">Hit Points: {monsterData.hit_points}</div>
             <div className="text">
                 Speed:
-                {Object.entries(monsterData.speed).map(([key, value], index) => (
+                {monsterData.speed && Object.entries(monsterData.speed).map(([key, value], index, array) => (
                     <span key={key}>
-                        {key}: {value} ft.
-                        {index !== Object.keys(monsterData.speed).length - 1 ? ', ' : ''}
+                        {key}: {value} ft.{index < array.length - 1 ? ', ' : ''}
                     </span>
                 ))}
             </div>
@@ -29,46 +27,40 @@ function MonsterDisplay({ monsterData }) {
                 ))}
             </div>
 
-            {/* Display skills */}
             <div className="text">
                 Skills:
-                {Object.entries(monsterData.skills).map(([key, value], index) => (
+                {monsterData.skills && Object.entries(monsterData.skills).map(([key, value], index, array) => (
                     <span key={key}>
-                        {key}: +{value}
-                        {index !== Object.keys(monsterData.skills).length - 1 ? ', ' : ''}
+                        {key}: +{value}{index < array.length - 1 ? ', ' : ''}
                     </span>
                 ))}
             </div>
 
-            {/* Damage Resistances, Immunities etc, more added similarly*/}
             {monsterData.damage_resistances && <div className="text">Damage Resistances: {monsterData.damage_resistances}</div>}
 
-            {/* Display special traits */}
-            {monsterData.special_abilities && monsterData.special_abilities.map((ability) => (
-                <div key={ability.name}>
+            {monsterData.special_abilities && monsterData.special_abilities.map((ability, index) => (
+                <div key={index}>
                     <div className="category">{ability.name}</div>
                     <div className="text">{ability.desc}</div>
                 </div>
             ))}
 
-            {/* Display actions */}
             {monsterData.actions && (
                 <div>
                     <div className="category">ACTIONS</div>
-                    {monsterData.actions.map((action) => (
-                        <div key={action.name}>
+                    {monsterData.actions.map((action, index) => (
+                        <div key={index}>
                             <div className="text">{action.name}: {action.desc}</div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Display legendary actions */}
             {monsterData.legendary_actions && (
                 <div>
                     <div className="category">LEGENDARY ACTIONS</div>
-                    {monsterData.legendary_actions.map((action) => (
-                        <div key={action.name}>
+                    {monsterData.legendary_actions.map((action, index) => (
+                        <div key={index}>
                             <div className="text">{action.name}: {action.desc}</div>
                         </div>
                     ))}

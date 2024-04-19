@@ -1,7 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {Box, Button, Slider, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Grid, Paper,} from "@mui/material";
 import {calculatePointCost, calculateModifier, rollSingleAbilityScore,} from "../utils/dndUtils";
 import Dice from "react-dice-complete";
+import WizardHelper from '../../styling/WizardHelper';
 
 const AbilityScoresForm = ({ character, updateCharacter, nextStep, prevStep }) => {
   const [method, setMethod] = useState("pointBuy");
@@ -9,6 +10,16 @@ const AbilityScoresForm = ({ character, updateCharacter, nextStep, prevStep }) =
   const diceRef = useRef(null);
   const [rolling, setRolling] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false); // State to track if the user has confirmed their choices
+  const [wizardVisible, setWizardVisible] = useState(false);
+
+  useEffect(() => {
+    // Show WizardHelper when the component mounts and hide after a delay
+    setWizardVisible(true);
+    const timer = setTimeout(() => {
+      setWizardVisible(false);
+    }, 10000); // Hide after 10 seconds
+    return () => clearTimeout(timer);
+  }, []);
 
   // Initialize a sequence for rolling
   const rollSequence = [
@@ -126,7 +137,9 @@ const AbilityScoresForm = ({ character, updateCharacter, nextStep, prevStep }) =
   };
 
   return (
-    <Paper elevation={3} style={{ padding: "20px", margin: "20px" }}>
+    <Paper elevation={3} sx={{ padding: "20px", margin: "20px", '@media (max-width:600px)': { marginLeft: '60px' } }}>
+
+      {wizardVisible && <WizardHelper />}  
       {/* Components */}
       <Typography
         variant="h6"
@@ -222,19 +235,17 @@ const AbilityScoresForm = ({ character, updateCharacter, nextStep, prevStep }) =
         ))}
       </Grid>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-        <Button variant="contained" color="primary" onClick={prevStep}>
-          Previous
-        </Button>
-        <Button 
-          variant="contained" 
-          color="secondary" 
-          onClick={handleConfirmation}
-          disabled={isConfirmed} // Disable button after confirmation
-        >
-          {isConfirmed ? 'Confirmed' : 'Confirm & Continue'}
-        </Button>
-      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+  <Button 
+    variant="contained" 
+    color="secondary" 
+    onClick={handleConfirmation}
+    disabled={isConfirmed} // Disable button after confirmation
+  >
+    {isConfirmed ? 'Confirmed' : 'Confirm & Continue'}
+  </Button>
+</Box>
+
 
       {method === "pointBuy" && (
         <Typography style={{ marginTop: "20px", textAlign: "center" }}>

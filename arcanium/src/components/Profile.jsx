@@ -1,42 +1,52 @@
 import React from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
-import { DialogContent, DialogTitle, DialogActions, Button } from '@mui/material';
-import axios from 'axios'; 
+import { DialogContent, DialogTitle, Card, CardContent, Avatar, Typography, Table, TableBody, TableCell, TableRow, Box } from '@mui/material';
 
-const Profile = ({ handleClose }) => {
-    const { user, getAccessTokenSilently } = useAuth0();
+const Profile = () => {
+    const { user } = useAuth0();
 
-    const handleAcknowledge = async () => {
-        try {
-            const token = await getAccessTokenSilently();
-            await axios.post('/api/user/profile', user, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            handleClose();
-        } catch (error) {
-            console.error('Error saving user profile:', error);
-        }
-    };
+    // Prepare user data for display
+    const userData = Object.entries(user).filter(([key, value]) => key !== 'picture' && typeof value !== 'object');
 
     return (
         <>
             <DialogTitle>User Profile</DialogTitle>
             <DialogContent>
-                <article>
-                    {user?.picture && <img src={user.picture} alt={user?.name} />}
-                    <h2>{user?.name}</h2>
-                    <ul>
-                        {Object.keys(user).map((objKey, i) => (
-                            <li key={i}>{`${objKey}: ${user[objKey]}`}</li>
-                        ))}
-                    </ul>
-                </article>
+                <Card sx={{ maxWidth: 345, mx: 'auto', textAlign: 'center' }}>
+                    <Box sx={{ p: 2 }}>
+                        {user?.picture && (
+                            <Avatar
+                                src={user.picture}
+                                alt={user?.name}
+                                sx={{ width: 100, height: 100, margin: 'auto' }}
+                            />
+                        )}
+                    </Box>
+                    <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                            {user?.name}
+                        </Typography>
+                        <Table>
+                            <TableBody>
+                                {userData.map(([key, value], index) => (
+                                    <TableRow key={index}>
+                                        <TableCell component="th" scope="row">
+                                            <Typography variant="subtitle2">
+                                                {key.replace(/_/g, ' ')}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Typography variant="body2">
+                                                {value}
+                                            </Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={handleAcknowledge}>Acknowledge/Accept</Button>
-            </DialogActions>
         </>
     );
 };

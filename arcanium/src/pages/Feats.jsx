@@ -8,7 +8,7 @@ function Feats() {
             <APISearch 
                 apiEndpoint="https://api.open5e.com/v1/feats/"
                 placeholder="Search for a feat" 
-                displayProps={['name', 'desc', 'prerequisite']}
+                displayProps={['prerequisite']}
                 filters={{}} 
             />
         </Box>

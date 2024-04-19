@@ -15,7 +15,8 @@ import {
   useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import CampaignDetails from './CampaignDetails'; 
+import CampaignDetails from './CampaignDetails';
+import CustomAlert from '../CustomAlert'; 
 
 const MyCampaigns = ({ userId }) => {
   const theme = useTheme();
@@ -25,6 +26,11 @@ const MyCampaigns = ({ userId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
   const [openDetails, setOpenDetails] = useState(false);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    severity: ''
+  });
 
   useEffect(() => {
     const fetchMyCampaigns = async () => {
@@ -34,6 +40,7 @@ const MyCampaigns = ({ userId }) => {
         setCampaigns(response.data);
       } catch (error) {
         console.error('Failed to fetch campaigns:', error);
+        setAlert({ open: true, message: 'Failed to fetch campaigns.', severity: 'error' });
       } finally {
         setIsLoading(false);
       }
@@ -47,6 +54,10 @@ const MyCampaigns = ({ userId }) => {
     setOpenDetails(true);
   };
 
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
+
   if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100px">
@@ -57,6 +68,7 @@ const MyCampaigns = ({ userId }) => {
 
   return (
     <Box>
+      <CustomAlert open={alert.open} handleClose={handleCloseAlert} severity={alert.severity} message={alert.message} />
       <List>
         {campaigns.length > 0 ? (
           campaigns.map((campaign) => (

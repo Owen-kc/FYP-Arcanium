@@ -3,11 +3,16 @@ import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { CircularProgress, Typography, Card, CardContent, CardMedia, Button, Box } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
+import CustomAlert from '../CustomAlert';  
 
 const FriendRequestsList = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    severity: '',
+  });
   const { user } = useAuth0();
 
   useEffect(() => {
@@ -16,9 +21,10 @@ const FriendRequestsList = () => {
       try {
         const response = await axios.get(`/api/friends/incoming-requests/${user.sub}`);
         setRequests(response.data);
+        setAlert(currentAlert => ({ ...currentAlert, open: false }));
       } catch (error) {
         console.error('Error fetching friend requests:', error);
-        setError('Failed to load friend requests.');
+        setAlert({ open: true, message: 'Failed to load friend requests.', severity: 'error' });
       } finally {
         setLoading(false);
       }
@@ -33,18 +39,23 @@ const FriendRequestsList = () => {
     try {
       await axios.post(`/api/friends/${action}-request`, { requestId });
       setRequests(requests.filter(request => request.id !== requestId));
+      setAlert({ open: true, message: `Friend request ${action === 'accept' ? 'accepted' : 'rejected'}.`, severity: 'success' });
     } catch (error) {
       console.error(`Error ${action}ing friend request:`, error);
-      // remember, implement a more user-friendly error handling strategy
+      setAlert({ open: true, message: `Failed to ${action} friend request.`, severity: 'error' });
     }
   };
 
+  const handleCloseAlert = () => {
+    setAlert({ ...alert, open: false });
+  };
+
   if (loading) return <Box display="flex" justifyContent="center"><CircularProgress /></Box>;
-  if (error) return <Typography variant="body1" color="error" textAlign="center">{error}</Typography>;
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center">
       <Box width="100%" maxWidth={600}>
+        <CustomAlert open={alert.open} handleClose={handleCloseAlert} severity={alert.severity} message={alert.message} />
         <AnimatePresence>
           {requests.length > 0 ? requests.map((request) => (
             <motion.div
@@ -61,21 +72,21 @@ const FriendRequestsList = () => {
                 cursor: 'pointer',
                 boxShadow: 3,
                 padding: '16px',
-                backgroundColor: 'rgba(52,58,64,255)', // Dark background
-                borderRadius: '16px', // Rounded corners
+                backgroundColor: 'rgba(52,58,64,255)',
+                borderRadius: '16px',
                 '&:hover': {
                   boxShadow: 6,
                 },
-                color: 'white', 
-                '.MuiButton-contained': { 
+                color: 'white',
+                '.MuiButton-contained': {
                   backgroundColor: '#17a2b8',
                   color: 'white',
                   '&:hover': {
-                    backgroundColor: '#138496', 
+                    backgroundColor: '#138496',
                   },
                 },
-                '.MuiButton-outlined': { 
-                  borderColor: '#f50057', 
+                '.MuiButton-outlined': {
+                  borderColor: '#f50057',
                   color: '#f50057',
                   '&:hover': {
                     borderColor: '#c51162',

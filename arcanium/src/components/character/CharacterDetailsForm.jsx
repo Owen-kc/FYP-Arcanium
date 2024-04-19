@@ -3,6 +3,7 @@ import { Box, TextField, Button, Typography, Grid, Slider, Snackbar, Avatar, Tog
 import Alert from '@mui/material/Alert';
 import { HexColorPicker } from "react-colorful";
 import axios from 'axios';
+import { useTheme } from '@mui/material/styles';
 
 const defaultAvatarUrl = ''; 
 const alignments = [
@@ -27,6 +28,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const [selectedAlignment, setSelectedAlignment] = useState(character.details.alignment || '');
   const [imageFile, setImageFile] = useState(null);
   const [imageKey, setImageKey] = useState(character.details.imageKey || '');
+  const theme = useTheme();
 
 
   const handleChange = (e) => {
@@ -70,26 +72,26 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   };
 
   const handleImageChange = (e) => {
-    if (e.target.files.length) {
-      const file = e.target.files[0];
-      if (file.size > 2097152) {
-        setSnackbarMessage('Image size should not exceed 2MB.');
-        setOpenSnackbar(true);
-        return;
-      }
-      if (!file.type.match('image.*')) {
-        setSnackbarMessage('Please select a valid image file.');
-        setOpenSnackbar(true);
-        return;
-      }
-      setImageFile(file);
-      const imageUrl = URL.createObjectURL(file);
-      setDetails((prevDetails) => ({
-        ...prevDetails,
-        image: imageUrl, // Set the image URL to the locally generated URL
-      }));
+  if (e.target.files.length) {
+    const file = e.target.files[0];
+    if (file.size > 2097152) {
+      setSnackbarMessage('Image size should not exceed 2MB.');
+      setOpenSnackbar(true);
+      return;
     }
-  };
+    if (!file.type.match('image.*')) {
+      setSnackbarMessage('Please select a valid image file.');
+      setOpenSnackbar(true);
+      return;
+    }
+    setImageFile(file);
+    const imageUrl = URL.createObjectURL(file);
+    setDetails((prevDetails) => ({
+      ...prevDetails,
+      image: imageUrl, // Immediately update the local display
+    }));
+  }
+};
 
   const fetchAndSetImageUrl = async (objectKey) => {
     try {
@@ -150,153 +152,161 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#FFFFFF' }}>
-        Character Details
-      </Typography>
-
-      <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Avatar
-          src={details.imageUrl || defaultAvatarUrl}
-          alt="Character"
-          sx={{ width: 150, height: 150, mb: 2 }} // Set size of the avatar
-        />
-        <input
-          accept="image/*"
-          id="character-image-upload"
-          type="file"
-          onChange={handleImageChange}
-          style={{ display: 'none' }}
-        />
-        <label htmlFor="character-image-upload">
-          <Button variant="contained" color="primary" component="span">
-            Upload Image
-          </Button>
-        </label>
-      </Box>
-
-      <TextField
-        margin="normal"
-        fullWidth
-        id="name"
-        label="Name"
-        name="name"
-        autoComplete="name"
-        autoFocus
-        value={details.name || ''}
-        onChange={handleChange}
-      />
-      <TextField
-        margin="normal"
-        fullWidth
-        id="backstory"
-        label="Backstory"
-        name="backstory"
-        autoComplete="backstory"
-        multiline
-        rows={4}
-        value={details.backstory || ''}
-        onChange={handleChange}
-      />
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <Typography gutterBottom>Height ({formatHeight(details.height || 60)})</Typography>
-          <Slider
-            value={typeof details.height === 'number' ? details.height : 60}
-            onChange={(e, newValue) => handleSliderChange('height', newValue)}
-            aria-labelledby="height-slider"
-            valueLabelDisplay="auto"
-            valueLabelFormat={formatHeight}
-            min={48} // 4 feet
-            max={84} // 7 feet
-          />
-        </Grid>
-
-
-        <Grid item xs={12} sm={6}>
-          <Typography gutterBottom>Weight ({details.weight || 100} lbs)</Typography>
-          <Slider
-            value={typeof details.weight === 'number' ? details.weight : 100}
-            onChange={(e, newValue) => handleSliderChange('weight', newValue)}
-            aria-labelledby="weight-slider"
-            valueLabelDisplay="auto"
-            min={50} 
-            max={300} 
-          />
-        </Grid>
-
-        {/* Color pickers */}
-        <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#FFFFFF' }}>
-            Hair Color
-          </Typography>
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <HexColorPicker color={hairColor} onChange={setHairColor} />
-          </Box>
-        </Grid>
-
-        <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#FFFFFF'}}>
-            Eye Color
-          </Typography>
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <HexColorPicker color={eyeColor} onChange={setEyeColor} />
-          </Box>
-        </Grid>
-        {/* Alignment selection */}
-        <Grid item xs={12} sx={{ textAlign: 'center' }}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: '#FFFFFF' }}>
-            Choose Your Alignment
-          </Typography>
-          <ToggleButtonGroup
-            value={selectedAlignment}
-            exclusive
-            onChange={handleAlignmentChange}
-            aria-label="alignment"
+    <Box sx={{
+      mt: 2,
+      '@media (max-width:600px)': {
+        paddingLeft: '70px', // Shifts entire content slightly to the right on mobile
+      }
+    }}>
+      <Box 
+        component="form" 
+        onSubmit={handleSubmit} 
         sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 1,
-          color: '#FFFFFF',
-          
-          '& .MuiToggleButtonGroup-grouped': {
-            margin: theme => theme.spacing(0.5),
-            border: 0,
-            '&.Mui-selected, &.Mui-selected:hover': {
-              color: theme => theme.palette.common.white,
-              backgroundColor: theme => theme.palette.primary.main,
-            },
-          },
+          p: 3,
+          backgroundColor: '#343a40', // Dark theme for the form background
+          color: '#FFFFFF', 
+          maxWidth: 800, 
+          margin: 'auto',
+          borderRadius: 1,
         }}
       >
-        {alignments.map((alignment) => (
-          <ToggleButton key={alignment} value={alignment} aria-label={alignment}>
-            {alignment}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
+        <Typography variant="h4" gutterBottom sx={{  color: '#FFFFFF' }}>
+          Character Details
+        </Typography>
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+          <Avatar
+            src={details.image || defaultAvatarUrl}
+            alt="Character"
+            sx={{ width: 150, height: 150, mb: 2 }} // Set size of the avatar
+          />
+          <input
+            accept="image/*"
+            id="character-image-upload"
+            type="file"
+            onChange={handleImageChange}
+            style={{ display: 'none' }}
+          />
+          <label htmlFor="character-image-upload">
+            <Button variant="contained" color="primary" component="span">
+              Upload Image
+            </Button>
+          </label>
+        </Box>
+
+        <TextField
+          margin="normal"
+          fullWidth
+          id="name"
+          label="Name"
+          name="name"
+          autoComplete="name"
+          autoFocus
+          value={details.name || ''}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="normal"
+          fullWidth
+          id="backstory"
+          label="Backstory"
+          name="backstory"
+          autoComplete="backstory"
+          multiline
+          rows={4}
+          value={details.backstory || ''}
+          onChange={handleChange}
+        />
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography gutterBottom>Height ({formatHeight(details.height || 60)})</Typography>
+            <Slider
+              value={typeof details.height === 'number' ? details.height : 60}
+              onChange={(e, newValue) => handleSliderChange('height', newValue)}
+              aria-labelledby="height-slider"
+              valueLabelDisplay="auto"
+              valueLabelFormat={formatHeight}
+              min={48} // 4 feet
+              max={84} // 7 feet
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <Typography gutterBottom>Weight ({details.weight || 100} lbs)</Typography>
+            <Slider
+              value={typeof details.weight === 'number' ? details.weight : 100}
+              onChange={(e, newValue) => handleSliderChange('weight', newValue)}
+              aria-labelledby="weight-slider"
+              valueLabelDisplay="auto"
+              min={50} 
+              max={300} 
+            />
+          </Grid>
+
+          {/* Color pickers */}
+          <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
+            <Typography variant="h6" gutterBottom sx={{  color: '#FFFFFF' }}>
+              Hair Color
+            </Typography>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              <HexColorPicker color={hairColor} onChange={setHairColor} />
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 2 }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#FFFFFF' }}>
+              Eye Color
+            </Typography>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              <HexColorPicker color={eyeColor} onChange={setEyeColor} />
+            </Box>
+          </Grid>
+          {/* Alignment selection */}
+          <Grid item xs={12} sx={{ textAlign: 'center' }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#FFFFFF' }}>
+              Choose Your Alignment
+            </Typography>
+            <ToggleButtonGroup
+  value={selectedAlignment}
+  exclusive
+  onChange={handleAlignmentChange}
+  aria-label="alignment"
+  sx={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: 1,
+    '& .MuiToggleButtonGroup-grouped': {
+      margin: theme => theme.spacing(0.5),
+      border: 0,
+      color: '#FFFFFF', 
+      '&.Mui-selected, &.Mui-selected:hover': {
+        color: '#FFFFFF', 
+        backgroundColor: theme => theme.palette.primary.main,
+      },
+    },
+  }}
+>
+  {alignments.map((alignment) => (
+    <ToggleButton key={alignment} value={alignment} aria-label={alignment} sx={{ color: '#FFFFFF' }}> 
+      {alignment}
+    </ToggleButton>
+  ))}
+</ToggleButtonGroup>
+          </Grid>
         </Grid>
-      </Grid>
-      <input
-        accept="image/*"
-        id="character-image-upload"
-        type="file"
-        onChange={handleImageChange}
-        style={{ display: 'none' }}
-      />
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-        <Button onClick={prevStep} sx={{ mr: 1 }}>
-          Previous
-        </Button>
-        <Button type="submit" variant="contained" color="primary">
-          Next
-        </Button>
-        {/* Snackbar for error messages */}
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Button type="submit" variant="contained" color="primary" sx={{ width: '100%' }}>
+            Set Character Details
+          </Button>
+          {/* Snackbar for error messages */}
+          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+            <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+        </Box>
       </Box>
     </Box>
   );

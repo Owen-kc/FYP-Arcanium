@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import axios from 'axios';
+import CustomAlert from '../CustomAlert'; 
 
 const InviteFriendsToCampaign = ({ userId, campaignId }) => {
     const [friends, setFriends] = useState([]);
     const [selectedFriends, setSelectedFriends] = useState([]);
+    const [alert, setAlert] = useState({
+        open: false,
+        message: '',
+        severity: ''
+    });
 
     useEffect(() => {
         const fetchFriends = async () => {
@@ -32,13 +38,16 @@ const InviteFriendsToCampaign = ({ userId, campaignId }) => {
                 campaignId,
                 friendAuth0Ids,
             });
-            alert("Friends invited successfully.");
+            setAlert({ open: true, message: 'Friends invited successfully.', severity: 'success' });
         } catch (error) {
             console.error('Error inviting friends:', error);
-            alert("Failed to invite friends.");
+            setAlert({ open: true, message: 'Failed to invite friends.', severity: 'error' });
         }
     };
 
+    const handleCloseAlert = () => {
+        setAlert({ ...alert, open: false });
+    };
 
     const toggleFriendSelection = (friendId) => {
         setSelectedFriends(prev => 
@@ -48,6 +57,7 @@ const InviteFriendsToCampaign = ({ userId, campaignId }) => {
 
     return (
         <Box>
+            <CustomAlert open={alert.open} handleClose={handleCloseAlert} severity={alert.severity} message={alert.message} />
             <FormGroup>
                 {friends.map(friend => (
                     <FormControlLabel
@@ -61,6 +71,5 @@ const InviteFriendsToCampaign = ({ userId, campaignId }) => {
         </Box>
     );
 };
-
 
 export default InviteFriendsToCampaign;

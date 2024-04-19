@@ -8,7 +8,6 @@ import Feats from './pages/Feats';
 import Weapons from './pages/Weapons';
 import Backgrounds from './pages/Backgrounds';
 import Header from './components/Header';
-//import Footer from './components/Footer'
 import { ThemeProvider } from '@mui/material/styles';
 import FantasyTheme from './components/FantasyTheme';
 import HomePageContent from './components/HomePageContent';
@@ -24,6 +23,9 @@ import ProfilePage from './components/social/ProfilePage';
 import FriendProfile from './components/social/friends/FriendProfile';
 import ChatComponent from './components/social/chat/ChatComponent';
 import CampaignsPage from './components/social/campaign/CampaignsPage';
+import WizardHelper from './styling/WizardHelper';
+import Footer from './components/Footer';
+import UserCharacters from './components/character/UserCharacters';
 
 
 function App() {
@@ -56,6 +58,7 @@ function App() {
                 <Route path="/backgrounds" element={<Backgrounds />} />
                 <Route path="/dungeon" element={<ChatbotDungeon userId={user.sub} />} />
                 <Route path="/create-character" element={<CreateCharacterPage userId={user.sub} />} />
+                <Route path="/characters" element={<UserCharacters />} />
                 <Route path="/friends" element={<FriendsPage />} />
                 <Route path="/friend-profile/:auth0Id" element={<FriendProfile />} />
                 <Route path="/chat" element={<ChatComponent />} />
@@ -76,6 +79,8 @@ function App() {
 function Home() {
   return <div>
   <HomePageContent />
+  <WizardHelper />
+  <Footer />
 </div>
 }
 

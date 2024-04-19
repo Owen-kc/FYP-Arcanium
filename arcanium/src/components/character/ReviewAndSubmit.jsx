@@ -2,23 +2,22 @@ import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import CharacterSheet from './CharacterSheet';
 import axios from 'axios';
+import { Button, Box } from '@mui/material'; // Make sure Box is imported if not already
+import { useNavigate } from 'react-router-dom';
 
 function ReviewAndSubmit({ character }) {
   const { user } = useAuth0();
   const userId = user?.sub;
+  const navigate = useNavigate();
 
   const getPresignedUrlAndUpload = async (file) => {
-    // Request a pre-signed URL from your server
     const presignResponse = await axios.get(`http://localhost:5000/api/upload-url?fileName=${encodeURIComponent(file.name)}&fileType=${encodeURIComponent(file.type)}`);
     const presignedUrl = presignResponse.data.url;
-
-    // Use the pre-signed URL to upload the file to S3
     await axios.put(presignedUrl, file, {
       headers: {
         'Content-Type': file.type,
       },
     });
-
     return presignedUrl.split('?')[0];
   };
 
@@ -35,11 +34,11 @@ function ReviewAndSubmit({ character }) {
     const characterData = {
       ...character,
       userId,
-      speed: formattedSpeed, // Use the formatted speed string
-      spells: spellNames, // Use the array of spell names
+      speed: formattedSpeed,
+      spells: spellNames,
       details: {
         ...character.details,
-        image: imageUrl, // Include the S3 image URL
+        image: imageUrl,
       },
       name: character.details.name,
       backstory: character.details.backstory,
@@ -56,24 +55,31 @@ function ReviewAndSubmit({ character }) {
     };
 
     try {
-      console.log('Submitting character data:', characterData);
       const response = await axios.post('http://localhost:5000/api/characters', characterData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
       console.log('Character created:', response.data);
+      navigate('/characters', { state: { newCharacterId: response.data._id } });
     } catch (error) {
       console.error('There was a problem with the character submission:', error);
     }
   };
 
   return (
-    <div>
+    <Box sx={{
+      '@media (max-width:600px)': {
+        paddingLeft: '70px', // Add padding on mobile to shift content right
+      }
+    }}>
       <CharacterSheet character={character} />
-      <button onClick={handleSubmit}>Submit Character</button>
-    </div>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
+          Submit Character
+        </Button>
+      </Box>
+    </Box>
   );
 }
 

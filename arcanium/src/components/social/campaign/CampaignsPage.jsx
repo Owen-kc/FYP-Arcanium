@@ -5,10 +5,16 @@ import CampaignInvitations from './CampaignInvitations';
 import MyCampaigns from './MyCampaigns';
 import CreateCampaignForm from './CreateCampaignForm';
 import InviteFriendsToCampaign from './InviteFriendsToCampaign';
+import CustomAlert from '../CustomAlert'; 
 
 const CampaignsPage = ({ userId }) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [newCampaignId, setNewCampaignId] = useState(null);
+    const [alert, setAlert] = useState({
+        open: false,
+        message: '',
+        severity: ''
+    });
 
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -19,6 +25,11 @@ const CampaignsPage = ({ userId }) => {
 
     const onCampaignCreated = (campaignId) => {
         setNewCampaignId(campaignId);
+        setAlert({ open: true, message: 'Campaign created successfully!', severity: 'success' });
+    };
+
+    const handleCloseAlert = () => {
+        setAlert({ ...alert, open: false });
     };
 
     const tabStyle = {
@@ -61,6 +72,7 @@ const CampaignsPage = ({ userId }) => {
                     )
                 )}
             </motion.div>
+            <CustomAlert open={alert.open} handleClose={handleCloseAlert} severity={alert.severity} message={alert.message} />
         </Container>
     );
 };

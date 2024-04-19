@@ -47,7 +47,7 @@ const SaveStories = ({ savedStories, activeStoryId, loadStory, exitReadOnlyMode,
       }}
     >
       <Typography variant="h6" sx={{ textAlign: "center", marginBottom: 2 }}>
-        Saved Stories
+        Saved
       </Typography>
       {savedStories.map((story, index) => (
         <Box
