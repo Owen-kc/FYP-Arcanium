@@ -28,20 +28,20 @@ const Message = require('./models/MessageSchema');
 //socket init
 const io = new Server(server, {
   cors: {
-    origin: '*', 
+    origin: ['https://fyp-arcanium-1.onrender.com', 'http://localhost:3000'], // same as your API CORS settings
+    methods: ["GET", "POST"]
   },
 });
 
 const corsOptions = {
-  origin: ['https://fyp-arcanium-1.onrender.com', 'http://localhost:3000'], // Replace 'yourdomain.com' with your actual domain
+  origin: ['https://fyp-arcanium-1.onrender.com', 'http://localhost:3000'],
   optionsSuccessStatus: 200
 };
-app.use(cors(corsOptions));
 
 
 connectDB();
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/characters', characterRoutes);
@@ -78,12 +78,14 @@ app.get('/api/get-image-url', async (req, res) => {
   }
 });
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-  });
-}
+
+// Serve static assets if in production. Frontend deployed seperately, so this is not needed right now.
+//if (process.env.NODE_ENV === 'production') {
+//  app.use(express.static('client/build'));
+//  app.get('*', (req, res) => {
+//    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+//  });
+//}
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
