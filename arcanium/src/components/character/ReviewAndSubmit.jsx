@@ -56,7 +56,7 @@ function ReviewAndSubmit({ character }) {
     };
 
     try {
-      const response = await axios.post('${config.apiUrl}/api/characters', characterData, {
+      const response = await axios.post(`${config.apiUrl}/api/characters`, characterData, {
         headers: {
           'Content-Type': 'application/json',
         },
