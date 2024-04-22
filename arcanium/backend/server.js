@@ -91,6 +91,12 @@ app.get('/api/get-image-url', async (req, res) => {
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
+  // Join the general chat room
+  const generalRoom = 'generalChatRoom';
+  socket.join(generalRoom);
+  console.log(`[Server] User with ID: ${socket.id} joined the general chat room: ${generalRoom}`);
+
+  // DM functionality
   socket.on('join_room', (room) => {
     socket.join(room);
     console.log(`[Server] User with ID: ${socket.id} joined room: ${room}`);
@@ -114,17 +120,31 @@ io.on('connection', (socket) => {
       console.error(`[Server] Received undefined content for room ${room}`);
     }
   });
-  
- socket.on('start_typing', ({room, user}) => {
-  console.log(`Received start_typing for room ${room} by ${user}`);
-  socket.to(room).emit('user_typing', {typing: true, user});
-});
 
-socket.on('stop_typing', ({room, user}) => {
-  console.log(`Received stop+typing for room ${room} by ${user}`);
-  socket.to(room).emit('user_typing', {typing: false, user});
-});
-  
+  // General chat functionality
+  socket.on('send_general_message', async ({ content, sender }) => {
+    if (content) {
+      try {
+        const message = await Message.create({
+          room: generalRoom,
+          content,
+          sender
+        });
+        console.log(`[Server] Message saved to general chat room by ${sender}`);
+        io.in(generalRoom).emit('receive_message', message);
+      } catch (error) {
+        console.error(`[Server] Error saving message: ${error}`);
+      }
+    }
+  });
+
+  socket.on('start_typing', ({ room, user }) => {
+    socket.to(room).emit('user_typing', { typing: true, user });
+  });
+
+  socket.on('stop_typing', ({ room, user }) => {
+    socket.to(room).emit('user_typing', { typing: false, user });
+  });
 
   socket.on('disconnect', () => {
     console.log(`User Disconnected: ${socket.id}`);

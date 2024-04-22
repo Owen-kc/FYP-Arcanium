@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  Box, Card, CardActionArea, CardContent, CardMedia, Typography, Grid, Paper
+  Box, Card, CardActionArea, CardContent, CardMedia, Typography, Grid, Paper, TextField, Button
 } from '@mui/material';
 import { styled } from '@mui/system';
-import Carousel from 'react-material-ui-carousel'; // Make sure to install this package
+import Carousel from 'react-material-ui-carousel';
+import io from 'socket.io-client';
+import config from '../config';
 import monsterImage from '../images/monsters.jpg';
 import spellImage from '../images/spells.jpg';
 import itemImage from '../images/items.jpeg';
 import ModelViewer from '../scenes/ModelViewer';
 import AnimatedHeading from '../styling/AnimatedHeading';
-import Footer from './Footer';
 import bg1 from '../images/bg1.jpg';
 import bg2 from '../images/bg2.jpg';
 import bg3 from '../images/bg3.jpg';
 import useTheme from '@mui/material/styles/useTheme';
+import { useAuth0 } from '@auth0/auth0-react';
+import socketIO from 'socket.io-client';
+import axios from 'axios';
 
 const images = [
   { src: bg1, label: 'First Slide' },
@@ -28,9 +32,32 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }
 }));
 
+const ScrollableBox = styled(Box)(({ theme }) => ({
+  maxHeight: '400px',
+  overflowY: 'auto',
+  backgroundColor: '#282a36',
+  borderRadius: '10px',
+  padding: '16px',
+  '&::-webkit-scrollbar': {
+    width: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: '#44475a',
+    borderRadius: '10px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#5D3FD3',
+    borderRadius: '10px',
+  },
+}));
+
 const HomePageContent = () => {
   const theme = useTheme();
   const [showTitle, setShowTitle] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [currentMessage, setCurrentMessage] = useState('');
+  const socketRef = useRef(null);
+  const { user } = useAuth0();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -40,26 +67,63 @@ const HomePageContent = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const features = [
-    { title: 'Monsters', description: 'Discover fearsome monsters.', imgSrc: monsterImage, link: '/monsters' },
-    { title: 'Spells', description: 'Browse through powerful spells.', imgSrc: spellImage, link: '/spells' },
-    { title: 'Items', description: 'Find legendary items.', imgSrc: itemImage, link: '/items' },
-  ];
+  useEffect(() => {
+    // Connect to socket server
+    socketRef.current = socketIO.connect(config.apiUrl);
+
+    // Join the general chat room
+    socketRef.current.emit('join_room', 'generalChatRoom');
+
+    // Fetch messages initially
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get(`${config.apiUrl}/api/messages/generalChatRoom`);
+        setMessages(response.data);
+      } catch (error) {
+        console.error('Error fetching general chat messages:', error);
+      }
+    };
+
+    fetchMessages();
+
+    // Handle incoming messages
+    socketRef.current.on('receive_message', (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    // Clean up on component unmount
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, []);
+
+  const sendMessage = () => {
+    if (currentMessage.trim()) {
+      const messageData = {
+        room: 'generalChatRoom', 
+        content: currentMessage,
+        sender: user.name || user.email || 'Anonymous' 
+      };
+  
+      socketRef.current.emit('send_message', messageData);
+      setCurrentMessage('');
+    }
+  };
 
   return (
     <Box sx={{ flexGrow: 1, pb: 10 }}>
       <Box sx={{ position: 'relative', width: '100%', height: '60vh', overflow: 'hidden' }}>
         <ModelViewer modelPath="/scene/scene.gltf" />
         <Box sx={{
-  position: 'absolute',
-  top: '2rem', // move down from the top
-  left: '1rem', // left aligned with some padding
-  zIndex: 10
-}}>
+          position: 'absolute',
+          top: '2rem',
+          left: '1rem',
+          zIndex: 10
+        }}>
           <AnimatedHeading text="Welcome to Arcanium" show={showTitle} theme={theme} />
         </Box>
       </Box>
-  
+
       <Paper elevation={4} sx={{ my: 4, mx: 2, overflow: 'hidden', borderRadius: '16px' }}>
         <Grid container>
           <Grid item xs={12} md={6}>
@@ -104,36 +168,65 @@ const HomePageContent = () => {
           </Grid>
         </Grid>
       </Paper>
-  
-      <Box sx={{ p: 3 }}>
-        <Grid container spacing={3}>
-          {features.map((feature, index) => (
-            <Grid item key={index} xs={12} sm={6} md={4}>
-              <StyledCard>
-                <CardActionArea href={feature.link}>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image={feature.imgSrc}
-                    alt={feature.title}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {feature.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {feature.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </StyledCard>
-            </Grid>
+
+      {/* Message Board Section, inline css for simplicity */}
+      <Paper style={{ padding: '20px', maxWidth: '1300px', margin: '40px auto', backgroundColor: '#2a2a2d', color: '#f8f8f2', borderRadius: '10px' }} elevation={3}>
+  <Typography variant="h4" style={{ marginBottom: '30px', textAlign: 'center', color: '#f8f8f2', borderBottom: '1px solid #5D3FD3' }}>Message Board</Typography>
+        <ScrollableBox>
+          {messages.map((msg, index) => (
+            <Box key={index} style={{
+              backgroundColor: '#44475a',
+              margin: '8px 0',
+              padding: '8px',
+              borderRadius: '8px',
+              color: '#f8f8f2',
+              wordWrap: 'break-word',
+              marginBottom: '16px',
+            }}>
+              <Typography variant="body2" style={{ fontSize: '0.95rem', marginBottom: '4px', color: '#f8f8f2' }}>
+                {msg.sender || 'Anonymous'}
+              </Typography>
+              <Typography style={{ fontSize: '0.75rem', color: '#999791', alignSelf: 'flex-end', marginBottom: '4px' }}>
+                {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </Typography>
+              <Typography style={{ fontSize: '0.85rem', color: '#f8f8f2' }}>
+                {msg.content}
+              </Typography>
+            </Box>
           ))}
-        </Grid>
-      </Box>
+        </ScrollableBox>
+        <Box style={{ display: 'flex', alignItems: 'center', backgroundColor: '#282a36', borderRadius: '10px', padding: '10px', boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.2)', marginTop: '16px' }}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Type a message..."
+            value={currentMessage}
+            onChange={e => setCurrentMessage(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' && sendMessage()}
+            style={{
+              backgroundColor: '#44475a',
+              color: '#f8f8f2',
+              borderRadius: '20px',
+              padding: '12px 20px',
+              border: 'none',
+              outline: 'none',
+              boxShadow: 'none',
+              marginRight: '8px'
+            }}
+            InputProps={{
+              disableUnderline: true,
+              style: { color: '#f8f8f2' }
+            }}
+          />
+
+          <Button variant="contained" onClick={sendMessage} style={{ backgroundColor: '#5D3FD3', color: '#FFFFFF', borderRadius: '20px', padding: '12px 24px' }}>
+            Send
+          </Button>
+        </Box>
+      </Paper>
+
     </Box>
   );
-  
 }
 
 export default HomePageContent;
