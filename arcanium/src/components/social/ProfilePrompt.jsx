@@ -3,6 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import axios from 'axios';
 import { Dialog, DialogContent, DialogActions, Button, Avatar, Typography, TextField, List, ListItem, ListItemText, Box, Grid} from '@mui/material';
 import { motion, useAnimation } from 'framer-motion';
+import config from '../../config';
 
 const ProfilePrompt = () => {
   const { user, isAuthenticated, logout } = useAuth0();
@@ -14,7 +15,7 @@ const ProfilePrompt = () => {
     const checkUserProfileExists = async () => {
       if (isAuthenticated && user) {
         try {
-          const response = await axios.get(`/api/profile-exists/${user.sub}`);
+          const response = await axios.get(`${config.apiUrl}/api/profile-exists/${user.sub}`);
           setShowModal(!response.data.exists);
           setNickname(user.nickname || '');
         } catch (error) {
@@ -34,7 +35,7 @@ const ProfilePrompt = () => {
       transition: { duration: 0.5 },
     }).then(async () => {
       try {
-        await axios.post('/api/user/profile', {
+        await axios.post(`${config.apiUrl}/api/user/profile`, {
           auth0Id: user.sub,
           nickname: nickname,
           picture: user.picture,

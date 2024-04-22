@@ -28,7 +28,7 @@ const Message = require('./models/MessageSchema');
 //socket init
 const io = new Server(server, {
   cors: {
-    origin: ['https://fyp-arcanium-1.onrender.com', 'http://localhost:3000'], // same as your API CORS settings
+    origin: ['https://fyp-arcanium-1.onrender.com', 'http://localhost:3000'], 
     methods: ["GET", "POST"]
   },
 });

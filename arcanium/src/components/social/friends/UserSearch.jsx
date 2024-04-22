@@ -4,6 +4,7 @@ import { TextField, Button, List, Box, Paper, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import UserProfile from '../UserProfile';
 import CustomAlert from '../CustomAlert'; 
+import config from '../../../config';
 
 const UserSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,7 +17,7 @@ const UserSearch = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`/api/search?query=${searchTerm}`);
+      const response = await axios.get(`${config.apiUrl}/api/search?query=${searchTerm}`);
       const users = response.data.users || [];
       setResults(users);
       setAlert({ open: false });

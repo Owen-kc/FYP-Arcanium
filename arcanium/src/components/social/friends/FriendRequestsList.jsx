@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { CircularProgress, Typography, Card, CardContent, CardMedia, Button, Box } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import CustomAlert from '../CustomAlert';  
+import config from '../../../config';
 
 const FriendRequestsList = () => {
   const [requests, setRequests] = useState([]);
@@ -19,7 +20,7 @@ const FriendRequestsList = () => {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/api/friends/incoming-requests/${user.sub}`);
+        const response = await axios.get(`${config.apiUrl}/api/friends/incoming-requests/${user.sub}`);
         setRequests(response.data);
         setAlert(currentAlert => ({ ...currentAlert, open: false }));
       } catch (error) {
@@ -37,7 +38,7 @@ const FriendRequestsList = () => {
 
   const handleResponse = async (requestId, action) => {
     try {
-      await axios.post(`/api/friends/${action}-request`, { requestId });
+      await axios.post(`${config.apiUrl}/api/friends/${action}-request`, { requestId });
       setRequests(requests.filter(request => request.id !== requestId));
       setAlert({ open: true, message: `Friend request ${action === 'accept' ? 'accepted' : 'rejected'}.`, severity: 'success' });
     } catch (error) {

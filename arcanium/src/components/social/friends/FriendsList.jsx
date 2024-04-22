@@ -5,6 +5,7 @@ import { List, CircularProgress, Typography, Card, CardContent, CardMedia, Box, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom'; 
 import CustomAlert from '../CustomAlert'; 
+import config from '../../../config';
 
 const FriendsList = () => {
   const [friends, setFriends] = useState([]);
@@ -24,7 +25,7 @@ const FriendsList = () => {
 
       setLoading(true);
       try {
-        const response = await axios.get(`/api/friends/list-friends/${user.sub}`);
+        const response = await axios.get(`${config.apiUrl}/api/friends/list-friends/${user.sub}`);
         setFriends(response.data);
       } catch (error) {
         console.error('Error fetching friends:', error);

@@ -4,7 +4,7 @@ import CharacterSheet from './CharacterSheet';
 import axios from 'axios';
 import { Button, Box } from '@mui/material'; // Make sure Box is imported if not already
 import { useNavigate } from 'react-router-dom';
-import config from '../../config'
+import config from '../../config';
 
 function ReviewAndSubmit({ character }) {
   const { user } = useAuth0();

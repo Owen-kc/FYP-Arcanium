@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CircularProgress, Box, Typography, Modal, Button } from '@mui/material';
 import CharacterSheet from '../../character/CharacterSheet'; 
+import config from '../../../config';
 
 const CampaignDetails = ({ campaignId }) => {
   const [campaignDetails, setCampaignDetails] = useState(null);
@@ -13,7 +14,7 @@ const CampaignDetails = ({ campaignId }) => {
     const fetchCampaignDetails = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`/api/campaigns/details/${campaignId}`);
+        const response = await axios.get(`${config.apiUrl}/api/campaigns/details/${campaignId}`);
         setCampaignDetails(response.data);
       } catch (error) {
         console.error('Failed to fetch campaign details:', error);
@@ -29,7 +30,7 @@ const CampaignDetails = ({ campaignId }) => {
   const handleOpenCharacterModal = async (characterId) => {
     try {
       setIsLoading(true); 
-      const response = await axios.get(`/api/characters/${characterId}`);
+      const response = await axios.get(`${config.apiUrl}/api/characters/${characterId}`);
       setSelectedCharacter(response.data);
       setIsCharacterModalOpen(true);
     } catch (error) {

@@ -3,6 +3,7 @@ import { Button, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import CustomAlert from '../CustomAlert';
+import config from '../../../config';
 
 
 const FriendRequestButton = ({ recipientAuth0Id }) => {
@@ -19,7 +20,7 @@ const FriendRequestButton = ({ recipientAuth0Id }) => {
 
     setLoading(true);
     try {
-      await axios.post('/api/friends/send-request', {
+      await axios.post(`${config.apiUrl}/api/friends/send-request`, {
         requesterAuth0Id: user?.sub,
         recipientAuth0Id: recipientAuth0Id,
       });

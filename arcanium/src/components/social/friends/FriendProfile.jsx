@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { fetchCharactersByUserId } from '../../FetchCharacters';
 import CharacterSheet from '../../character/CharacterSheet';
 import Alert from '@mui/material/Alert';
+import config from '../../../config';
 
 
 const FriendProfile = () => {
@@ -29,7 +30,7 @@ const FriendProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`/api/profile/${decodedAuth0Id}`);
+        const response = await axios.get(`${config.apiUrl}/api/profile/${decodedAuth0Id}`);
         setProfileData(response.data);
       } catch (error) {
         setAlert({ severity: 'error', message: 'Error fetching profile data.' });
@@ -40,7 +41,7 @@ const FriendProfile = () => {
 
     const fetchFriends = async () => {
       try {
-        const friendsResponse = await axios.get(`/api/friends/list-friends/${decodedAuth0Id}`);
+        const friendsResponse = await axios.get(`${config.apiUrl}/api/friends/list-friends/${decodedAuth0Id}`);
         setFriends(friendsResponse.data);
         console.log(friendsResponse.data); 
       } catch (error) {

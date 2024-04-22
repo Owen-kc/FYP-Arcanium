@@ -18,7 +18,7 @@ const CreateCampaignForm = ({ userId, onCampaignCreated }) => {
         setError(''); 
 
         try {
-            const response = await axios.post('/api/campaigns/create', {
+            const response = await axios.post('${config.apiUrl}/api/campaigns/create', {
                 name,
                 description,
                 creatorAuth0Id: userId

@@ -4,6 +4,7 @@ import Alert from '@mui/material/Alert';
 import { HexColorPicker } from "react-colorful";
 import axios from 'axios';
 import { useTheme } from '@mui/material/styles';
+import config from '../../config';
 
 const defaultAvatarUrl = ''; 
 const alignments = [
@@ -95,7 +96,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
 
   const fetchAndSetImageUrl = async (objectKey) => {
     try {
-      const response = await axios.get(`/api/get-image-url?objectKey=${encodeURIComponent(objectKey)}`);
+      const response = await axios.get(`${config.apiUrl}/api/get-image-url?objectKey=${encodeURIComponent(objectKey)}`);
       setDetails((prevDetails) => ({
         ...prevDetails,
         imageUrl: response.data.url, // The signed URL for the image
@@ -112,7 +113,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   
     if (imageFile) {
       try {
-        const presignedResponse = await axios.get(`/api/upload-url`, {
+        const presignedResponse = await axios.get(`${config.apiUrl}/api/upload-url`, {
           params: { fileName: encodeURIComponent(imageFile.name), fileType: encodeURIComponent(imageFile.type) }
         });
         const presignedUrl = presignedResponse.data.url;

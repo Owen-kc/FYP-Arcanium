@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import axios from 'axios';
 import CustomAlert from '../CustomAlert'; 
+import config from '../../../config';
 
 const InviteFriendsToCampaign = ({ userId, campaignId }) => {
     const [friends, setFriends] = useState([]);
@@ -15,7 +16,7 @@ const InviteFriendsToCampaign = ({ userId, campaignId }) => {
     useEffect(() => {
         const fetchFriends = async () => {
             try {
-                const res = await axios.get(`/api/friends/list-friends/${userId}`);
+                const res = await axios.get(`${config.apiUrl}/api/friends/list-friends/${userId}`);
                 const formattedFriends = res.data.map(friend => ({
                     id: friend._id,
                     name: friend.requester.auth0Id === userId ? friend.recipient.name : friend.requester.name,
@@ -34,7 +35,7 @@ const InviteFriendsToCampaign = ({ userId, campaignId }) => {
             const friendAuth0Ids = selectedFriends.map(friendId => 
                 friends.find(friend => friend.id === friendId).auth0Id
             );
-            await axios.post('/api/campaigns/invite', {
+            await axios.post('${config.apiUrl}/api/campaigns/invite', {
                 campaignId,
                 friendAuth0Ids,
             });

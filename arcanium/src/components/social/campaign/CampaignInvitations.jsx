@@ -22,6 +22,7 @@ import { useTheme } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import { fetchCharactersByUserId } from '../../FetchCharacters';
 import CustomAlert from '../CustomAlert'; 
+import config from '../../../config';
 
 const CampaignInvitations = ({ userId }) => {
   const theme = useTheme();
@@ -42,7 +43,7 @@ const CampaignInvitations = ({ userId }) => {
     const fetchInvitations = async () => {
       console.log("Fetching invitations...");
       try {
-        const invitationRes = await axios.get(`/api/campaigns/invitations/${userId}`);
+        const invitationRes = await axios.get(`${config.apiUrl}/api/campaigns/invitations/${userId}`);
         setInvitations(invitationRes.data);
       } catch (error) {
         console.error('Error fetching invitations:', error);
@@ -79,7 +80,7 @@ const CampaignInvitations = ({ userId }) => {
       return;
     }
     try {
-      await axios.post('/api/campaigns/accept-invitation', {
+      await axios.post('${config.apiUrl}/api/campaigns/accept-invitation', {
         campaignId: currentCampaignId,
         userAuth0Id: userId, 
         characterId: selectedCharacterId,

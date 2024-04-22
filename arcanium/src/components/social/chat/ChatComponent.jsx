@@ -7,6 +7,7 @@ import './ChatComponent.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import { motion } from 'framer-motion';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import config from '../../../config';
 
 const ChatPage = () => {
   const navigate = useNavigate()
@@ -15,7 +16,7 @@ const ChatPage = () => {
   const location = useLocation();
   const messagesEndRef = useRef(null);
   const chatMessagesRef = useRef(null);
-  const socketRef = useRef(null);
+  const socketRef = useRef(socketIO.connect(config.apiUrl));
   const [friends, setFriends] = useState([]); 
   const { user } = useAuth0();
   const [isTyping, setIsTyping] = useState(false);
@@ -55,18 +56,16 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const user = searchParams.get('user');
-    const friend = searchParams.get('friend');
-    const room = [user, friend].sort().join('_');
-    const socketEndpoint = process.env.REACT_APP_SOCKET_ENDPOINT || 'http://localhost:5000';
+    socketRef.current = socketIO.connect(config.apiUrl);
 
-    socketRef.current = socketIO.connect(socketEndpoint);
-    const socket = socketRef.current;
+    const searchParams = new URLSearchParams(location.search);
+    const userParam = searchParams.get('user');
+    const friend = searchParams.get('friend');
+    const room = [userParam, friend].sort().join('_');
 
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`/api/messages/${room}`);
+        const response = await axios.get(`${config.apiUrl}/api/messages/${room}`);
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching message history:', error);
@@ -74,19 +73,21 @@ const ChatPage = () => {
     };
 
     fetchMessages();
-    socket.emit('join_room', room);
+    socketRef.current.emit('join_room', room);
 
-    socket.on('receive_message', (data) => {
+    socketRef.current.on('receive_message', (data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
     });
 
-    socket.on('user_typing', (data) => {
+    socketRef.current.on('user_typing', (data) => {
       setIsTyping(data.typing);
       setTypingUser(data.user);
     });
 
     return () => {
-      socket.disconnect();
+      socketRef.current.off('receive_message');
+      socketRef.current.off('user_typing');
+      socketRef.current.disconnect();
     };
   }, [location.search]);
 
@@ -95,14 +96,13 @@ const ChatPage = () => {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
-  
 
   useEffect(() => {
     const fetchFriends = async () => {
       if (!user?.sub) return;
 
       try {
-        const response = await axios.get(`/api/friends/list-friends/${user.sub}`);
+        const response = await axios.get(`${config.apiUrl}/api/friends/list-friends/${user.sub}`);
         setFriends(response.data);
         console.log('Fetched friends:', response.data);
       } catch (error) {
@@ -125,20 +125,20 @@ const ChatPage = () => {
     clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
       socketRef.current.emit('stop_typing', { room, user: user.name || user.nickname || 'Someone' });
-    }, 500); 
+    }, 500);
   };
 
   const sendMessage = () => {
     if (currentMessage.trim()) {
       const searchParams = new URLSearchParams(location.search);
-      const user = searchParams.get('user');
+      const userParam = searchParams.get('user');
 
       const timestamp = new Date().toISOString();
 
       socketRef.current.emit('send_message', {
-        room: [user, searchParams.get('friend')].sort().join('_'),
+        room: [userParam, searchParams.get('friend')].sort().join('_'),
         content: currentMessage,
-        sender: user,
+        sender: userParam,
         timestamp: timestamp
       });
 
@@ -151,12 +151,11 @@ const ChatPage = () => {
       friend.requester.auth0Id === senderId || friend.recipient.auth0Id === senderId
     );
     if (!friendData) {
-      console.log(`No friend data found for senderId: ${senderId}`); 
+      console.log(`No friend data found for senderId: ${senderId}`);
       return null;
     }
     return friendData.requester.auth0Id === user.sub ? friendData.recipient : friendData.requester;
   };
-  
 
   const isMyMessage = (sender) => {
     const searchParams = new URLSearchParams(location.search);

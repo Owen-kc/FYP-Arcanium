@@ -17,6 +17,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import CampaignDetails from './CampaignDetails';
 import CustomAlert from '../CustomAlert'; 
+import config from '../../../config';
 
 const MyCampaigns = ({ userId }) => {
   const theme = useTheme();
@@ -36,7 +37,7 @@ const MyCampaigns = ({ userId }) => {
     const fetchMyCampaigns = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`/api/campaigns/my-campaigns/${userId}`);
+        const response = await axios.get(`${config.apiUrl}/api/campaigns/my-campaigns/${userId}`);
         setCampaigns(response.data);
       } catch (error) {
         console.error('Failed to fetch campaigns:', error);
