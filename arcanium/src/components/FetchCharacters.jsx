@@ -1,15 +1,12 @@
-// plchlder
-
-const BASE_URL = 'http://localhost:5000/api/characters'; 
+import config from '../config'
 
 export const fetchAllCharacters = async () => {
   try {
-    const response = await fetch(BASE_URL);
+    const response = await fetch(`${config.apiUrl}/api/characters`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    const characters = await response.json();
-    return characters;
+    return response.json();
   } catch (error) {
     console.error("Failed to fetch characters:", error);
     throw error;
@@ -18,12 +15,11 @@ export const fetchAllCharacters = async () => {
 
 export const fetchCharacterById = async (id) => {
   try {
-    const response = await fetch(`${BASE_URL}/${id}`);
+    const response = await fetch(`${config.apiUrl}/api/characters/${id}`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    const character = await response.json();
-    return character;
+    return response.json();
   } catch (error) {
     console.error(`Failed to fetch character with id ${id}:`, error);
     throw error;
@@ -32,14 +28,14 @@ export const fetchCharacterById = async (id) => {
 
 export const fetchCharactersByUserId = async (userId) => {
   try {
-    const response = await fetch(`${BASE_URL}/user/${userId}`);
+    const response = await fetch(`${config.apiUrl}/api/characters/user/${userId}`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    const characters = await response.json();
-    return characters;
+    return response.json();
   } catch (error) {
     console.error(`Failed to fetch characters for user ${userId}:`, error);
     throw error;
   }
 };
+

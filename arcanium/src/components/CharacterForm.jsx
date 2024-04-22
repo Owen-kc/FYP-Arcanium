@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Select, MenuItem, FormControl, InputLabel, Grid, List, ListItem, Typography, Card, CardContent } from '@mui/material';
+import config from '../config';
 
 function CharacterForm({ userId }) {
   const [character, setCharacter] = useState({
@@ -29,7 +30,7 @@ function CharacterForm({ userId }) {
     // Fetch characters created by the user
     async function fetchUserCharacters() {
       try {
-        const response = await fetch(`http://localhost:5000/api/characters/user/${userId}`);
+        const response = await fetch(`${config.apiUrl}/api/characters/user/${userId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -58,7 +59,7 @@ function CharacterForm({ userId }) {
     const characterDataWithUserId = { ...character, userId };
 
     try {
-      const response = await fetch('http://localhost:5000/api/characters', {
+      const response = await fetch('${config.apiUrl}/api/characters', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

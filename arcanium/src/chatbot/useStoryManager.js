@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid'; 
 import { useAuth0 } from '@auth0/auth0-react'; 
+import config from '../config';
 
 const useStoryManager = () => {
   const [savedStories, setSavedStories] = useState([]);
@@ -14,7 +15,7 @@ const useStoryManager = () => {
     const fetchSavedStories = async () => {
       if (!userId) return;
       try {
-        const response = await fetch(`http://localhost:5000/api/stories/user/${userId}`);
+        const response = await fetch(`${config.apiUrl}/api/stories/user/${userId}`);
         if (!response.ok) throw new Error('Failed to fetch stories');
         const data = await response.json();
         const storiesWithId = data.map(story => ({ ...story, id: uuidv4() }));
@@ -38,7 +39,7 @@ const useStoryManager = () => {
 
 
     try {
-      const response = await fetch('http://localhost:5000/api/stories', {
+      const response = await fetch(`${config.apiUrl}/api/stories`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ const useStoryManager = () => {
 
   const deleteStory = async (storyId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/stories/${storyId}`, {
+      const response = await fetch(`${config.apiUrl}/api/stories/${storyId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

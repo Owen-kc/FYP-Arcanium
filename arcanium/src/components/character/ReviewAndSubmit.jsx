@@ -4,6 +4,7 @@ import CharacterSheet from './CharacterSheet';
 import axios from 'axios';
 import { Button, Box } from '@mui/material'; // Make sure Box is imported if not already
 import { useNavigate } from 'react-router-dom';
+import config from '../../config'
 
 function ReviewAndSubmit({ character }) {
   const { user } = useAuth0();
@@ -11,7 +12,7 @@ function ReviewAndSubmit({ character }) {
   const navigate = useNavigate();
 
   const getPresignedUrlAndUpload = async (file) => {
-    const presignResponse = await axios.get(`http://localhost:5000/api/upload-url?fileName=${encodeURIComponent(file.name)}&fileType=${encodeURIComponent(file.type)}`);
+    const presignResponse = await axios.get(`${config.apiUrl}/api/upload-url?fileName=${encodeURIComponent(file.name)}&fileType=${encodeURIComponent(file.type)}`);
     const presignedUrl = presignResponse.data.url;
     await axios.put(presignedUrl, file, {
       headers: {
@@ -55,7 +56,7 @@ function ReviewAndSubmit({ character }) {
     };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/characters', characterData, {
+      const response = await axios.post('${config.apiUrl}/api/characters', characterData, {
         headers: {
           'Content-Type': 'application/json',
         },

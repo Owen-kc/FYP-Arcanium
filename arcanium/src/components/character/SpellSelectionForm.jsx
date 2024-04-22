@@ -49,8 +49,6 @@ const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) 
   useEffect(() => {
     // Automatically trigger WizardHelper when the component mounts
     setWizardVisible(true);
-
-    // Optional: hide WizardHelper after a delay or based on other actions
     const timer = setTimeout(() => {
       setWizardVisible(false);
     }, 10000); // Hide after 10 seconds
