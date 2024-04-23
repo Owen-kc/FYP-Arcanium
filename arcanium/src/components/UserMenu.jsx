@@ -26,6 +26,14 @@ const UserMenu = () => {
     setProfileDialogOpen(false);
   };
 
+  const handleLogout = () => {
+    const returnTo = window.location.hostname === "localhost" 
+                     ? window.location.origin 
+                     : process.env.REACT_APP_BASE_URL;
+    logout({ returnTo });
+    handleClose();
+  };
+
   return (
     <>
       {isAuthenticated ? (
@@ -49,10 +57,7 @@ const UserMenu = () => {
             onClose={handleClose}
           >
             <MenuItem onClick={openProfileDialog}>Profile</MenuItem>
-            <MenuItem onClick={() => {
-              logout({ returnTo: window.location.origin });
-              handleClose();
-            }}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
           <Dialog open={profileDialogOpen} onClose={closeProfileDialog}>
             <Profile />
