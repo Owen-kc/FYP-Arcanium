@@ -27,10 +27,14 @@ const UserMenu = () => {
   };
 
   const handleLogout = () => {
-    const returnTo = window.location.hostname === "localhost" 
-                     ? window.location.origin 
-                     : process.env.REACT_APP_BASE_URL;
-    logout({ returnTo });
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    // You can default to 'window.location.origin' if REACT_APP_BASE_URL isn't set for some reason
+    const returnToUrl = isProduction && process.env.REACT_APP_BASE_URL
+      ? process.env.REACT_APP_BASE_URL
+      : window.location.origin;
+  
+    logout({ returnTo: returnToUrl });
     handleClose();
   };
 
