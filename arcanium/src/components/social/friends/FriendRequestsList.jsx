@@ -16,6 +16,7 @@ const FriendRequestsList = () => {
   });
   const { user } = useAuth0();
 
+  // Fetch friend requests for the current user
   useEffect(() => {
     const fetchRequests = async () => {
       setLoading(true);

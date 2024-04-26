@@ -19,13 +19,14 @@ const FriendsList = () => {
   const { user } = useAuth0();
   const navigate = useNavigate(); 
 
+  // Fetch friends for the current user
   useEffect(() => {
     const fetchFriends = async () => {
       if (!user?.sub) return;
 
       setLoading(true);
       try {
-        const response = await axios.get(`${config.apiUrl}/api/friends/list-friends/${user.sub}`);
+        const response = await axios.get(`${config.apiUrl}/api/friends/list-friends/${user.sub}`); // Fetch friends list based on the user's Auth0 ID
         setFriends(response.data);
       } catch (error) {
         console.error('Error fetching friends:', error);
@@ -39,11 +40,13 @@ const FriendsList = () => {
     fetchFriends();
   }, [user?.sub]);
 
+  // Function to navigate to a friend's profile
   const navigateToFriendProfile = (auth0Id) => {
     console.log(auth0Id)
     navigate(`/friend-profile/${auth0Id}`); 
   };
 
+  // Function to open a chat with a friend, passing the user's Auth0 ID and the friend's Auth0 ID as query parameters
   const openChat = (friendId) => {
     if (user?.sub && friendId && user.sub !== friendId) { 
       // Log to check the IDs being passed

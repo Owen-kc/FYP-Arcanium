@@ -44,6 +44,7 @@ const AbilityScoresForm = ({ character, updateCharacter, nextStep, prevStep }) =
     setScores(initializeScores()); // Reset scores 
   };
 
+  // Initialize scores based on ASI, character
   const initializeScores = () => ({
     strength: 8 + (character.asi?.strength || 0),
     dexterity: 8 + (character.asi?.dexterity || 0),
@@ -75,6 +76,7 @@ const AbilityScoresForm = ({ character, updateCharacter, nextStep, prevStep }) =
     }
   };
 
+  // Calculate the slider change, behaviour for point buy
   const handleSliderChange = (ability, newValue) => {
     if (method === "pointBuy") {
       const baseScore = scores[ability] - (character.asi?.[ability] || 0);

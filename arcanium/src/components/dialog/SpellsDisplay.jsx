@@ -1,4 +1,4 @@
-import './DialogStyles.css'; // Make sure to import the CSS file
+import './DialogStyles.css'; 
 
 function SpellsDisplay({ spellData }) {
     if (!spellData) return null;

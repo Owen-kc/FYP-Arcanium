@@ -97,6 +97,7 @@ const HomePageContent = () => {
     };
   }, []);
 
+  // Function to send a message, same as the one in the Chat component
   const sendMessage = () => {
     if (currentMessage.trim()) {
       const messageData = {

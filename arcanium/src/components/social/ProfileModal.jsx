@@ -2,7 +2,7 @@ import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 
-
+// simple user profile modal to set username
 const SimpleModal = ({ open, onClose, onAcknowledge, user }) => {
   return (
     <Dialog open={open} onClose={onClose}>

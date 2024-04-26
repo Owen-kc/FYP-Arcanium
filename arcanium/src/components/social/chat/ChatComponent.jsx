@@ -55,9 +55,11 @@ const ChatPage = () => {
     navigate(-1); 
   };
 
+  // Connect to the socket server and join the chat room, handle incoming messages and other socket events
   useEffect(() => {
     socketRef.current = socketIO.connect(config.apiUrl);
 
+    // Get the user and friend IDs from the URL search params
     const searchParams = new URLSearchParams(location.search);
     const userParam = searchParams.get('user');
     const friend = searchParams.get('friend');
@@ -65,7 +67,7 @@ const ChatPage = () => {
 
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`${config.apiUrl}/api/messages/${room}`);
+        const response = await axios.get(`${config.apiUrl}/api/messages/${room}`); // Fetch the message history
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching message history:', error);
@@ -97,6 +99,7 @@ const ChatPage = () => {
     }
   }, [messages]);
 
+  // Fetch the user's friends when the component mounts, and set the friends state
   useEffect(() => {
     const fetchFriends = async () => {
       if (!user?.sub) return;
@@ -115,19 +118,23 @@ const ChatPage = () => {
 
   const typingTimeoutRef = useRef(null);
 
+  // Handle input change in the chat input field, and emit typing events
   const handleInputChange = (e) => {
     setCurrentMessage(e.target.value);
 
+    // Emit typing events
     const searchParams = new URLSearchParams(location.search);
     const room = [searchParams.get('user'), searchParams.get('friend')].sort().join('_');
     socketRef.current.emit('start_typing', { room, user: user.name || user.nickname || 'Someone' });
 
+    // Clear the typing timeout and set a new one
     clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
       socketRef.current.emit('stop_typing', { room, user: user.name || user.nickname || 'Someone' });
     }, 500);
   };
 
+  // Send a message to the chat room
   const sendMessage = () => {
     if (currentMessage.trim()) {
       const searchParams = new URLSearchParams(location.search);
@@ -136,7 +143,7 @@ const ChatPage = () => {
       const timestamp = new Date().toISOString();
 
       socketRef.current.emit('send_message', {
-        room: [userParam, searchParams.get('friend')].sort().join('_'),
+        room: [userParam, searchParams.get('friend')].sort().join('_'), // Sort the user IDs to create a unique room ID
         content: currentMessage,
         sender: userParam,
         timestamp: timestamp
@@ -146,9 +153,10 @@ const ChatPage = () => {
     }
   };
 
+  // Get the friend data based on the sender ID
   const getFriendData = (senderId) => {
     const friendData = friends.find(friend =>
-      friend.requester.auth0Id === senderId || friend.recipient.auth0Id === senderId
+      friend.requester.auth0Id === senderId || friend.recipient.auth0Id === senderId // find the friend data based on the sender ID
     );
     if (!friendData) {
       console.log(`No friend data found for senderId: ${senderId}`);
@@ -157,15 +165,17 @@ const ChatPage = () => {
     return friendData.requester.auth0Id === user.sub ? friendData.recipient : friendData.requester;
   };
 
+  // Check if the message was sent by the current user
   const isMyMessage = (sender) => {
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = new URLSearchParams(location.search); // Get the URL search params
     return sender === searchParams.get('user');
   };
 
+  // Format the timestamp to display the time only
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     if (!isNaN(date)) {
-      return date.toLocaleTimeString([], { timeStyle: 'short' });
+      return date.toLocaleTimeString([], { timeStyle: 'short' }); // Format the time only
     } else {
       return 'Fetching time...';
     }

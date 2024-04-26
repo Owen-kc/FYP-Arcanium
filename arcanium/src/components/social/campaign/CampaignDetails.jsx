@@ -10,10 +10,12 @@ const CampaignDetails = ({ campaignId }) => {
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
 
+  // Fetch campaign details when the component mounts
   useEffect(() => {
     const fetchCampaignDetails = async () => {
       setIsLoading(true);
       try {
+        // Fetch campaign details from the server
         const response = await axios.get(`${config.apiUrl}/api/campaigns/details/${campaignId}`);
         setCampaignDetails(response.data);
       } catch (error) {
@@ -27,6 +29,7 @@ const CampaignDetails = ({ campaignId }) => {
     fetchCampaignDetails();
   }, [campaignId]);
 
+  // Function to handle opening the character modal within the campaign
   const handleOpenCharacterModal = async (characterId) => {
     try {
       setIsLoading(true); 

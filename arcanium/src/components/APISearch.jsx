@@ -23,20 +23,24 @@ function APISearch({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  // Function to fetch data from the API, with pagination and search term
   const fetchData = async (pageNum, searchValue) => {
     let baseUrl = apiEndpoint.includes('?') ? `${apiEndpoint}&` : `${apiEndpoint}?`;
-    let query = `${baseUrl}search=${searchValue}&page=${pageNum}`;
+    let query = `${baseUrl}search=${searchValue}&page=${pageNum}`;  // Add search term and page number to the query
     console.log(query);
 
+    // Add filters to the query string, if any
     for (let key in filters) {
       if (filters[key]) {
         query += `&${key}=${filters[key]}`;
       }
     }
 
+    // Fetch data from the API
     const response = await fetch(query);
     const json = await response.json();
 
+    // Check if there are any results and filter out any items with 'a5e' in the slug
     if (!json.results || json.results.length === 0) {
       setHasMore(false);
       return [];
@@ -55,6 +59,7 @@ function APISearch({
     fetchData(1, ""); // Load initial data when the component mounts
   }, []);
 
+  // Reset data and pagination when the search term or filters change
   useEffect(() => {
     setData([]);
     setHasMore(true);

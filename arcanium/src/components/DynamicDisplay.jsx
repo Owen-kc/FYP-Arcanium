@@ -23,6 +23,7 @@ const styles = {
     }
 };
 
+// This component will display the data passed to it, depending on the display type
 function DynamicDisplay({ data }) {
     if (!data) return null;
 

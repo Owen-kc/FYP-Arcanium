@@ -25,6 +25,7 @@ exports.createCampaign = async (req, res) => {
     }
 };
 
+// Invite users to a campaign
 exports.inviteToCampaign = async (req, res) => {
     const { campaignId, friendAuth0Ids } = req.body;
   
@@ -47,6 +48,7 @@ exports.inviteToCampaign = async (req, res) => {
     }
 };
 
+// Fetch campaigns for a user
 exports.getMyCampaigns = async (req, res) => {
     try {
         const userAuth0Id = req.params.userId;
@@ -71,7 +73,7 @@ exports.getMyCampaigns = async (req, res) => {
 };
 
 
-
+// Fetch invitations for a user
 exports.fetchInvitationsForUser = async (req, res) => {
     const userAuth0Id = req.params.userId;
 
@@ -86,6 +88,7 @@ exports.fetchInvitationsForUser = async (req, res) => {
     }
 };
 
+// Accept an invitation to join a campaign
 exports.acceptInvitation = async (req, res) => {
     const { campaignId, userAuth0Id, characterId } = req.body;
     console.log('A', campaignId);

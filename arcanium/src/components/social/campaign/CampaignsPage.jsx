@@ -16,6 +16,7 @@ const CampaignsPage = ({ userId }) => {
         severity: ''
     });
 
+    // Handle tab change event
     const handleTabChange = (event, newValue) => {
         setSelectedTab(newValue);
         if (newValue !== 2) {
@@ -23,6 +24,7 @@ const CampaignsPage = ({ userId }) => {
         }
     };
 
+    // Handle campaign creation event
     const onCampaignCreated = (campaignId) => {
         setNewCampaignId(campaignId);
         setAlert({ open: true, message: 'Campaign created successfully!', severity: 'success' });

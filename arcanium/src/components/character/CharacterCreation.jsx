@@ -117,6 +117,7 @@ function CharacterCreation() {
     },
   };
 
+  // Update character state with new data throughout the form
   const updateCharacter = (updates) => {
     setCharacter((prevCharacter) => {
       console.log('Before update:', prevCharacter);

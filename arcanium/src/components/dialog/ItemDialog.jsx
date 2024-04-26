@@ -12,6 +12,7 @@ import ItemDisplay from './ItemDisplay';
 
 function ItemDialog({ open, onClose, item }) {
     console.log(item);
+    // Determine what type of item is being displayed
     const isMonster = item && ('challenge_rating' in item || ('type' in item && item.type === "Monster"));
     const isSpell = item && ('level_int' in item || 'school' in item);
     const isRace = item && ('languages' in item && 'asi' in item);
@@ -20,6 +21,7 @@ function ItemDialog({ open, onClose, item }) {
     const isArmor = item && ('category' in item && 'base_ac' in item);
     const isGenericItem = item && ('desc' in item && 'rarity' in item && !isArmor && !isWeapon);
 
+    // Show the appropriate display based on the item type
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogContent>

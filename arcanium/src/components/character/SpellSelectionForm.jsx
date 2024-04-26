@@ -62,6 +62,7 @@ const SpellSelectionForm = ({ character, updateCharacter, nextStep, prevStep }) 
     nextStep();
   };
 
+  // Function to handle spell selection, including cantrips and spells, and display alerts dependqnt on the selection
   const handleSelectSpell = (spell, isCantrip) => {
     const alreadySelected = isCantrip
         ? selectedCantrips.some(s => s.name === spell.name)

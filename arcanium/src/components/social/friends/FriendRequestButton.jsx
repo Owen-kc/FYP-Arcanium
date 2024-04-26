@@ -12,12 +12,14 @@ const FriendRequestButton = ({ recipientAuth0Id }) => {
   const { user } = useAuth0();
   const [alert, setAlert] = useState({ open: false, severity: '', message: '' });
   
+  // Send a friend request to the recipient, using the requester's Auth0 ID and the recipient's Auth0 ID
   const sendFriendRequest = async () => {
     if (!user?.sub || !recipientAuth0Id) {
       console.error("Missing requester or recipient ID.");
       return;
     }
 
+    // Set loading state while sending the request
     setLoading(true);
     try {
       await axios.post(`${config.apiUrl}/api/friends/send-request`, {

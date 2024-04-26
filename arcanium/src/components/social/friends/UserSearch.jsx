@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TextField, Button, List, Box, Paper, Grid } from '@mui/material';
+import { TextField, Button, Box, Paper, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import UserProfile from '../UserProfile';
 import CustomAlert from '../CustomAlert'; 
@@ -15,31 +15,31 @@ const UserSearch = () => {
     severity: '',
   });
 
-  const handleSearch = async () => {
+  // Function to fetch users
+  const fetchUsers = async (query = '') => {
     try {
-      const response = await axios.get(`${config.apiUrl}/api/search?query=${searchTerm}`);
+      const response = await axios.get(`${config.apiUrl}/api/search?query=${query}`);
       const users = response.data.users || [];
       setResults(users);
       setAlert({ open: false });
     } catch (error) {
-      console.error('Error searching users:', error);
+      console.error('Error fetching users:', error);
       setResults([]);
-      setAlert({ open: true, message: 'Failed to search users.', severity: 'error' });
+      setAlert({ open: true, message: 'Failed to fetch users.', severity: 'error' });
     }
+  };
+
+  // Use useEffect to fetch all users when the component mounts
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleSearch = () => {
+    fetchUsers(searchTerm);
   };
 
   const handleCloseAlert = () => {
     setAlert({ ...alert, open: false });
-  };
-
-  const listVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { x: -10, opacity: 0 },
-    visible: { x: 0, opacity: 1 },
   };
 
   return (

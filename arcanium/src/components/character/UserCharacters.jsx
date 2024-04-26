@@ -21,6 +21,7 @@ const UserCharacters = () => {
     normal: { scale: 1 }
   };
 
+  // Fetch characters when the component mounts
   useEffect(() => {
     const loadCharacters = async () => {
       if (user?.sub) {
@@ -37,6 +38,7 @@ const UserCharacters = () => {
     loadCharacters();
   }, [user?.sub]);
 
+  // Handle opening the character modal
   const handleOpenCharacterModal = (character) => {
     setSelectedCharacter(character);
     setIsCharacterModalOpen(true);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, FormControl, InputLabel, Select, MenuItem, Typography } from '@mui/material';
 
+// FilterDropdown component, can be used to filter data by a specific field
 function FilterDropdown({ options, value, onChange, label, id }) {
   return (
     <Box display="flex" justifyContent="center" alignItems="center" flexWrap="wrap" gap={2}>

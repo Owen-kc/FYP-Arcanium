@@ -20,7 +20,11 @@ Arcanium is a dynamic, multi-platform web-based application designed for Dungeon
 These features provide a comprehensive and detailed location for the needs of players of Dungeons & Dragons, both new and experienced alike.
 
 ### Video Demonstration
-*to add
+A video demonstration can be watched below:
+
+[![Watch the Video](https://img.youtube.com/vi/3oAZ_GkNiQM/0.jpg)](https://www.youtube.com/watch?v=3oAZ_GkNiQM)
+
+Otherwise the file can be accessed and downloaded from [google drive](https://drive.google.com/file/d/15ZbRrJsBI0aORT4KFgiGr0rninUsluUN/view?usp=sharing)
 
 ## Usage
 
@@ -88,10 +92,10 @@ npm start
 The technology stack of Arcanium utilizes the MERN stack for it's main technologies. Many other miscellaneous frameworks and technologies are used throughout the application. The package.json file provides a more detailed overview of exactly what technologies are used and their versions.
 
 ## Poster
-*to add
+[View the A0 poster here](./sw4-FYP-Poster.pdf)
 
 ## Dissertation
-*to add
+[Read the disseration associated with Arcanium here](./SW4_FYP_Dissertation.pdf)
 
 ## Acknowledgements
 

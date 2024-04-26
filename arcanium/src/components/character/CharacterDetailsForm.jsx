@@ -32,6 +32,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const theme = useTheme();
 
 
+  // Function to handle changes in the form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setDetails((prevDetails) => ({
@@ -40,18 +41,21 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
     }));
   };
 
+  // Fetch image URL when imageKey changes
   useEffect(() => {
     if (imageKey) {
       fetchAndSetImageUrl(imageKey);
     }
   }, [imageKey]);
 
+  // Function to format height in feet and inches
   const formatHeight = (value) => {
     const feet = Math.floor(value / 12);
     const inches = value % 12;
     return `${feet}'${inches}"`; 
   };
 
+  // Function to handle changes in the slider
   const handleSliderChange = (name, newValue) => {
     setDetails((prevDetails) => ({
       ...prevDetails,
@@ -72,6 +76,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
     }
   };
 
+  // Function to handle image changes, validate image size and type
   const handleImageChange = (e) => {
   if (e.target.files.length) {
     const file = e.target.files[0];
@@ -94,6 +99,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   }
 };
 
+// Function to fetch image URL from the server, presigned url for S3 upload
   const fetchAndSetImageUrl = async (objectKey) => {
     try {
       const response = await axios.get(`${config.apiUrl}/api/get-image-url?objectKey=${encodeURIComponent(objectKey)}`);
@@ -111,6 +117,7 @@ function CharacterDetailsForm({ character, updateCharacter, nextStep, prevStep }
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Upload image to S3 if a new image was selected
     if (imageFile) {
       try {
         const presignedResponse = await axios.get(`${config.apiUrl}/api/upload-url`, {

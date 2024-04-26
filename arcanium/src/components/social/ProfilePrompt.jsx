@@ -11,11 +11,12 @@ const ProfilePrompt = () => {
   const [nickname, setNickname] = useState('');
   const saveAnimationControls = useAnimation();
 
+  // Check if the user has a profile, and show the modal if they don't
   useEffect(() => {
     const checkUserProfileExists = async () => {
-      if (isAuthenticated && user) {
+      if (isAuthenticated && user) {  // Check if the user is authenticated
         try {
-          const response = await axios.get(`${config.apiUrl}/api/profile-exists/${user.sub}`);
+          const response = await axios.get(`${config.apiUrl}/api/profile-exists/${user.sub}`); // Check if the user has a profile
           setShowModal(!response.data.exists);
           setNickname(user.nickname || '');
         } catch (error) {

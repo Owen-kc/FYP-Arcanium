@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, TextField, Box } from '@mui/material';
 import axios from 'axios';
 import CustomAlert from '../CustomAlert';
+import config from '../../../config';
 
 const CreateCampaignForm = ({ userId, onCampaignCreated }) => {
     const [name, setName] = useState('');
@@ -13,12 +14,14 @@ const CreateCampaignForm = ({ userId, onCampaignCreated }) => {
         severity: ''
     });
 
+    // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); 
 
+        // Validate form fields, post to server if valid, and handle response
         try {
-            const response = await axios.post('${config.apiUrl}/api/campaigns/create', {
+            const response = await axios.post(`${config.apiUrl}/api/campaigns/create`, {
                 name,
                 description,
                 creatorAuth0Id: userId

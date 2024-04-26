@@ -1,5 +1,6 @@
 import config from '../config'
 
+// Function to fetch all characters from the server
 export const fetchAllCharacters = async () => {
   try {
     const response = await fetch(`${config.apiUrl}/api/characters`);
@@ -13,6 +14,7 @@ export const fetchAllCharacters = async () => {
   }
 };
 
+// Function to fetch a character by ID from the server
 export const fetchCharacterById = async (id) => {
   try {
     const response = await fetch(`${config.apiUrl}/api/characters/${id}`);
@@ -26,6 +28,7 @@ export const fetchCharacterById = async (id) => {
   }
 };
 
+// Function to fetch characters by user ID from the server
 export const fetchCharactersByUserId = async (userId) => {
   try {
     const response = await fetch(`${config.apiUrl}/api/characters/user/${userId}`);

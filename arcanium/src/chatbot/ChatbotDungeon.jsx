@@ -47,7 +47,6 @@ const API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 
 const systemMessage = dungeonSystemMessage;
 
-/// to be optimized. in progress.
 const ChatbotDungeon = () => {
   const [messages, setMessages] = useState([
     {
@@ -86,7 +85,7 @@ const ChatbotDungeon = () => {
     useState(null);
   const [selectedLocation, setSelectedLocation] = useState("");
   
-
+  // Scroll to the bottom of the chat when a new message is added
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -118,6 +117,7 @@ const ChatbotDungeon = () => {
   }, []);
   
 
+  // Fetch characters for the current user
   useEffect(() => {
     const fetchCharacters = async () => {
       if (user?.sub) {
@@ -151,14 +151,17 @@ const ChatbotDungeon = () => {
     fetchCharacters();
   }, [user?.sub]);
 
+  // Story prompt dialog
   const promptForStoryName = () => {
     setIsNamingDialogOpen(true);
   };
 
+  // Toggle visibility of saved stories panel
   const toggleSavedStoriesVisibility = () => {
     setShowSavedStories(!showSavedStories);
   };
 
+  // Handle character selection
   const handleCharacterSelection = (characterId) => {
     setSelectedCharacterId(characterId);
     const characterDetails = characters.find(
@@ -208,10 +211,12 @@ const ChatbotDungeon = () => {
     return styles;
   };
 
+  // Scroll to the bottom of the chat
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Type out a message
   const typeMessage = async (message, sender = "system") => {
     setIsAnimatingMessage(true); // Start animating message
     const words = message.split(" ");
@@ -239,12 +244,14 @@ const ChatbotDungeon = () => {
     setIsAnimatingMessage(false);
   };
 
+  // Handle the selection of a story
   const handlePromptSelection = (prompt) => {
     setSelectedLocation(prompt);
     const formattedPrompt = `Your journey begins in ${prompt}`;
     setInitialPrompt(formattedPrompt);
   };
 
+  // Start the adventure with the selected prompt
   const startAdventureWithPrompt = () => {
     setIsPromptDialogOpen(false); 
 
@@ -268,6 +275,7 @@ const ChatbotDungeon = () => {
     sendMessage(fullInitialMessage, "story");
   };
 
+  // Process the user's message
   const processMessage = async (userMessage, actionType) => {
     setIsTyping(true);
 
@@ -287,6 +295,7 @@ const ChatbotDungeon = () => {
       messages: [systemMessage, ...newConversationHistory],
     };
 
+    // Call the OpenAI API to get a response
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -316,6 +325,7 @@ const ChatbotDungeon = () => {
     scrollToBottom();
   };
 
+  // Send a message
   const sendMessage = async (text, type = actionType) => {
     if (text.trim()) {
       setMessages((messages) => [
@@ -326,6 +336,7 @@ const ChatbotDungeon = () => {
     }
   };
 
+  // Render the content of a message
   const renderMessageContent = (message, isSaved) => {
     let actionText = "";
     switch (message.actionType) {

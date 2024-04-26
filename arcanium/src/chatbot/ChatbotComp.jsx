@@ -15,17 +15,19 @@ import { chatbotSystemMessage } from './chatbotConfig';
 
 
 
-// ******** IMPORTANT ******** PUT API KEY HERE ******** IMPORTANT ********
+// process.env.REACT_APP_OPENAI_API_KEY
 const API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 
 const systemMessage = chatbotSystemMessage;
 
+// Component for the chatbot
 const ChatbotComp = () => {
   const [messages, setMessages] = useState([{ message: "Greetings! I'm Arcanium Advisor. Ask me anything relating to Arcanium, or Dungeons & Dragons. I am happy to help!", sentTime: "just now", sender: "Arcanium Advisor" }]);
   const [isTyping, setIsTyping] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const messageListRef = useRef(null);
 
+  // Scroll to the bottom of the chat when a new message is added
   useEffect(() => {
     if (isOpen && messageListRef.current) {
       messageListRef.current.scrollToBottom();
@@ -46,6 +48,7 @@ const ChatbotComp = () => {
     }, 500); 
   };
 
+  // Function to simulate typing effect for the chatbot
   const typeMessage = async (message, sender) => {
     const words = message.split(' ');
     let currentMessage = '';
@@ -64,12 +67,14 @@ const ChatbotComp = () => {
     }
   };
 
+  // Function to process the user's message and get a response from the chatbot
   async function processMessage(chatMessages) {
     const apiMessages = chatMessages.map(msg => ({
       role: msg.sender === "Arcanium Advisor" ? "assistant" : "user",
       content: msg.message
     }));
   
+    // Call the OpenAI API to get a response
     const apiRequestBody = {
       "model": "gpt-3.5-turbo",
       "messages": [systemMessage, ...apiMessages]
@@ -85,6 +90,7 @@ const ChatbotComp = () => {
     });
     const data = await response.json();
   
+    // Update the chat with the response from the chatbot
     await typeMessage(data.choices[0].message.content, "Arcanium Advisor");
     setIsTyping(false);
   }

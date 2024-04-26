@@ -35,7 +35,7 @@ const InviteFriendsToCampaign = ({ userId, campaignId }) => {
             const friendAuth0Ids = selectedFriends.map(friendId => 
                 friends.find(friend => friend.id === friendId).auth0Id
             );
-            await axios.post('${config.apiUrl}/api/campaigns/invite', {
+            await axios.post(`${config.apiUrl}/api/campaigns/invite`, {
                 campaignId,
                 friendAuth0Ids,
             });

@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { calculateModifier, skillToAbilityMap } from "../utils/dndUtils";
 import { styled } from "@mui/system";
+import axios from 'axios';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -70,6 +71,7 @@ const CharacterSheet = ({ character }) => {
       );
     });
   };
+  
 
   // Function to render ability score boxes (unused rn)
   const renderAbilityScore = (ability, score) => (

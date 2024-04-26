@@ -11,6 +11,7 @@ const useStoryManager = () => {
   const { user } = useAuth0();
   const userId = user?.sub;
 
+  // Fetch saved stories for the current user
   useEffect(() => {
     const fetchSavedStories = async () => {
       if (!userId) return;
@@ -38,6 +39,7 @@ const useStoryManager = () => {
 };
 
 
+    // Save the story
     try {
       const response = await fetch(`${config.apiUrl}/api/stories`, {
         method: 'POST',
@@ -55,6 +57,7 @@ const useStoryManager = () => {
     }
   };
 
+  // Delete a story
   const deleteStory = async (storyId) => {
     try {
       const response = await fetch(`${config.apiUrl}/api/stories/${storyId}`, {
@@ -71,12 +74,14 @@ const useStoryManager = () => {
     }
   };
 
+  // Exit read-only mode
   const exitReadOnlyMode = () => {
     setIsReadOnlyMode(false);
     setActiveStoryId(null);
     setActiveStory(null);
   };
 
+  // Load a story
   const loadStory = (storyToLoad) => {
     console.log('Attempting to load story:', storyToLoad.id);
     setActiveStory(storyToLoad);

@@ -39,6 +39,7 @@ const CampaignInvitations = ({ userId }) => {
     severity: '',
   });
 
+  // Fetch invitations and characters when the component mounts
   useEffect(() => {
     const fetchInvitations = async () => {
       console.log("Fetching invitations...");
@@ -51,6 +52,7 @@ const CampaignInvitations = ({ userId }) => {
       }
     };
 
+    // Fetch characters for the user
     const fetchCharacters = async () => {
       try {
         const charactersData = await fetchCharactersByUserId(userId);
@@ -74,6 +76,7 @@ const CampaignInvitations = ({ userId }) => {
     setOpenDialog(false);
   };
 
+  // Function to handle accepting an invitation
   const handleAccept = async () => {
     if (!selectedCharacterId) {
       setAlert({ open: true, message: 'Please select a character.', severity: 'warning' });

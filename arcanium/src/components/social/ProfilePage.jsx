@@ -7,13 +7,14 @@ const ProfilePage = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [characters, setCharacters] = useState([]);
 
+  // Fetch the user's profile and characters when the component mounts
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const profileResponse = await axios.get(`/api/profiles/${userId}`);
+        const profileResponse = await axios.get(`/api/profiles/${userId}`);  // Fetch the user's profile
         setUserProfile(profileResponse.data);
 
-        const charactersResponse = await axios.get(`/api/characters/user/${userId}`);
+        const charactersResponse = await axios.get(`/api/characters/user/${userId}`); // Fetch the user's characters
         setCharacters(charactersResponse.data);
       } catch (error) {
         console.error('Error fetching user profile and characters:', error);

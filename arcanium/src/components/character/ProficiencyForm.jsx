@@ -8,10 +8,11 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
   const [equipmentChoices, setEquipmentChoices] = useState([]);
   const theme = useTheme();
 
+  // Fetch class details when the component mounts
   useEffect(() => {
     const fetchClassDetails = async () => {
       try {
-        const response = await fetch(`https://api.open5e.com/classes/${character.class.toLowerCase()}/`);
+        const response = await fetch(`https://api.open5e.com/classes/${character.class.toLowerCase()}/`); // Fetch class details from the Open5e API
         const data = await response.json();
         setClassDetails(data);
         parseEquipmentChoices(data.equipment);
@@ -57,6 +58,7 @@ const ProficiencyForm = ({ character, updateCharacter, nextStep, prevStep }) => 
     ));
   };
 
+  // Function to handle form submission
   const handleSubmit = () => {
     updateCharacter({ ...character, equipment: equipmentChoices });
     nextStep();

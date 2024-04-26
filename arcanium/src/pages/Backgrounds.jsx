@@ -6,9 +6,9 @@ function Backgrounds() {
     return (
         <Box>
             <APISearch 
-                apiEndpoint="https://api.open5e.com/v1/backgrounds/" // adjust the endpoint if different
+                apiEndpoint="https://api.open5e.com/v1/backgrounds/" 
                 placeholder="Search for a background" 
-                displayProps={['description']} // adjust with relevant background properties you want to display
+                displayProps={['description']} // adjust with relevant background properties
             />
         </Box>
     );

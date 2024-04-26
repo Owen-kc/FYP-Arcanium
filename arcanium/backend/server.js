@@ -138,10 +138,12 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Typing functionality
   socket.on('start_typing', ({ room, user }) => {
     socket.to(room).emit('user_typing', { typing: true, user });
   });
 
+  // Stop typing functionality
   socket.on('stop_typing', ({ room, user }) => {
     socket.to(room).emit('user_typing', { typing: false, user });
   });
@@ -151,6 +153,7 @@ io.on('connection', (socket) => {
   });
 });
 
+// Get messages for a specific room
 app.get('/api/messages/:room', async (req, res) => {
   try {
     const messages = await Message.find({ room: req.params.room }).sort({ timestamp: 1 });

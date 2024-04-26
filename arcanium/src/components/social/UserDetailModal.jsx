@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const UserDetailModal = ({ user, onClose }) => {
     const navigate = useNavigate();
 
+    // Function to navigate to the user's profile page
     const handleViewProfile = () => {
         onClose();
-        navigate(`/profile/${user.auth0Id}`);
+        navigate(`/profile/${user.auth0Id}`); // Navigate to the user's profile page
     };
 
     console.log(user); // check user object structure

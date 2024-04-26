@@ -73,7 +73,7 @@ exports.getIncomingFriendRequests = async (req, res) => {
           senderName: request.requester.name, 
           senderAuth0Id: request.requester.auth0Id,
           senderPicture: request.requester.picture, // Add picture
-          senderEmail: request.requester.email // Optionally add email if you want to use it
+          senderEmail: request.requester.email
         })));
     } catch (error) {
         console.error('Error fetching incoming friend requests:', error);

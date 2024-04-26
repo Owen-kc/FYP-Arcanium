@@ -33,11 +33,12 @@ const MyCampaigns = ({ userId }) => {
     severity: ''
   });
 
+  // Fetch the user's campaigns when the component mounts, and set the loading state, and handle errors
   useEffect(() => {
     const fetchMyCampaigns = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${config.apiUrl}/api/campaigns/my-campaigns/${userId}`);
+        const response = await axios.get(`${config.apiUrl}/api/campaigns/my-campaigns/${userId}`); // Fetch the user's campaigns
         setCampaigns(response.data);
       } catch (error) {
         console.error('Failed to fetch campaigns:', error);

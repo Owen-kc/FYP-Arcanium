@@ -27,6 +27,7 @@ const FriendProfile = () => {
   const [alert, setAlert] = useState({ severity: '', message: '' });
 
 
+  // Fetch profile data, characters, and friends
   useEffect(() => {
     const fetchProfileData = async () => {
       try {

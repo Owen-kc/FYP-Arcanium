@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 
+// simple image slideshow component
 const ImageSlideshow = ({ images, interval = 3000 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 

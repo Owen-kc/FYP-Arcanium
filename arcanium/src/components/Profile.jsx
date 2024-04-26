@@ -2,12 +2,15 @@ import React from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import { DialogContent, DialogTitle, Card, CardContent, Avatar, Typography, Table, TableBody, TableCell, TableRow, Box } from '@mui/material';
 
+
+// Profile component, displays simple user profile information
 const Profile = () => {
     const { user } = useAuth0();
 
     // Prepare user data for display
     const userData = Object.entries(user).filter(([key, value]) => key !== 'picture' && typeof value !== 'object');
 
+    // information to display, got from auth0 user object
     return (
         <>
             <DialogTitle>User Profile</DialogTitle>
@@ -23,7 +26,7 @@ const Profile = () => {
                         )}
                     </Box>
                     <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
+                        <Typography gutterBottom variant="h5" component="div">      
                             {user?.name}
                         </Typography>
                         <Table>
