@@ -10,9 +10,9 @@ Arcanium is a dynamic, multi-platform web-based application designed for Dungeon
 - **Centralized Hub:** Centralizes essential tools, resources, and information into a single platform.
 - **User-Friendly Design:** Designed to be intuitive and engaging for both new and veteran D&D players.
 - **Multi-Platform Support:** Ensures full functionality across both desktop and mobile devices to accommodate all user preferences.
-- **API Integration:** Incorporates Open5e's API to facilitate extensive resource searching, data retrieval and character creation.
+- **API Integration:** Incorporates Open5e's API to facilitate extensive resource searching, data retrieval, and character creation.
 - **Dynamic Character Creation:** Features an interactive process for character creation, where users can create characters to use in campaigns and generative storytelling.
-- **Social Connectivity:** Enables users to add friends, join campaigns, and communicate in real time through Socket.io.
+- **Social Connectivity:** Enables users to add friends, join campaigns, and communicate in real-time through Socket.io.
 - **AI Integration:** Utilizes advanced AI for dynamic story generation utilizing character and location context, and a chatbot for user assistance and queries.
 - **Security/Authentication:** Implements robust authentication mechanisms through Auth0.
 - **Scalable Database:** Uses a cloud-based architecture for scalable data storage, through the use of MongoDB Atlas.
@@ -24,7 +24,7 @@ A video demonstration can be watched below:
 
 [![Watch the Video](https://img.youtube.com/vi/3oAZ_GkNiQM/0.jpg)](https://www.youtube.com/watch?v=3oAZ_GkNiQM)
 
-Otherwise the file can be accessed and downloaded from [google drive](https://drive.google.com/file/d/15ZbRrJsBI0aORT4KFgiGr0rninUsluUN/view?usp=sharing)
+Otherwise, the file can be accessed and downloaded from [Google Drive](https://drive.google.com/file/d/15ZbRrJsBI0aORT4KFgiGr0rninUsluUN/view?usp=sharing)
 
 ## Usage
 
@@ -90,19 +90,19 @@ npm start
   - Open5e API: Provides extensive data and resources for Dungeons & Dragons
   - OpenAI: For implementing generative storytelling and chatbot assistance
 
-The technology stack of Arcanium utilizes the MERN stack for it's main technologies. Many other miscellaneous frameworks and technologies are used throughout the application. The package.json file provides a more detailed overview of exactly what technologies are used and their versions.
+The technology stack of Arcanium utilizes the MERN stack for its main technologies. Many other miscellaneous frameworks and technologies are used throughout the application. The package.json file provides a more detailed overview of exactly what technologies are used and their versions.
 
 ## Poster
 [View the A0 poster here](./sw4-FYP-Poster.pdf)
 
 ## Dissertation
-[Read the disseration associated with Arcanium here](./SW4_FYP_Dissertation.pdf)
+[Read the dissertation associated with Arcanium here](./SW4_FYP_Dissertation.pdf)
 
-## Acknowledgements
+## Acknowledgments
 
 This project makes use of several key resources that have contributed immensely to its development:
 
-- **Open5e API:** Arcanium utilizes the [Open5e API](https://api.open5e.com/) to access a wealth of Dungeons & Dragons 5th Edition resources and data in a JSON format. This API has been invaluable for integrating comprehensive D&D content, resource searching, character creation and more.
+- **Open5e API:** Arcanium utilizes the [Open5e API](https://api.open5e.com/) to access a wealth of Dungeons & Dragons 5th Edition resources and data in a JSON format. This API has been invaluable for integrating comprehensive D&D content, resource searching, character creation, and more.
 
 - **Systems Reference Document (SRD):** This project adheres to and incorporates content based on the [Open Gaming License: Systems Reference Document](https://dnd.wizards.com/resources/systems-reference-document) by Wizards of the Coast. This document provides the foundational mechanics and content used under the Open Gaming License.
 
