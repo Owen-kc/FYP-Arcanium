@@ -62,6 +62,7 @@ npm install
 npm start
 ```
 
+**Note**: Arcanium utilizes sensitive environment variables such as API keys, MongoDB connection information, and Auth0 domain information, which can't be included in the repository for security reasons. These are utilized through .env files. If you require this data to run locally, please contact me anytime and I can provide the necessary resources. 
 
 ## Technology Stack
 
